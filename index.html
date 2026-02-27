@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOBJECTIF R1P</title>
+    <title>OOBJECTIF R1P • Luxe Ultime 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -102,6 +102,8 @@
             cursor: pointer;
             box-shadow: 0 0 70px 18px rgba(247,147,30,0.7);
             transition: all .28s cubic-bezier(0.175,0.885,0.32,1.85);
+            width: 100%;
+            margin-top: 10px;
         }
         #r1p-btn:hover { transform: scale(1.08); box-shadow: 0 0 90px 25px rgba(247,147,30,0.85); }
         #r1p-btn:active { transform: scale(0.94); }
@@ -116,13 +118,33 @@
             justify-content: space-between;
             font-size: 0.97rem;
         }
+
+        /* Styles pour le Toast (Notification) */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #0a0f1c;
+            padding: 15px 30px;
+            border-radius: 9999px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 999999;
+            box-shadow: 0 10px 30px rgba(247,147,30,0.4);
+        }
     </style>
 </head>
 <body>
     <canvas id="bg"></canvas>
     <canvas id="confetti"></canvas>
 
-    <!-- LOGIN MODAL -->
+    <div id="toast"></div>
+
     <div id="login-modal" style="position:fixed;inset:0;background:rgba(10,15,28,0.98);z-index:99999;display:flex;align-items:center;justify-content:center;">
         <div style="background:var(--glass);padding:2.6rem 2.2rem;border-radius:28px;width:100%;max-width:350px;text-align:center;border:1px solid var(--primary);">
             <h2 style="font-size:2.15rem;margin-bottom:1rem;">Bienvenue dans l’univers OOBJECTIF R1P</h2>
@@ -142,7 +164,6 @@
         </header>
 
         <main>
-            <!-- LEFT -->
             <div class="glass user-card" style="padding:2rem 1.8rem;">
                 <div id="avatar" style="width:122px;height:122px;margin:0 auto 1rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--gold));font-size:4.2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 16px rgba(247,147,30,0.32);">🔥</div>
                 <h2 id="user-name" style="font-size:2.28rem;margin-bottom:4px;">—</h2>
@@ -162,12 +183,11 @@
                 <div id="personal-rank" style="margin:0.6rem 0;font-size:1.1rem;opacity:0.9;"></div>
 
                 <div class="r1p-card">
-                    <textarea id="note" style="background:rgba(255,255,255,0.06);border:none;border-radius:17px;padding:1rem;color:#fff;font-size:0.97rem;resize:none;height:68px;" placeholder="Note client ou vibe du moment..."></textarea>
-                    <button id="r1p-btn">R1P +1</button>
+                    <textarea id="note" style="background:rgba(255,255,255,0.06);border:none;border-radius:17px;padding:1rem;color:#fff;font-size:0.97rem;resize:none;height:68px;width:100%;" placeholder="Note client ou vibe du moment..."></textarea>
+                    <button id="r1p-btn" onclick="takeR1P()">R1P +1</button>
                 </div>
             </div>
 
-            <!-- CENTER -->
             <div style="display:flex;flex-direction:column;gap:1.5rem;">
                 <div class="glass" style="padding:1.9rem;flex:1;display:flex;flex-direction:column;">
                     <h2 style="font-size:1.68rem;margin-bottom:1.1rem;">🥇 Individuel • Cette semaine</h2>
@@ -179,7 +199,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT -->
             <div style="display:flex;flex-direction:column;gap:1.5rem;">
                 <div class="glass" style="padding:1.9rem;flex:1;">
                     <h2 style="font-size:1.68rem;margin-bottom:1.1rem;">🏆 Momentum Équipes</h2>
@@ -202,7 +221,7 @@
         const SUPABASE_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
 
-        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const TEAM_MAP = {
             "sofia":"Caen","david":"Caen","kevin":"Caen",
@@ -237,7 +256,7 @@
             const note = document.getElementById("note").value.trim();
             const week = new Date().toISOString().slice(0,10).replace(/-/g,'');
 
-            await supabase.from('suivi_r1p').insert({
+            await supabaseClient.from('suivi_r1p').insert({
                 auteur: currentUser.name,
                 equipe: currentUser.team,
                 semaine: week,
@@ -250,21 +269,18 @@
 
             lastR1PTake = Date.now();
             launchEpicConfetti();
-            playR1PSuccessSound();
-            speakR1P();
-            showPersonalMotiv();
             showToast("🎉 NOUVELLE AVENTURE COMMENCÉE !");
             document.getElementById("note").value = "";
             await refreshAll();
         }
 
         async function incrementCounter(scope, key){
-            let { data } = await supabase.from('r1p_counters').select('*').eq('scope', scope).eq('key', key).single();
+            let { data } = await supabaseClient.from('r1p_counters').select('*').eq('scope', scope).eq('key', key).single();
 
             if (!data) {
-                await supabase.from('r1p_counters').insert({scope, key, count_week:1, count_session:1});
+                await supabaseClient.from('r1p_counters').insert({scope, key, count_week:1, count_session:1});
             } else {
-                await supabase.from('r1p_counters').update({
+                await supabaseClient.from('r1p_counters').update({
                     count_week: data.count_week + 1,
                     count_session: data.count_session + 1,
                     last_updated: new Date().toISOString()
@@ -273,9 +289,9 @@
         }
 
         async function refreshAll(){
-            const { data: indiv } = await supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false}).limit(10);
+            const { data: indiv } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false}).limit(10);
             renderLB("indiv-week", indiv || [], false);
-            // ... (autres feeds similaires)
+            // Si tu as d'autres feeds, ajoute-les ici de la même manière
         }
 
         function renderLB(id, items, isSession){
@@ -294,11 +310,21 @@
             setTimeout(() => t.style.opacity = "0", 2600);
         }
 
-        function launchEpicConfetti(){ /* confetti premium */ }
+        function launchEpicConfetti(){ 
+            // Ta fonction confetti premium ira ici
+        }
 
         function init(){
-            initBackground();
+            // Focus automatique sur l'input au chargement
             document.getElementById("prenom-input").focus();
+            
+            // Permet de valider avec la touche "Entrée"
+            document.getElementById("prenom-input").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    validatePrenom();
+                }
+            });
         }
 
         window.onload = init;
