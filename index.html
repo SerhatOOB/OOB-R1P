@@ -1,305 +1,100 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOBJECTIF R1P • Elite Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    const SUPABASE_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
+    // ATTENTION : Vérifie bien cette clé dans ton dashboard Supabase (Project Settings > API)
+    const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz"; 
+    const ADMIN_KEY = "OOB2026";
     
-    <style>
-        :root {
-            --primary: #F7931E;
-            --gold: #fbbf24;
-            --dark: #05070a;
-            --card-bg: rgba(15, 23, 42, 0.9);
+    // Initialisation sécurisée
+    let supabaseClient;
+    try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+        console.error("Erreur d'initialisation Supabase:", e);
+    }
+
+    const TEAM_MAP = {"sofia":"Caen","david":"Caen","kevin":"Caen","durmus":"Evreux","merwan":"Courbevoie","diassivi":"Courbevoie","sertag":"Courbevoie","roxanne":"Rouen"};
+    const COMPLIMENTS = ["Légendaire, {name} ! 🔥", "Quel monstre, {name} ! 🏆", "BOOM ! {name} est imbattable.", "Magistral, {name} ! ✨", "Le patron, c'est {name} !", "{name}, tu es en feu ! 🚀"];
+
+    let currentUser = {name:"", team:""};
+    let lastClick = 0;
+
+    function validatePrenom() {
+        let input = document.getElementById("prenom-input");
+        let p = input.value.trim().toLowerCase();
+        
+        if(!TEAM_MAP[p]) { 
+            document.getElementById("login-error").textContent = "Prénom non répertorié."; 
+            return; 
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b, #05070a);
-            color: #f8fafc;
-            height: 100vh;
-            overflow: hidden;
-            margin: 0;
+        currentUser.name = p.charAt(0).toUpperCase() + p.slice(1);
+        currentUser.team = TEAM_MAP[p];
+
+        // Transition d'écran
+        gsap.to("#login-modal", { duration: 0.8, y: "-100%", ease: "expo.inOut", onComplete: () => {
+            document.getElementById("login-modal").style.display = "none";
+            const mainApp = document.getElementById("main-app");
+            mainApp.style.display = "grid";
+            gsap.to(mainApp, { opacity: 1, duration: 1 });
+        }});
+
+        // Mise à jour interface
+        document.getElementById("user-name").textContent = currentUser.name;
+        document.getElementById("avatar").textContent = currentUser.name[0];
+        document.getElementById("user-team").textContent = "Équipe " + currentUser.team;
+        
+        // On lance le refresh mais on ne bloque pas si Supabase est mal configuré
+        refreshAll().catch(err => console.log("Mode déconnecté ou erreur clé API"));
+        setInterval(refreshAll, 10000);
+    }
+
+    async function refreshAll() {
+        if(!supabaseClient) return;
+        try {
+            const { data: indiv } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false}).limit(10);
+            const { data: sess } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_session', {ascending: false}).limit(10);
+            const { data: teams } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Equipe').order('count_week', {ascending: false});
+            const { data: feed } = await supabaseClient.from('suivi_r1p').select('*').order('created_at', {ascending: false}).limit(12);
+
+            if(indiv) renderList("indiv-week", indiv, "count_week");
+            if(sess) renderList("session-live", sess, "count_session");
+            if(teams) renderList("team-momentum", teams, "count_week");
+            if(feed) renderFeed(feed);
+        } catch(e) { 
+            console.error("Erreur de rafraîchissement des données"); 
         }
+    }
 
-        /* Grain de texture luxe */
-        body::before {
-            content: ""; position: fixed; inset: 0;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.03; pointer-events: none; z-index: 999;
-        }
-
-        .container {
-            display: grid; grid-template-rows: auto 1fr auto;
-            height: 100vh; padding: 1.5rem 2rem;
-            max-width: 1400px; margin: 0 auto; position: relative; z-index: 10;
-        }
-
-        .logo {
-            font-size: 3rem; font-weight: 900; letter-spacing: -2px; text-align: center;
-            background: linear-gradient(to right, #fff 30%, var(--primary) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
-        }
-
-        main {
-            display: grid; grid-template-columns: 320px 1fr 320px;
-            gap: 1.5rem; height: 100%; overflow: hidden;
-        }
-
-        .glass-card {
-            background: var(--card-bg); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
-            padding: 1.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-
-        .btn-r1p {
-            background: linear-gradient(135deg, #F7931E 0%, #EA580C 100%);
-            border: none; color: white; padding: 18px; border-radius: 16px;
-            font-size: 1.4rem; font-weight: 900; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(234, 88, 12, 0.4);
-            transition: all 0.2s ease;
-        }
-        .btn-r1p:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(234, 88, 12, 0.6); }
-
-        /* BOUTON ADMIN CLÉ */
-        .admin-key {
-            position: absolute; bottom: 15px; right: 20px;
-            font-size: 1.2rem; cursor: pointer; opacity: 0.3;
-            transition: all 0.3s ease; filter: grayscale(1);
-        }
-        .admin-key:hover { opacity: 1; filter: grayscale(0); transform: scale(1.2) rotate(-15deg); }
-
-        /* CLASSEMENTS & FEED */
-        .feed-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 14px; margin-bottom: 8px;
-            background: rgba(255,255,255,0.03); border-radius: 12px;
-        }
-        .top-3 { border-left: 3px solid var(--gold); background: rgba(251, 191, 36, 0.05); }
-
-        #toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; color: #05070a; padding: 30px 50px; border-radius: 24px;
-            font-size: 1.8rem; font-weight: 900; text-align: center;
-            display: none; z-index: 10000; min-width: 400px;
-            box-shadow: 0 0 100px rgba(247, 147, 30, 0.6);
-            border: 4px solid var(--primary); pointer-events: none;
-        }
-
-        #login-modal {
-            position: fixed; inset: 0; background: #05070a;
-            z-index: 99999; display: flex; align-items: center; justify-content: center;
-        }
-        .login-box {
-            width: 380px; text-align: center; background: rgba(255,255,255,0.03);
-            padding: 40px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-        }
-    </style>
-</head>
-<body id="app-body">
-
-    <div id="toast"></div>
-
-    <div id="login-modal">
-        <div class="login-box">
-            <h1 class="logo">OOBjectif</h1>
-            <p style="opacity:0.5; margin-bottom:2rem; font-size:0.9rem;">ENTREZ DANS LA LÉGENDE</p>
-            
-            <input id="prenom-input" type="text" placeholder="Ton prénom..." 
-                style="width:100%; padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:white; font-size:1.2rem; margin-bottom:1rem; outline:none; text-align:center;">
-            
-            <button onclick="validatePrenom()" class="btn-r1p" style="width: 100%; font-size: 1.1rem;">DÉMARRER LA SESSION</button>
-            <p id="login-error" style="color: #ef4444; margin-top: 1rem; font-size:0.9rem;"></p>
-
-            <div class="admin-key" onclick="askAdminCode()" title="Mode Admin">🔑</div>
-        </div>
-    </div>
-
-    <div class="container" id="main-app" style="display:none; opacity: 0;">
-        <header><div class="logo">OOBjectif R1P</div></header>
-        <main id="shake-container">
-            <div class="glass-card">
-                <div id="avatar" style="width:80px; height:80px; background:var(--primary); border-radius:50%; margin: 0 auto 1rem; display:flex; align-items:center; justify-content:center; font-size:2.5rem; font-weight:900; box-shadow: 0 0 30px rgba(247,147,30,0.3);"></div>
-                <h2 id="user-name" style="text-align:center; margin:0;">---</h2>
-                <p id="user-team" style="text-align:center; opacity:0.5; margin-bottom:1.5rem;">---</p>
-                <textarea id="note" placeholder="Une note sur cette prise ?" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px; color:white; height:70px; margin-bottom:1rem; resize:none; font-family:inherit;"></textarea>
-                <button class="btn-r1p" onclick="takeR1P()">R1P +1</button>
+    // Garde le reste de tes fonctions (renderList, renderFeed, takeR1P, etc.) à l'identique ici...
+    function renderList(id, items, field) {
+        const container = document.getElementById(id);
+        if(!container) return;
+        container.innerHTML = items.map((it, idx) => `
+            <div class="feed-item ${idx < 3 ? 'top-3' : ''}">
+                <span>${idx+1}. <strong>${it.key}</strong></span>
+                <span style="font-weight:900; color:var(--gold)">${it[field]}</span>
             </div>
-
-            <div style="display:grid; grid-template-rows: 1fr 1fr; gap:1.5rem;">
-                <div class="glass-card">
-                    <h3 style="margin:0 0 1rem; font-size:1.1rem; color:var(--gold);">🥇 CLASSEMENT HEBDO</h3>
-                    <div id="indiv-week" style="overflow-y:auto;"></div>
+        `).join('');
+    }
+    // ... Copie/colle la suite de tes fonctions d'origine ...
+    function renderFeed(items) {
+        document.getElementById("live-feed").innerHTML = items.map(it => `
+            <div class="feed-item" style="flex-direction:column; align-items:flex-start;">
+                <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <strong style="color:var(--primary)">${it.auteur}</strong> 
+                    <span style="opacity:0.4; font-size:0.75rem;">${new Date(it.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span>
                 </div>
-                <div class="glass-card">
-                    <h3 style="margin:0 0 1rem; font-size:1.1rem; color:var(--primary);">⚡ SESSION EN DIRECT</h3>
-                    <div id="session-live" style="overflow-y:auto;"></div>
-                </div>
+                <div style="opacity:0.7; font-style:italic;">${it.note || "Nouveau R1P validé !"}</div>
             </div>
-
-            <div style="display:grid; grid-template-rows: 1fr 1.5fr; gap:1.5rem;">
-                <div class="glass-card">
-                    <h3 style="margin:0 0 1rem; font-size:1.1rem;">🏆 MOMENTUM VILLES</h3>
-                    <div id="team-momentum"></div>
-                </div>
-                <div class="glass-card">
-                    <h3 style="margin:0 0 1rem; font-size:1.1rem;">🔥 ACTIVITÉ</h3>
-                    <div id="live-feed" style="overflow-y:auto; font-size:0.85rem;"></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        const SUPABASE_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
-        const ADMIN_KEY = "OOB2026";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        const TEAM_MAP = {"sofia":"Caen","david":"Caen","kevin":"Caen","durmus":"Evreux","merwan":"Courbevoie","diassivi":"Courbevoie","sertag":"Courbevoie","roxanne":"Rouen"};
-        const COMPLIMENTS = [
-            "Légendaire, {name} ! 🔥", "Quel monstre, {name} ! 🏆", "BOOM ! {name} est imbattable.", 
-            "Magistral, {name} ! ✨", "Le patron, c'est {name} !", "{name}, tu es en feu ! 🚀"
-        ];
-
-        let currentUser = {name:"", team:""};
-        let lastClick = 0;
-
-        function validatePrenom() {
-            let p = document.getElementById("prenom-input").value.trim().toLowerCase();
-            if(!TEAM_MAP[p]) { document.getElementById("login-error").textContent = "Prénom non répertorié."; return; }
-
-            currentUser.name = p.charAt(0).toUpperCase() + p.slice(1);
-            currentUser.team = TEAM_MAP[p];
-
-            gsap.to("#login-modal", { duration: 0.8, y: "-100%", ease: "expo.inOut", onComplete: () => {
-                document.getElementById("login-modal").style.display = "none";
-                document.getElementById("main-app").style.display = "grid";
-                gsap.to("#main-app", { opacity: 1, duration: 1 });
-            }});
-
-            document.getElementById("user-name").textContent = currentUser.name;
-            document.getElementById("avatar").textContent = currentUser.name[0];
-            document.getElementById("user-team").textContent = "Équipe " + currentUser.team;
-            
-            refreshAll();
-            setInterval(refreshAll, 10000);
-        }
-
-        // FONCTION CLÉ ADMIN
-        function askAdminCode() {
-            const code = prompt("🔑 Entrez le code d'accès Élite :");
-            if(code === ADMIN_KEY) {
-                if(confirm("🛠 MODE ADMIN\n\nVoulez-vous réinitialiser les compteurs de la SESSION actuelle ?")) {
-                    resetSession();
-                }
-            } else if(code !== null) {
-                alert("Code incorrect. Accès refusé.");
-            }
-        }
-
-        async function resetSession() {
-            const { error } = await supabaseClient.from('r1p_counters').update({ count_session: 0 }).gt('count_session', -1);
-            if(!error) { alert("✅ Session réinitialisée."); location.reload(); }
-        }
-
-        async function takeR1P() {
-            if(Date.now() - lastClick < 60000) { showToast("Patience {name}... (1 min)"); return; }
-            
-            const note = document.getElementById("note").value.trim();
-            const { error } = await supabaseClient.from('suivi_r1p').insert({
-                auteur: currentUser.name, equipe: currentUser.team, note: note,
-                semaine: new Date().toISOString().slice(0,10), mois: new Date().toISOString().slice(0,7)
-            });
-
-            if(!error) {
-                await updateCounter("Individuel", currentUser.name);
-                await updateCounter("Equipe", currentUser.team);
-                lastClick = Date.now();
-                
-                launchLuxuryConfetti();
-                shakeInterface();
-                const msg = COMPLIMENTS[Math.floor(Math.random()*COMPLIMENTS.length)].replace("{name}", currentUser.name);
-                showToast(msg);
-                
-                document.getElementById("note").value = "";
-                refreshAll();
-            }
-        }
-
-        async function updateCounter(scope, key) {
-            let { data } = await supabaseClient.from('r1p_counters').select('*').eq('scope', scope).eq('key', key).single();
-            if(!data) {
-                await supabaseClient.from('r1p_counters').insert({ scope, key, count_week: 1, count_session: 1 });
-            } else {
-                await supabaseClient.from('r1p_counters').update({ 
-                    count_week: data.count_week + 1, count_session: data.count_session + 1, last_updated: new Date().toISOString()
-                }).eq('id', data.id);
-            }
-        }
-
-        async function refreshAll() {
-            try {
-                const { data: indiv } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false}).limit(10);
-                const { data: sess } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_session', {ascending: false}).limit(10);
-                const { data: teams } = await supabaseClient.from('r1p_counters').select('*').eq('scope', 'Equipe').order('count_week', {ascending: false});
-                const { data: feed } = await supabaseClient.from('suivi_r1p').select('*').order('created_at', {ascending: false}).limit(12);
-
-                if(indiv) renderList("indiv-week", indiv, "count_week");
-                if(sess) renderList("session-live", sess, "count_session");
-                if(teams) renderList("team-momentum", teams, "count_week");
-                if(feed) renderFeed(feed);
-            } catch(e) { console.log("Refresh error"); }
-        }
-
-        function renderList(id, items, field) {
-            document.getElementById(id).innerHTML = items.map((it, idx) => `
-                <div class="feed-item ${idx < 3 ? 'top-3' : ''}">
-                    <span>${idx+1}. <strong>${it.key}</strong></span>
-                    <span style="font-weight:900; color:var(--gold)">${it[field]}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderFeed(items) {
-            document.getElementById("live-feed").innerHTML = items.map(it => `
-                <div class="feed-item" style="flex-direction:column; align-items:flex-start;">
-                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:4px;">
-                        <strong style="color:var(--primary)">${it.auteur}</strong> 
-                        <span style="opacity:0.4; font-size:0.75rem;">${new Date(it.created_at).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</span>
-                    </div>
-                    <div style="opacity:0.7; font-style:italic;">${it.note || "Nouveau R1P validé !"}</div>
-                </div>
-            `).join('');
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById("toast");
-            t.innerHTML = msg; t.style.display = "block";
-            gsap.fromTo(t, { scale: 0.5, opacity: 0, y: 50 }, { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" });
-            setTimeout(() => {
-                gsap.to(t, { opacity: 0, scale: 0.8, duration: 0.4, onComplete: () => t.style.display = "none" });
-            }, 3000);
-        }
-
-        function shakeInterface() {
-            gsap.fromTo("#shake-container", { x: -4 }, { x: 4, duration: 0.07, repeat: 7, yoyo: true, ease: "none" });
-        }
-
-        function launchLuxuryConfetti() {
-            const colors = ['#F7931E', '#ffffff', '#fbbf24'];
-            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 }, colors: colors });
-            confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: colors });
-            confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: colors });
-        }
-
-        window.onload = () => document.getElementById("prenom-input").focus();
-    </script>
-</body>
-</html>
+        `).join('');
+    }
+    function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.innerHTML = msg; t.style.display = "block";
+        gsap.fromTo(t, { scale: 0.5, opacity: 0, y: 50 }, { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" });
+        setTimeout(() => {
+            gsap.to(t, { opacity: 0, scale: 0.8, duration: 0.4, onComplete: () => t.style.display = "none" });
+        }, 3000);
+    }
+    window.onload = () => document.getElementById("prenom-input").focus();
+</script>
