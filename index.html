@@ -633,7 +633,7 @@ function doLogin(){
     user.team=TEAM_MAP[raw];
 
     const btn=document.getElementById('blbtn');
-    btn.disabled=true; btn.textContent='INITIALISATION...';
+    btn.disabled=true; btn.textContent='DECOLLAGE EN COURS...';
 
     hyper(true);
     gsap.to('#lm',{opacity:0,duration:1,delay:1.9});
@@ -1392,6 +1392,7 @@ window.onload=()=>{initStars();loadPilotCount();};
 </script>
 </body>
 </html>
+
 
 
 
