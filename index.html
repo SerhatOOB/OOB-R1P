@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOBjectif R1P • Normandie & IDF</title>
+    <title>OOBjectif R1P • PROTOCOLE ÉLITE 2026</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -77,6 +77,7 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
 
 .biglogo{font-family:var(--fh);font-size:2.7rem;font-weight:900;letter-spacing:5px;line-height:1;margin-bottom:8px;text-shadow:0 0 50px rgba(247,147,30,.3);}
 .biglogo em{font-style:normal;color:var(--p);}
+.biglogo em.oob{color:var(--oob);}
 
 .tagline{font-family:var(--fm);font-size:.57rem;letter-spacing:3px;color:var(--dim);margin-bottom:38px;text-transform:uppercase;}
 
@@ -268,10 +269,22 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
 <div id="gb"></div>
 <canvas id="sc"></canvas>
 
-<!-- Celebration layers -->
-<div id="mxo"></div>
-<div id="flo"></div>
-<div id="holo"></div>
+<!-- Notification live (autre pilote qui score) -->
+<div id="notif" style="position:fixed;bottom:24px;right:24px;z-index:550;display:none;max-width:280px;">
+    <div style="background:rgba(6,12,28,.97);border:1px solid rgba(247,147,30,.3);border-radius:8px;padding:12px 16px;box-shadow:0 8px 32px rgba(0,0,0,.6);display:flex;align-items:center;gap:10px;">
+        <div style="width:8px;height:8px;background:var(--grn);border-radius:50%;box-shadow:0 0 8px var(--grn);flex-shrink:0;"></div>
+        <div id="notif-txt" style="font-family:var(--fm);font-size:.62rem;color:rgba(255,255,255,.75);letter-spacing:1px;"></div>
+    </div>
+</div>
+
+<!-- Mega milestone overlay -->
+<div id="milestone" style="position:fixed;inset:0;z-index:700;display:none;pointer-events:none;align-items:center;justify-content:center;flex-direction:column;">
+    <div id="ms-inner" style="text-align:center;">
+        <div id="ms-num" style="font-family:'Orbitron',monospace;font-size:8rem;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 60px rgba(251,191,36,.8),0 0 120px rgba(247,147,30,.4);"></div>
+        <div id="ms-lbl" style="font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:700;color:white;letter-spacing:6px;margin-top:8px;"></div>
+        <div id="ms-sub" style="font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:3px;margin-top:12px;"></div>
+    </div>
+</div>
 
 <!-- Toast -->
 <div id="toast">
@@ -291,7 +304,7 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
         <div class="lf">
             <div class="sysline"><span class="dg"></span>SYSTÈME OPÉRATIONNEL — v3.1</div>
             <div class="oob-badge">OOB</div>
-            <div class="biglogo"><em>OOB</em>JECTIF<br><em>R1P</em></div>
+            <div class="biglogo"><em class="oob">OOB</em>JECTIF<br><em>R1P</em></div>
             <div class="tagline">Prêt pour la chasse aux trésors Pilote ?</div>
             <div class="iw">
                 <span class="ilbl">IDENTIFIANT PILOTE</span>
@@ -373,6 +386,8 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
                 <div class="str"><span class="stl">ÉCART LEADER</span><span class="stv" id="stg">—</span></div>
                 <div class="str"><span class="stl">R1P / HEURE</span><span class="stv up" id="str2">—</span></div>
                 <div class="str"><span class="stl">SESSION</span><span class="stv" id="stse">—</span></div>
+                <div class="str"><span class="stl">DURÉE SESSION</span><span class="stv" id="stimer">00:00:00</span></div>
+                <div class="str"><span class="stl">RECORD PERSO</span><span class="stv" id="stbest" style="color:var(--gold);">—</span></div>
             </div>
             <div class="gc" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
                 <div class="ct"><span>📡</span>FLUX EN DIRECT</div>
@@ -432,6 +447,12 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
             <div class="asect-t">📣 MESSAGE DIFFUSION (tous les écrans)</div>
             <input class="ainp" id="bmsg" placeholder="Ex: DERNIÈRE HEURE — À FOND !">
             <button class="abtn" onclick="admBroadcast()">📡 DIFFUSER LE MESSAGE</button>
+        </div>
+
+        <div class="asect">
+            <div class="asect-t">📥 EXPORT DONNÉES</div>
+            <button class="abtn g" onclick="admExportCSV()">📊 EXPORTER CSV SEMAINE</button>
+            <button class="abtn"   onclick="admExportFeed()">📋 EXPORTER HISTORIQUE R1P</button>
         </div>
 
         <div class="asect">
@@ -508,11 +529,24 @@ const QUOTES = [
 // Animations aléatoires
 const ANIM = ["confetti_rain","confetti_cannon","matrix","lightning","holo","spotlight","zoom","particles","color_flash","star_burst"];
 
+// Paliers de célébration spéciale
+const MILESTONES = {
+    5:  { lbl:"5 R1P !",       sub:"TU CHAUFFES PILOTE 🔥",         sound:"fanfare" },
+    10: { lbl:"10 R1P !",      sub:"MACHINE ABSOLUE 🏆",             sound:"epic"    },
+    15: { lbl:"15 R1P !",      sub:"RANG A DÉVERROUILLÉ ⭐",         sound:"epic"    },
+    20: { lbl:"20 R1P !",      sub:"LÉGENDE EN COURS 👑",            sound:"mega"    },
+    25: { lbl:"25 R1P !",      sub:"TERRITOIRE INEXPLORÉ 🚀",        sound:"mega"    },
+    30: { lbl:"★ RANG S !",    sub:"LE SOMMET EST TON PLANCHER 🌟",  sound:"mega"    },
+    50: { lbl:"50 R1P !!!",    sub:"C'EST HISTORIQUE 🎖",            sound:"mega"    },
+};
+
 let user = { name:"", team:"" };
-let ses  = 0;   // session count local
-let week = 0;   // week count
+let ses  = 0;
+let week = 0;
 let t0   = Date.now();
 let board = [];
+let prevLeader = null; // pour détecter si on prend la tête
+let lastFeedIds = new Set(); // pour notifs live
 
 /* ═══════════════════════════════════════
    CURSOR
@@ -619,13 +653,36 @@ function boot(){
     document.getElementById('tml').textContent  = user.team.toUpperCase();
     document.getElementById('qtxt').textContent = '"'+QUOTES[~~(Math.random()*QUOTES.length)]+'"';
     buildStreak(0);
+
+    // Personal best from localStorage
+    const pb = parseInt(localStorage.getItem('oob_pb_'+user.name))||0;
+    document.getElementById('stbest').textContent = pb ? pb+' R1P' : '—';
+
+    // Session timer
+    setInterval(()=>{
+        const s=~~((Date.now()-t0)/1000);
+        const h=~~(s/3600), m=~~((s%3600)/60), sc=s%60;
+        document.getElementById('stimer').textContent=
+            String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');
+    },1000);
+
     refreshAll();
     setInterval(refreshAll,8000);
     setInterval(rotateFomo,8500);
+    setInterval(rotateQuote,30000);
 
     // Realtime subscription
     _sb.channel('r1p-live')
-       .on('postgres_changes',{event:'INSERT',schema:'public',table:'suivi_r1p'},()=>refreshAll())
+       .on('postgres_changes',{event:'INSERT',schema:'public',table:'suivi_r1p'},payload=>{
+           const nom=(payload.new?.auteur||'').toLowerCase();
+           const id=payload.new?.id;
+           // Notif si c'est quelqu'un d'autre
+           if(nom!==user.name.toLowerCase()&&id&&!lastFeedIds.has(id)){
+               lastFeedIds.add(id);
+               showNotif(`📞 ${(payload.new.auteur||'').toUpperCase()} vient de prendre un R1P !`);
+           }
+           refreshAll();
+       })
        .subscribe();
 }
 
@@ -692,24 +749,42 @@ async function takeR1P(){
         buildStreak(Math.min(ses,7));
         setRank(week);
         document.getElementById('note').value='';
+        document.getElementById('stse').textContent=ses+' R1P';
+
+        // Personal best
+        const pb = parseInt(localStorage.getItem('oob_pb_'+user.name))||0;
+        if(week > pb){
+            localStorage.setItem('oob_pb_'+user.name, week);
+            document.getElementById('stbest').textContent=week+' R1P';
+            if(week>pb+0) showNotif('🏆 NOUVEAU RECORD PERSONNEL — '+week+' R1P !');
+        }
 
         // Réactivation immédiate — plusieurs R1P d'affilée autorisés
         btn.disabled=false;
         btn.innerHTML='📞 R1P +1';
 
-        playCheer();
+        // Palier spécial ?
+        if(MILESTONES[week]){
+            const ms=MILESTONES[week];
+            setTimeout(()=>showMilestone(week,ms),400);
+            playSound(ms.sound);
+        } else {
+            playCheer();
+        }
 
         const anim=ANIM[~~(Math.random()*ANIM.length)];
         celebrate(anim);
 
-        const tpl=HYPE[~~(Math.random()*HYPE.length)];
-        showToast(
-            tpl.m.replace('{name}',user.name.toUpperCase()),
-            tpl.s,
-            week
-        );
+        // Mega extra si palier
+        if(MILESTONES[week]){
+            setTimeout(()=>celebrate('confetti_cannon'),600);
+            setTimeout(()=>celebrate('star_burst'),1200);
+        } else {
+            const tpl=HYPE[~~(Math.random()*HYPE.length)];
+            showToast(tpl.m.replace('{name}',user.name.toUpperCase()),tpl.s,week);
+        }
 
-        refreshAll(); // sans await — tourne en arrière-plan
+        refreshAll();
 
     }catch(e){
         console.error('❌ Erreur R1P complète:', e);
@@ -763,6 +838,10 @@ async function refreshAll(){
    RENDER LB
 ═══════════════════════════════════════ */
 function renderLB(id,items,field){
+    if(!items.length){
+        document.getElementById(id).innerHTML='<div style="font-family:var(--fm);font-size:.6rem;color:var(--dim);letter-spacing:2px;text-align:center;padding:20px 0;">AUCUNE DONNÉE</div>';
+        return;
+    }
     const max=items.length?items[0][field]:1;
     document.getElementById(id).innerHTML=items.map((it,i)=>{
         const me=it.key.toLowerCase()===user.name.toLowerCase();
@@ -801,18 +880,34 @@ function updateStats(indiv){
     const me=pos>=0?indiv[pos]:null;
     const leader=indiv[0]||null;
     document.getElementById('stp').textContent=pos>=0?`#${pos+1}/${indiv.length}`:'—';
+
+    // Détection prise de tête
+    if(leader&&leader.key.toLowerCase()===user.name.toLowerCase()&&prevLeader&&prevLeader!==user.name.toLowerCase()){
+        showNotif('👑 '+user.name.toUpperCase()+' PREND LA TÊTE DU CLASSEMENT !');
+        celebrate('star_burst');
+    }
+    prevLeader=leader?leader.key.toLowerCase():null;
+
     if(me&&leader&&leader.key!==me.key){
         const g=leader.count_week-me.count_week;
         const el=document.getElementById('stg');
         el.textContent=`−${g} R1P`;
         el.className='stv '+(g>5?'rd':'up');
     }else if(pos===0){
-        document.getElementById('stg').textContent='🏆 EN TÊTE !';
+        document.getElementById('stg').textContent='👑 EN TÊTE !';
         document.getElementById('stg').className='stv up';
     }
     const hrs=Math.max((Date.now()-t0)/3600000,.01);
     document.getElementById('str2').textContent=(ses/hrs).toFixed(1)+'/h';
     document.getElementById('stse').textContent=ses+' R1P';
+}
+
+function rotateQuote(){
+    const el=document.getElementById('qtxt');
+    gsap.to(el,{opacity:0,duration:.4,onComplete:()=>{
+        el.textContent='"'+QUOTES[~~(Math.random()*QUOTES.length)]+'"';
+        gsap.to(el,{opacity:1,duration:.4});
+    }});
 }
 
 /* ═══════════════════════════════════════
@@ -864,7 +959,7 @@ function showToast(msg,sub,count,isErr=false){
    CELEBRATIONS — 10 ANIMATIONS DISTINCTES
 ═══════════════════════════════════════ */
 function celebrate(type){
-    const C=['#F7931E','#ffffff','#fbbf24','#ff6200','#22c55e'];
+    const C=['#F7931E','#ffffff','#fbbf24','#ff6200','#1a3a6b','#60a5fa'];
     switch(type){
 
     case 'confetti_rain':
@@ -948,22 +1043,106 @@ function celebrate(type){
 }
 
 /* ═══════════════════════════════════════
-   AUDIO
+   AUDIO — Sons variés selon contexte
 ═══════════════════════════════════════ */
 let actx;
+function getCtx(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); return actx; }
+
 function playCheer(){
     try{
-        if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+        const ctx=getCtx();
         [[880,0],[1100,.06],[1320,.12],[1760,.18]].forEach(([f,d])=>{
-            const o=actx.createOscillator(), g=actx.createGain();
-            o.connect(g); g.connect(actx.destination);
-            o.frequency.value=f; o.type='sine';
-            const t=actx.currentTime+d;
-            g.gain.setValueAtTime(.22,t);
-            g.gain.exponentialRampToValueAtTime(.001,t+.4);
-            o.start(t); o.stop(t+.4);
+            const o=ctx.createOscillator(),g=ctx.createGain();
+            o.connect(g);g.connect(ctx.destination);
+            o.frequency.value=f;o.type='sine';
+            const t=ctx.currentTime+d;
+            g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.4);
+            o.start(t);o.stop(t+.4);
         });
     }catch{}
+}
+
+function playSound(type){
+    try{
+        const ctx=getCtx();
+        if(type==='fanfare'){
+            [[523,.0],[659,.1],[784,.2],[1047,.3],[1319,.4]].forEach(([f,d])=>{
+                const o=ctx.createOscillator(),g=ctx.createGain();
+                o.connect(g);g.connect(ctx.destination);
+                o.frequency.value=f;o.type='triangle';
+                const t=ctx.currentTime+d;
+                g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.45);
+                o.start(t);o.stop(t+.45);
+            });
+        }
+        if(type==='epic'){
+            [[262,.0],[330,.07],[392,.14],[523,.21],[659,.28],[784,.35],[1047,.42],[1319,.5]].forEach(([f,d])=>{
+                const o=ctx.createOscillator(),g=ctx.createGain();
+                o.connect(g);g.connect(ctx.destination);
+                o.frequency.value=f;o.type='sine';
+                const t=ctx.currentTime+d;
+                g.gain.setValueAtTime(.22,t);g.gain.exponentialRampToValueAtTime(.001,t+.5);
+                o.start(t);o.stop(t+.5);
+            });
+        }
+        if(type==='mega'){
+            // Accord + basse + aigu
+            [[131,.0],[165,.0],[196,.0],[261,.0],[523,.1],[1047,.2],[2093,.35]].forEach(([f,d])=>{
+                const o=ctx.createOscillator(),g=ctx.createGain();
+                o.connect(g);g.connect(ctx.destination);
+                o.frequency.value=f;o.type=f<200?'sawtooth':'sine';
+                const t=ctx.currentTime+d;
+                g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.8);
+                o.start(t);o.stop(t+.8);
+            });
+        }
+    }catch{}
+}
+
+/* ═══════════════════════════════════════
+   NOTIFICATION LIVE (coin bas-droite)
+═══════════════════════════════════════ */
+let notifQ=[];let notifBusy=false;
+function showNotif(txt){
+    notifQ.push(txt);
+    if(!notifBusy)processNotif();
+}
+function processNotif(){
+    if(!notifQ.length){notifBusy=false;return;}
+    notifBusy=true;
+    const el=document.getElementById('notif');
+    document.getElementById('notif-txt').textContent=notifQ.shift();
+    el.style.display='block';
+    gsap.fromTo(el,{opacity:0,y:20},{opacity:1,y:0,duration:.35,ease:'back.out(2)'});
+    setTimeout(()=>gsap.to(el,{opacity:0,y:10,duration:.3,onComplete:()=>{el.style.display='none';setTimeout(processNotif,400);}}),3500);
+}
+
+/* ═══════════════════════════════════════
+   MILESTONE MEGA-CELEBRATION
+═══════════════════════════════════════ */
+function showMilestone(num,ms){
+    const overlay=document.getElementById('milestone');
+    overlay.style.display='flex';
+    document.getElementById('ms-num').textContent=num;
+    document.getElementById('ms-lbl').textContent=ms.lbl;
+    document.getElementById('ms-sub').textContent=ms.sub;
+
+    gsap.fromTo('#ms-inner',
+        {scale:0,opacity:0},
+        {scale:1,opacity:1,duration:.6,ease:'back.out(2.5)'}
+    );
+    // Pulse the number
+    gsap.to('#ms-num',{
+        textShadow:'0 0 100px rgba(251,191,36,1),0 0 200px rgba(247,147,30,.8)',
+        duration:.3,yoyo:true,repeat:5
+    });
+    // Triple confetti
+    const C=['#fbbf24','#F7931E','#ffffff','#ff6200','#1a3a6b'];
+    [0,400,800,1200].forEach(d=>setTimeout(()=>confetti({
+        particleCount:150,spread:100,origin:{y:.4,x:.5},colors:C,startVelocity:45
+    }),d));
+
+    setTimeout(()=>gsap.to('#ms-inner',{scale:0,opacity:0,duration:.4,ease:'back.in(2)',onComplete:()=>overlay.style.display='none'}),3500);
 }
 
 /* ═══════════════════════════════════════
@@ -1144,6 +1323,49 @@ async function admDelPilot(id,key){
     admLoadPilots(); admStats();
 }
 
+async function admExportCSV(){
+    alog('Export CSV en cours...');
+    try{
+        const{data}=await _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_week',{ascending:false});
+        if(!data||!data.length){alog('Aucune donnée',false);return;}
+        const rows=['Pilote,Équipe,R1P Semaine,R1P Session'];
+        data.forEach(d=>{
+            const team=Object.entries(TEAM_MAP).find(([k])=>k===d.key.toLowerCase())?.[1]||'—';
+            rows.push(`${d.key},${team},${d.count_week},${d.count_session}`);
+        });
+        const csv=rows.join('\n');
+        const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url; a.download=`OOB_R1P_${today()}.csv`; a.click();
+        URL.revokeObjectURL(url);
+        alog('CSV exporté ✓ — '+data.length+' pilotes');
+    }catch(e){alog('Erreur : '+e.message,false);}
+}
+
+async function admExportFeed(){
+    alog('Export historique en cours...');
+    try{
+        const{data}=await _sb.from('suivi_r1p').select('*').order('created_at',{ascending:false}).limit(500);
+        if(!data||!data.length){alog('Aucune donnée',false);return;}
+        const rows=['Date,Heure,Pilote,Équipe,Commentaire'];
+        data.forEach(d=>{
+            const dt=d.created_at?new Date(d.created_at):null;
+            const date=dt?dt.toLocaleDateString('fr-FR'):'';
+            const heure=dt?dt.toLocaleTimeString('fr-FR'):'';
+            const note=(d.note||'').replace(/,/g,' ');
+            rows.push(`${date},${heure},${d.auteur||''},${d.equipe||''},${note}`);
+        });
+        const csv=rows.join('\n');
+        const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url; a.download=`OOB_Historique_${today()}.csv`; a.click();
+        URL.revokeObjectURL(url);
+        alog('Historique exporté ✓ — '+data.length+' entrées');
+    }catch(e){alog('Erreur : '+e.message,false);}
+}
+
 /* ═══════════════════════════════════════
    BOOT
 ═══════════════════════════════════════ */
@@ -1151,4 +1373,3 @@ window.onload=()=>{initStars();loadPilotCount();};
 </script>
 </body>
 </html>
-
