@@ -3,329 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBJECTIF R1P</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>OBJECTIF R1P | Performance Team</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
             --primary: #F7931E;
-            --primary-hover: #e08215;
-            --bg-color: #0a0f1c;
-            --card-bg: rgba(15, 23, 42, 0.7);
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
-            --danger: #ef4444;
+            --primary-light: #ffac4d;
+            --bg: #0a0f1c;
+            --card: rgba(15, 23, 42, 0.8);
+            --text: #ffffff;
+            --error: #ff4b2b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top, #162032, var(--bg-color));
-            color: var(--text-main);
-            min-height: 100vh;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(247, 147, 30, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(247, 147, 30, 0.05) 0px, transparent 50%);
+            color: var(--text);
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
         }
 
-        /* Conteneurs avec effet Glassmorphism */
+        .container {
+            perspective: 1000px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
         .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: var(--card);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             padding: 40px;
-            border-radius: 24px;
+            border-radius: 28px;
             width: 90%;
-            max-width: 420px;
+            max-width: 400px;
             text-align: center;
-            border: 1px solid rgba(247, 147, 30, 0.3);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.5s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: none; /* Géré par JS */
         }
 
-        @keyframes fadeIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h2 {
-            font-weight: 800;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-        }
-
-        p {
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
+        h1 { font-weight: 900; font-size: 2rem; margin-bottom: 10px; letter-spacing: -1px; }
+        p { color: #94a3b8; margin-bottom: 25px; line-height: 1.5; }
 
         input {
             width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: 2px solid transparent;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-align: center;
             margin-bottom: 20px;
-            transition: border 0.3s ease;
             outline: none;
+            transition: all 0.3s;
         }
 
-        input:focus {
-            border: 2px solid var(--primary);
-            background: rgba(255, 255, 255, 0.1);
-        }
+        input:focus { border-color: var(--primary); background: rgba(0,0,0,0.4); }
 
         button {
+            width: 100%;
+            padding: 18px;
+            border-radius: 50px;
+            border: none;
             background: var(--primary);
             color: #000;
-            border: none;
-            padding: 16px 40px;
-            border-radius: 9999px;
             font-size: 1.1rem;
             font-weight: 800;
             cursor: pointer;
-            width: 100%;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 10px 20px rgba(247, 147, 30, 0.3);
         }
 
-        button:hover {
-            background: var(--primary-hover);
-            transform: scale(1.02);
-        }
+        button:hover { background: var(--primary-light); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
 
-        button:active {
-            transform: scale(0.98);
-        }
-
-        button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .btn-outline {
+        .btn-secondary {
             background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--text-muted);
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 0.9rem;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-color: white;
-        }
-
-        #login-error {
-            color: var(--danger);
+            color: #64748b;
+            box-shadow: none;
             margin-top: 15px;
-            font-weight: 600;
-            min-height: 24px; /* Évite les sauts de mise en page */
+            font-size: 0.9rem;
+            text-decoration: underline;
         }
 
-        #main-app {
-            display: none; /* Masqué par défaut */
-        }
+        #error-display { color: var(--error); font-size: 0.9rem; margin-top: -10px; margin-bottom: 15px; height: 20px; font-weight: 600; }
 
-        .team-badge {
-            background: rgba(247, 147, 30, 0.2);
-            color: var(--primary);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 600;
+        .badge {
             display: inline-block;
-            margin-top: 10px;
-            border: 1px solid var(--primary);
+            padding: 6px 16px;
+            background: rgba(247, 147, 30, 0.1);
+            color: var(--primary);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 20px;
         }
 
-        /* Toast Notification */
+        /* Toast */
         #toast {
             position: fixed;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 20px;
+            right: -300px;
             background: #22c55e;
             color: white;
-            padding: 16px 32px;
-            border-radius: 9999px;
+            padding: 15px 25px;
+            border-radius: 12px;
             font-weight: bold;
-            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
-            transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-        }
-        #toast.show {
-            bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10000;
         }
     </style>
 </head>
 <body>
 
-    <div id="login-modal" class="card">
-        <h2>OBJECTIF R1P</h2>
-        <p>Identifie-toi pour accéder à ton espace :</p>
-        <input id="prenom-input" type="text" placeholder="Sofia, Kevin, Merwan..." autocomplete="off" />
-        <button onclick="validatePrenom()">COMMENCER L'AVENTURE</button>
-        <div id="login-error"></div>
+    <div id="toast">🚀 R1P Enregistré ! Bravo.</div>
+
+    <div class="container">
+        <div id="login-card" class="card" style="display: block;">
+            <h1>OOBJECTIF R1P</h1>
+            <p>Entre ton prénom pour rejoindre ton équipe et exploser les scores.</p>
+            <input id="prenom-input" type="text" placeholder="Ton prénom..." autocomplete="off">
+            <div id="error-display"></div>
+            <button onclick="handleLogin()">REJOINDRE L'ÉQUIPE</button>
+        </div>
+
+        <div id="main-card" class="card">
+            <div class="badge" id="display-team">EQUIPE</div>
+            <h1>Salut, <span id="display-name">Champion</span> !</h1>
+            <p>Prêt à valider un nouveau R1P aujourd'hui ?</p>
+            
+            <button id="r1p-btn" onclick="submitR1P()" style="font-size: 1.5rem; padding: 25px;">
+                🔥 R1P +1
+            </button>
+
+            <button class="btn-secondary" onclick="handleLogout()">Changer de compte</button>
+        </div>
     </div>
-
-    <div id="main-app" class="card">
-        <h2>Salut <span id="user-name"></span> ! 👋</h2>
-        <div class="team-badge" id="user-team"></div>
-        
-        <button id="r1p-btn" onclick="takeR1P()" style="margin-top: 40px; padding: 20px; font-size: 1.4rem;">
-            🔥 R1P +1
-        </button>
-
-        <button class="btn-outline" onclick="logout()">Changer d'utilisateur</button>
-    </div>
-
-    <div id="toast">✅ Objectif R1P validé !</div>
 
     <script>
-        // 1. Initialisation de Supabase (Correction du "s" minuscule)
-        const SUPABASE_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 1. CONFIGURATION (Remplacement du nom pour éviter le bug déclaré)
+        const S_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
+        const S_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
+        
+        // On utilise un nom unique pour le client
+        const supabaseDB = window.supabase.createClient(S_URL, S_KEY);
 
-        // 2. Données de l'équipe
-        const TEAM_MAP = {
-            "sofia":"Équipe de Caen", "david":"Équipe de Caen", "kevin":"Équipe de Caen",
-            "durmus":"Équipe d'Evreux", "merwan":"Équipe de Courbevoie",
-            "diassivi":"Équipe de Courbevoie", "sertag":"Équipe de Courbevoie", "roxanne":"Équipe de Rouen"
+        const TEAMS = {
+            "sofia":"Caen", "david":"Caen", "kevin":"Caen",
+            "durmus":"Evreux", "merwan":"Courbevoie",
+            "diassivi":"Courbevoie", "sertag":"Courbevoie", "roxanne":"Rouen"
         };
 
-        // 3. Éléments du DOM
-        const loginModal = document.getElementById("login-modal");
-        const mainApp = document.getElementById("main-app");
-        const prenomInput = document.getElementById("prenom-input");
-        const errorMsg = document.getElementById("login-error");
-        const r1pBtn = document.getElementById("r1p-btn");
-        const toast = document.getElementById("toast");
-
-        // 4. Vérifier si l'utilisateur est déjà connecté au chargement
-        window.onload = () => {
-            const savedUser = localStorage.getItem("r1p_user");
-            if (savedUser) {
-                showApp(savedUser, TEAM_MAP[savedUser.toLowerCase()]);
+        // 2. INITIALISATION
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem("r1p_session");
+            if (saved) {
+                const userData = JSON.parse(saved);
+                showMain(userData.name, userData.team, false);
             } else {
-                prenomInput.focus();
-            }
-        };
-
-        // 5. Validation à l'appui de la touche "Entrée"
-        prenomInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                validatePrenom();
+                gsap.from("#login-card", { duration: 0.8, y: 50, opacity: 0, ease: "back.out(1.7)" });
+                document.getElementById("prenom-input").focus();
             }
         });
 
-        // 6. Fonction de connexion
-        function validatePrenom() {
-            let prenom = prenomInput.value.trim().toLowerCase();
-            errorMsg.textContent = ""; // Reset de l'erreur
-            
-            if (!prenom) {
-                errorMsg.textContent = "Veuillez entrer un prénom.";
-                return;
-            }
+        // 3. LOGIQUE DE CONNEXION
+        function handleLogin() {
+            const input = document.getElementById("prenom-input");
+            const val = input.value.trim().toLowerCase();
+            const errorDiv = document.getElementById("error-display");
 
-            if (!TEAM_MAP[prenom]) {
-                errorMsg.textContent = "Prénom non reconnu dans l'équipe.";
-                // Petite animation d'erreur (shake)
-                loginModal.style.transform = "translateX(10px)";
-                setTimeout(() => loginModal.style.transform = "translateX(-10px)", 100);
-                setTimeout(() => loginModal.style.transform = "translateX(0)", 200);
-                return;
+            if (TEAMS[val]) {
+                const userData = { name: val, team: TEAMS[val] };
+                localStorage.setItem("r1p_session", JSON.stringify(userData));
+                showMain(val, TEAMS[val], true);
+            } else {
+                errorDiv.textContent = "Prénom non reconnu.";
+                gsap.to("#login-card", { x: 10, duration: 0.05, repeat: 5, yoyo: true });
             }
-
-            // Sauvegarde dans le navigateur
-            localStorage.setItem("r1p_user", prenom);
-            showApp(prenom, TEAM_MAP[prenom]);
         }
 
-        // 7. Affichage de l'interface principale
-        function showApp(prenom, team) {
-            const nameFormatted = prenom.charAt(0).toUpperCase() + prenom.slice(1);
-            document.getElementById("user-name").textContent = nameFormatted;
-            document.getElementById("user-team").textContent = team;
-
-            loginModal.style.display = "none";
-            mainApp.style.display = "block";
+        // 4. NAVIGATION
+        function showMain(name, team, animate) {
+            const loginCard = document.getElementById("login-card");
+            const mainCard = document.getElementById("main-card");
             
-            // Relance l'animation d'apparition
-            mainApp.style.animation = 'none';
-            mainApp.offsetHeight; /* trigger reflow */
-            mainApp.style.animation = null; 
+            document.getElementById("display-name").textContent = name.charAt(0).toUpperCase() + name.slice(1);
+            document.getElementById("display-team").textContent = "Équipe " + team;
+
+            if (animate) {
+                gsap.to(loginCard, { duration: 0.4, opacity: 0, scale: 0.9, onComplete: () => {
+                    loginCard.style.display = "none";
+                    mainCard.style.display = "block";
+                    gsap.fromTo(mainCard, { opacity: 0, scale: 0.8 }, { duration: 0.5, opacity: 1, scale: 1, ease: "back.out(1.2)" });
+                }});
+            } else {
+                loginCard.style.display = "none";
+                mainCard.style.display = "block";
+            }
         }
 
-        // 8. Action Principale (R1P)
-        async function takeR1P() {
-            const user = localStorage.getItem("r1p_user");
-            
-            // UX : État de chargement du bouton
-            r1pBtn.disabled = true;
-            r1pBtn.innerHTML = "⏳ Envoi en cours...";
+        // 5. ACTION R1P
+        async function submitR1P() {
+            const btn = document.getElementById("r1p-btn");
+            const user = JSON.parse(localStorage.getItem("r1p_session"));
 
+            // Animation bouton
+            gsap.to(btn, { scale: 0.95, duration: 0.1, yoyo: true, repeat: 1 });
+
+            // Confetti !
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#F7931E', '#ffffff', '#ffcc80']
+            });
+
+            // Feedback visuel immédiat
+            showToast();
+
+            // Envoi Supabase (Silencieux pour l'utilisateur pour ne pas le ralentir)
             try {
-                // EXEMPLE : Futur code Supabase (à décommenter quand la table existera)
-                /*
-                const { error } = await supabaseClient
-                    .from('r1p_logs')
-                    .insert([{ user_name: user, created_at: new Date() }]);
-                
-                if (error) throw error;
-                */
-
-                // Simulation de l'attente réseau (500ms)
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                showToast();
-
-            } catch (error) {
-                console.error("Erreur Supabase:", error);
-                alert("Une erreur est survenue lors de l'envoi.");
-            } finally {
-                // UX : Retour à l'état normal
-                r1pBtn.disabled = false;
-                r1pBtn.innerHTML = "🔥 R1P +1";
+                await supabaseDB.from('r1p_logs').insert([
+                    { prenom: user.name, equipe: user.team, date: new Date().toISOString() }
+                ]);
+            } catch (e) {
+                console.error("Erreur de synchro Supabase", e);
             }
         }
 
-        // 9. Afficher la notification Toast
         function showToast() {
-            toast.classList.add("show");
-            setTimeout(() => {
-                toast.classList.remove("show");
-            }, 3000); // Disparaît après 3 secondes
+            const t = document.getElementById("toast");
+            t.style.right = "20px";
+            setTimeout(() => { t.style.right = "-300px"; }, 3000);
         }
 
-        // 10. Déconnexion
-        function logout() {
-            localStorage.removeItem("r1p_user");
-            prenomInput.value = "";
-            mainApp.style.display = "none";
-            loginModal.style.display = "block";
-            prenomInput.focus();
+        function handleLogout() {
+            localStorage.removeItem("r1p_session");
+            location.reload();
         }
+
+        // Touche Entrée
+        document.getElementById("prenom-input").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") handleLogin();
+        });
     </script>
 </body>
 </html>
