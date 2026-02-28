@@ -15,6 +15,7 @@
 
 <style>
 :root {
+    --oob:  #1a3a6b;
     --p:    #F7931E;
     --p2:   #ff6200;
     --gold: #fbbf24;
@@ -72,8 +73,7 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
 .sysline{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px;font-family:var(--fm);font-size:.58rem;color:var(--dim);letter-spacing:3px;}
 .dg{width:5px;height:5px;background:var(--grn);border-radius:50%;box-shadow:0 0 8px var(--grn);animation:blink 1.2s infinite;flex-shrink:0;}
 
-.oob-badge{font-family:var(--fh);font-size:.85rem;font-weight:900;letter-spacing:8px;color:rgba(255,255,255,.35);margin-bottom:6px;}
-.oob-badge .oo{color:var(--p);}
+.oob-badge{font-family:var(--fh);font-size:.85rem;font-weight:900;letter-spacing:8px;color:var(--oob);margin-bottom:6px;}
 
 .biglogo{font-family:var(--fh);font-size:2.7rem;font-weight:900;letter-spacing:5px;line-height:1;margin-bottom:8px;text-shadow:0 0 50px rgba(247,147,30,.3);}
 .biglogo em{font-style:normal;color:var(--p);}
@@ -105,8 +105,8 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
 
 #ah{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd2);padding-bottom:11px;}
 .hbrand{display:flex;align-items:baseline;font-family:var(--fh);font-weight:900;letter-spacing:4px;}
-.hoo{color:var(--p);font-size:1.1rem;}
-.hb{color:white;font-size:1.1rem;}
+.hoo{color:var(--oob);font-size:1.1rem;background:rgba(26,58,107,.15);padding:2px 6px;border-radius:3px;}
+.hb{color:var(--oob);font-size:1.1rem;}
 .hj{color:rgba(255,255,255,.45);font-size:.72rem;letter-spacing:3px;}
 .hr1p{color:var(--p);font-size:1.1rem;margin-left:10px;}
 .hr{display:flex;align-items:center;gap:18px;}
@@ -290,9 +290,9 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
         <div class="lr2"></div>
         <div class="lf">
             <div class="sysline"><span class="dg"></span>SYSTÈME OPÉRATIONNEL — v3.1</div>
-            <div class="oob-badge"><span class="oo">OO</span>B</div>
+            <div class="oob-badge">OOB</div>
             <div class="biglogo"><em>OOB</em>JECTIF<br><em>R1P</em></div>
-            <div class="tagline">RENDEZ-VOUS 1 PROSPECTION · PERFORMANCE ÉLITE</div>
+            <div class="tagline">Prêt pour la chasse aux trésors Pilote ?</div>
             <div class="iw">
                 <span class="ilbl">IDENTIFIANT PILOTE</span>
                 <input id="pi" type="text" placeholder="ENTREZ VOTRE NOM" autocomplete="off">
@@ -310,7 +310,7 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
 <div id="app" style="display:none;opacity:0;">
     <header id="ah">
         <div class="hbrand">
-            <span class="hoo">OO</span><span class="hb">B</span><span class="hj">JECTIF</span><span class="hr1p">R1P</span>
+            <span class="hoo">OOB</span><span class="hj">JECTIF</span><span class="hr1p">R1P</span>
         </div>
         <div class="hr">
             <div class="lchip"><span class="ld"></span>LIVE</div>
@@ -674,7 +674,8 @@ async function takeR1P(){
     try{
         const{data, error}=await _sb.from('suivi_r1p').insert({
             auteur:user.name, equipe:user.team,
-            note:note||null, semaine:today()
+            note:note||null, semaine:today(),
+            mois: new Date().toISOString().slice(0,7)
         });
         if(error){
             console.error('❌ INSERT suivi_r1p:', error.message, error.details, error.hint, error.code);
