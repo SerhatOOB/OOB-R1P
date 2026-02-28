@@ -3,389 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOBJECTIF R1P • Luxe Ultime 2026</title>
+    <title>OOBJECTIF R1P • PROTOCOLE ÉLITE</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <style>
         :root {
             --primary: #F7931E;
             --gold: #fbbf24;
-            --darkblue: #1e3a8a;
-            --dark: #0a0f1c;
-            --glass: rgba(15,23,42,0.975);
-            --glow: 0 0 120px rgba(251,191,36,0.6);
+            --dark: #020408;
+            --accent: #3b82f6;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
+
+        * { margin:0; padding:0; box-sizing:border-box; cursor: crosshair; }
+
         body {
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--dark);
-            color: #f8fafc;
+            color: white;
             height: 100vh;
             overflow: hidden;
-            font-size: 14.6px;
-        }
-        canvas#bg { position:fixed; inset:0; z-index:1; pointer-events:none; }
-        canvas#confetti { position:fixed; inset:0; z-index:9999; pointer-events:none; }
-
-        .container {
-            position:relative; z-index:10;
-            height:100vh;
-            display:grid;
-            grid-template-rows:auto 1fr auto;
-            max-width:1240px;
-            margin:0 auto;
-            padding:1.1rem 1.9rem 0.9rem;
         }
 
-        .logo {
-            font-size: clamp(1.92rem, 4.2vw, 3.55rem);
+        /* FOND ÉTOILÉ POUR LA CONNEXION */
+        #star-canvas {
+            position: fixed; inset: 0; z-index: 1;
+        }
+
+        /* OVERLAY DE CONNEXION STYLE JEU VIDÉO */
+        #login-modal {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle at center, rgba(247, 147, 30, 0.05) 0%, transparent 70%);
+        }
+
+        .login-frame {
+            position: relative;
+            width: 450px;
+            padding: 50px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+        }
+
+        /* Décorations cockpit */
+        .login-frame::before, .login-frame::after {
+            content: ''; position: absolute; width: 20px; height: 20px;
+            border: 2px solid var(--primary);
+        }
+        .login-frame::before { top: -5px; left: -5px; border-right: 0; border-bottom: 0; }
+        .login-frame::after { bottom: -5px; right: -5px; border-left: 0; border-top: 0; }
+
+        .status-light {
+            width: 8px; height: 8px; background: var(--primary);
+            border-radius: 50%; display: inline-block; margin-right: 10px;
+            box-shadow: 0 0 10px var(--primary);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0.3; } }
+
+        .title-glitch {
+            font-size: 2.5rem; font-weight: 900; letter-spacing: 5px;
+            text-transform: uppercase; margin-bottom: 30px;
+            text-shadow: 2px 2px 0px var(--primary);
+        }
+
+        .input-group { position: relative; margin-bottom: 30px; }
+
+        input#prenom-input {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            color: white;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-align: center;
+            text-transform: uppercase;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input#prenom-input:focus {
+            border-color: var(--primary);
+            background: rgba(247, 147, 30, 0.05);
+            box-shadow: 0 0 20px rgba(247, 147, 30, 0.2);
+        }
+
+        .btn-launch {
+            width: 100%;
+            padding: 20px;
+            background: var(--primary);
+            color: black;
             font-weight: 900;
-            letter-spacing: -4.2px;
-            line-height: 0.82;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            animation: logoPulse 10s ease-in-out infinite;
-        }
-        .logo .oob { color: var(--darkblue); font-size: 1.18em; }
-        .logo .jectif {
-            font-size: 0.79em;
-            background: linear-gradient(90deg, var(--gold), #facc15);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-        .logo .r1p {
-            font-size: 0.67em;
-            color: var(--primary);
-            background: linear-gradient(var(--primary), #ea580c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            padding: 3px 16px 5px;
-            border-radius: 9999px;
-            border: 1px solid rgba(247,147,30,0.5);
-            font-weight: 800;
-        }
-        @keyframes logoPulse { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.38) hue-rotate(10deg); } }
-
-        .tagline {
-            font-size: clamp(1.1rem, 2vw, 1.3rem);
-            opacity: 0.94;
-            letter-spacing: 2px;
-            font-weight: 500;
-            margin-top: -5px;
-        }
-
-        main {
-            display: grid;
-            grid-template-columns: 295px 1fr 295px;
-            gap: 1.6rem;
-            height: calc(100vh - 160px);
-        }
-        @media (max-width: 1260px) { main { grid-template-columns: 1fr; height: auto; overflow-y: auto; } }
-
-        .glass {
-            background: var(--glass);
-            backdrop-filter: blur(56px);
-            border: 1px solid rgba(251,191,36,0.42);
-            border-radius: 28px;
-            box-shadow: 0 36px 82px -22px rgb(0 0 0 / 0.9);
-        }
-
-        #r1p-btn {
-            background: linear-gradient(145deg, #ffffff, var(--primary));
-            color: #0a0f1c;
-            font-size: 1.4rem;
-            font-weight: 900;
-            padding: 17px 34px;
-            border-radius: 9999px;
             border: none;
+            letter-spacing: 2px;
+            font-size: 1rem;
             cursor: pointer;
-            box-shadow: 0 0 65px 16px rgba(247,147,30,0.7);
-            transition: all .28s cubic-bezier(0.175,0.885,0.32,1.85);
+            transition: 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
         }
-        #r1p-btn:hover { transform: scale(1.07); box-shadow: 0 0 85px 22px rgba(247,147,30,0.85); }
-        #r1p-btn:active { transform: scale(0.95); }
 
-        .feed { flex: 1; overflow-y: auto; scrollbar-width: none; }
-        .feed-item {
-            padding: 10px 15px;
-            margin-bottom: 8px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 17px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.97rem;
+        .btn-launch:hover {
+            transform: scale(1.05);
+            background: white;
+            box-shadow: 0 0 30px white;
+        }
+
+        /* DASHBOARD PRINCIPAL (MASQUÉ AU DÉBUT) */
+        #main-app {
+            position: relative; z-index: 10;
+            display: none; opacity: 0;
+            padding: 2rem; height: 100vh;
+            grid-template-rows: auto 1fr; gap: 2rem;
+        }
+
+        .glass-card {
+            background: rgba(10, 15, 25, 0.9);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 15px; padding: 20px;
+        }
+
+        #toast {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; color: black; padding: 40px 60px; border-radius: 10px;
+            font-weight: 900; font-size: 2rem; z-index: 200; display: none;
+            text-align: center; box-shadow: 0 0 100px var(--primary);
         }
     </style>
 </head>
 <body>
-    <canvas id="bg"></canvas>
-    <canvas id="confetti"></canvas>
 
-    <!-- LOGIN MODAL -->
-    <div id="login-modal" style="position:fixed;inset:0;background:rgba(10,15,28,0.98);z-index:99999;display:flex;align-items:center;justify-content:center;">
-        <div style="background:var(--glass);padding:2.6rem 2.2rem;border-radius:28px;width:100%;max-width:360px;text-align:center;border:1px solid var(--primary);">
-            <h2 style="font-size:2.2rem;margin-bottom:1rem;">Bienvenue dans l’univers</h2>
-            <h1 class="logo" style="margin-bottom:1.5rem;">
-                <span class="oob">OOB</span><span class="jectif">jectif</span><span class="r1p">R1P</span>
-            </h1>
-            <p style="margin-bottom:1.4rem;opacity:0.93;">Entre ton prénom exactement comme dans l’équipe :</p>
-            <input id="prenom-input" type="text" placeholder="Kevin • Sofia • Merwan..." style="width:100%;padding:16px;border-radius:18px;border:none;background:rgba(255,255,255,0.07);color:white;font-size:1.28rem;text-align:center;">
-            <button onclick="validatePrenom()" style="margin-top:1.5rem;padding:14px 50px;background:var(--primary);color:#0a0f1c;border:none;border-radius:9999px;font-weight:900;font-size:1.2rem;cursor:pointer;width:100%;">COMMENCER L’AVENTURE</button>
-            <p id="login-error" style="color:#ef4444;margin-top:1rem;min-height:24px;"></p>
+    <div id="toast"></div>
+    <canvas id="star-canvas"></canvas>
+
+    <div id="login-modal">
+        <div class="login-box-wrapper">
+            <div class="login-frame">
+                <div style="margin-bottom: 10px; font-size: 0.7rem; opacity: 0.5; letter-spacing: 2px;">
+                    <span class="status-light"></span> SYSTÈME OPÉRATIONNEL V.2.6
+                </div>
+                <h1 class="title-glitch">OBJECTIF<br><span style="color:var(--primary)">R1P</span></h1>
+                
+                <div class="input-group">
+                    <input id="prenom-input" type="text" placeholder="IDENTIFIANT PILOTE" autocomplete="off">
+                </div>
+
+                <button class="btn-launch" onclick="initiateLaunch()">LANCER LA SÉQUENCE</button>
+                <p id="login-error" style="color: #ff4444; font-size: 0.8rem; margin-top: 20px; height: 10px;"></p>
+                
+                <div style="margin-top: 40px; font-size: 0.6rem; opacity: 0.3; line-height: 1.5;">
+                    ACCÈS RÉSERVÉ AUX MEMBRES DE L'ÉLITE<br>
+                    PROTOCOLE DE PROSPECTION HAUTE PERFORMANCE
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="container" id="main-app" style="display:none;">
-        <header>
-            <h1 class="logo">
-                <span class="oob">OOB</span><span class="jectif">jectif</span><span class="r1p">R1P</span>
-            </h1>
-            <p class="tagline">Chaque prise est une nouvelle aventure qui commence !</p>
+    <div id="main-app">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="letter-spacing: 5px; font-weight: 900;">DASHBOARD <span style="color:var(--primary)">R1P</span></h2>
+            <div id="user-display" style="background: var(--primary); color: black; padding: 5px 20px; font-weight: 800; border-radius: 50px;"></div>
         </header>
 
-        <main>
-            <!-- LEFT -->
-            <div class="glass" style="padding:2rem 1.8rem;text-align:center;display:flex;flex-direction:column;">
-                <div id="avatar" style="width:122px;height:122px;margin:0 auto 1rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--gold));font-size:4.2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 16px rgba(247,147,30,0.32);">🔥</div>
-                <h2 id="user-name" style="font-size:2.28rem;margin-bottom:4px;">—</h2>
-                <p id="user-team" style="font-size:1.32rem;color:var(--gold);font-weight:700;">Équipe • —</p>
+        <div style="display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px;">
+            <div class="glass-card" style="text-align: center;">
+                <div id="avatar" style="width:100px; height:100px; background:var(--primary); color:black; font-size:3rem; font-weight:900; border-radius:50%; margin: 0 auto 20px; display:flex; align-items:center; justify-content:center;">?</div>
+                <h3 id="display-name" style="font-size: 1.5rem; margin-bottom: 5px;">---</h3>
+                <p id="display-team" style="opacity: 0.5; margin-bottom: 30px;">---</p>
+                
+                <textarea id="note" placeholder="COMMENTAIRE DE MISSION..." style="width:100%; height:100px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white; padding:15px; margin-bottom:20px; resize:none;"></textarea>
+                
+                <button onclick="takeR1P()" style="width:100%; padding:25px; background:var(--primary); color:black; border:none; border-radius:10px; font-weight:900; font-size:1.5rem; cursor:pointer; box-shadow: 0 10px 30px rgba(247,147,30,0.3);">R1P +1</button>
+            </div>
 
-                <div style="margin:1.5rem 0 1.1rem;background:rgba(251,191,36,0.1);padding:8px 30px;border-radius:9999px;font-size:1.2rem;">
-                    🔥 Streak <span id="streak" style="color:var(--gold);font-weight:900;">0</span> jours
+            <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 20px;">
+                <div class="glass-card">
+                    <h4 style="color:var(--gold); margin-bottom: 15px;">🥇 TOP PERFORMANCE SEMAINE</h4>
+                    <div id="lb-week"></div>
                 </div>
-
-                <div class="progress-container" style="text-align:left;margin:1rem 0 1.3rem;">
-                    <div class="progress-label"><span>Session (4 min)</span><span id="session-goal">0/4</span></div>
-                    <div class="progress-bar"><div id="session-fill" class="progress-fill" style="width:0%"></div></div>
-                    <div class="progress-label" style="margin-top:11px;"><span>Semaine (8 min)</span><span id="week-goal">0/8</span></div>
-                    <div class="progress-bar"><div id="week-fill" class="progress-fill" style="width:0%"></div></div>
-                </div>
-
-                <div id="personal-rank" style="margin:0.6rem 0;font-size:1.1rem;opacity:0.9;"></div>
-
-                <div class="r1p-card" style="margin:1.3rem 0 1.5rem;padding:1rem;background:rgba(255,255,255,0.03);border-radius:20px;display:flex;flex-direction:column;gap:0.9rem;">
-                    <textarea id="note" style="background:rgba(255,255,255,0.06);border:none;border-radius:17px;padding:1rem;color:#fff;font-size:0.97rem;resize:none;height:68px;" placeholder="Note client ou vibe du moment..."></textarea>
-                    <button id="r1p-btn">R1P +1</button>
+                <div class="glass-card">
+                    <h4 style="color:var(--primary); margin-bottom: 15px;">⚡ LIVE SESSION</h4>
+                    <div id="lb-session"></div>
                 </div>
             </div>
 
-            <!-- CENTER -->
-            <div style="display:flex;flex-direction:column;gap:1.5rem;">
-                <div class="glass" style="padding:1.9rem;flex:1;display:flex;flex-direction:column;">
-                    <h2 style="font-size:1.68rem;margin-bottom:1.1rem;">🥇 Individuel • Cette semaine</h2>
-                    <div id="indiv-week" class="feed"></div>
-                </div>
-                <div class="glass" style="padding:1.9rem;flex:1;display:flex;flex-direction:column;">
-                    <h2 style="font-size:1.68rem;margin-bottom:1.1rem;">⚡ Session en direct</h2>
-                    <div id="session-live" class="feed"></div>
-                </div>
+            <div class="glass-card">
+                <h4 style="margin-bottom: 15px;">🔥 DERNIÈRES ACTIONS</h4>
+                <div id="live-feed" style="font-size: 0.8rem;"></div>
             </div>
-
-            <!-- RIGHT -->
-            <div style="display:flex;flex-direction:column;gap:1.5rem;">
-                <div class="glass" style="padding:1.9rem;flex:1;">
-                    <h2 style="font-size:1.68rem;margin-bottom:1.1rem;">🏆 Momentum Équipes</h2>
-                    <div id="team-momentum"></div>
-                </div>
-                <div class="glass" style="padding:1.9rem;flex:1.45;">
-                    <h2 style="font-size:1.68rem;margin-bottom:1.1rem;">🔥 Activité en direct</h2>
-                    <div id="live-feed" class="feed"></div>
-                </div>
-            </div>
-        </main>
-
-        <footer style="text-align:center;opacity:0.55;font-size:0.85rem;padding-top:0.5rem;">Lundi &amp; Jeudi 14h–18h (Europe/Paris) • Groupe OOB</footer>
+        </div>
     </div>
 
-    <div id="motiv" style="position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:rgba(10,15,28,0.96);padding:12px 40px;border-radius:9999px;font-size:1.48rem;font-weight:800;z-index:999;opacity:0;transition:all .7s;"></div>
-    <div id="toast" style="position:fixed;bottom:48px;left:50%;transform:translateX(-50%);background:var(--primary);color:#0a0f1c;padding:11px 36px;border-radius:9999px;font-size:1.28rem;font-weight:800;z-index:999;opacity:0;transition:all .7s;"></div>
-
-    <div class="status" id="status" style="position:fixed;bottom:14px;left:22px;font-size:0.76rem;opacity:0.65;">Prêt à conquérir...</div>
-
     <script>
-        // ========================================
-        // SUPABASE
-        // ========================================
+        // CONFIG SUPABASE
         const SUPABASE_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const TEAM_MAP = {"sofia":"Caen","david":"Caen","kevin":"Caen","durmus":"Evreux","merwan":"Courbevoie","diassivi":"Courbevoie","sertag":"Courbevoie","roxanne":"Rouen"};
+        const COMPLIMENTS = ["MAGISTRAL {name} !","GOD MODE ACTIVÉ : {name}","INARRÊTABLE {name} !","DOMINATION TOTALE {name}"];
+        
+        let currentUser = { name: "", team: "" };
 
-        const TEAM_MAP = {
-            "sofia":"Caen","david":"Caen","kevin":"Caen",
-            "durmus":"Evreux","merwan":"Courbevoie",
-            "diassivi":"Courbevoie","sertag":"Courbevoie","roxanne":"Rouen"
-        };
+        // THREE.JS STARFIELD ENGINE
+        let starScene, starCam, starRenderer, starGeo, stars;
+        function initStars() {
+            starScene = new THREE.Scene();
+            starCam = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            starCam.position.z = 1; starCam.rotation.x = Math.PI/2;
+            starRenderer = new THREE.WebGLRenderer({canvas: document.getElementById('star-canvas'), antialias: true});
+            starRenderer.setSize(window.innerWidth, window.innerHeight);
 
-        let currentUser = {name:"", team:""};
-        let lastR1PTake = 0;
-
-        // ========================================
-        // IDENTIFICATION
-        // ========================================
-        function validatePrenom(){
-            let p = document.getElementById("prenom-input").value.trim().toLowerCase();
-            if(!p || !TEAM_MAP[p]){
-                document.getElementById("login-error").textContent = "Prénom inconnu. Contactez Serhat.";
-                return;
+            starGeo = new THREE.Geometry();
+            for(let i=0; i<6000; i++) {
+                let star = new THREE.Vector3(Math.random()*600-300, Math.random()*600-300, Math.random()*600-300);
+                star.velocity = 0; star.acceleration = 0.01;
+                starGeo.vertices.push(star);
             }
+            let sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/circle.png');
+            let starMaterial = new THREE.PointsMaterial({color: 0xaaaaaa, size: 0.5, map: sprite, transparent: true});
+            stars = new THREE.Points(starGeo, starMaterial);
+            starScene.add(stars);
+            animateStars();
+        }
+
+        function animateStars() {
+            starGeo.vertices.forEach(p => {
+                p.velocity += p.acceleration; p.y -= p.velocity;
+                if (p.y < -200) { p.y = 200; p.velocity = 0; }
+            });
+            starGeo.verticesNeedUpdate = true;
+            stars.rotation.y += 0.001;
+            starRenderer.render(starScene, starCam);
+            requestAnimationFrame(animateStars);
+        }
+
+        // SEQUENCE DE LANCEMENT TYPE JEU VIDEO
+        function initiateLaunch() {
+            let p = document.getElementById("prenom-input").value.trim().toLowerCase();
+            if(!TEAM_MAP[p]) { document.getElementById("login-error").textContent = "ACCÈS REFUSÉ : PILOTE INCONNU"; return; }
+
             currentUser.name = p.charAt(0).toUpperCase() + p.slice(1);
             currentUser.team = TEAM_MAP[p];
 
-            // Animation fluide de fermeture
-            gsap.to("#login-modal", {opacity:0, duration:0.6, onComplete: () => {
+            // 1. Acceleration des étoiles (Hyperdrive)
+            starGeo.vertices.forEach(p => {
+                gsap.to(p, { acceleration: 0.8, duration: 2.5, ease: "power4.in" });
+            });
+            gsap.to(stars.material, { size: 3, duration: 2 });
+
+            // 2. Disparition du login avec effet de flash
+            gsap.to("#login-modal", { opacity: 0, duration: 1, delay: 2 });
+            
+            setTimeout(() => {
                 document.getElementById("login-modal").style.display = "none";
                 document.getElementById("main-app").style.display = "grid";
-                gsap.from("#main-app", {opacity:0, y:20, duration:0.8, ease:"power2.out"});
-            }});
-
-            document.getElementById("user-name").textContent = currentUser.name;
-            document.getElementById("avatar").textContent = currentUser.name[0];
-            document.getElementById("user-team").innerHTML = `Équipe <strong>${currentUser.team}</strong>`;
-            refreshAll();
+                gsap.to("#main-app", { opacity: 1, duration: 1 });
+                
+                // Reset étoiles
+                starGeo.vertices.forEach(p => { p.acceleration = 0.01; p.velocity = 0; });
+                gsap.to(stars.material, { size: 0.5, duration: 2 });
+                
+                setupDashboard();
+            }, 2500);
         }
 
-        // ========================================
-        // R1P ACTION
-        // ========================================
-        async function takeR1P(){
-            if(Date.now() - lastR1PTake < 120000){
-                showToast("⏳ 2 minutes entre chaque prise");
-                return;
-            }
-            const note = document.getElementById("note").value.trim();
-            const week = new Date().toISOString().slice(0,10).replace(/-/g,'');
+        function setupDashboard() {
+            document.getElementById("display-name").textContent = currentUser.name;
+            document.getElementById("user-display").textContent = currentUser.name;
+            document.getElementById("avatar").textContent = currentUser.name[0];
+            document.getElementById("display-team").textContent = "SECTEUR : " + currentUser.team;
+            refreshAll();
+            setInterval(refreshAll, 10000);
+        }
 
-            await supabase.from('suivi_r1p').insert({
-                auteur: currentUser.name,
-                equipe: currentUser.team,
-                semaine: week,
-                mois: new Date().toISOString().slice(0,7),
-                note: note || null
+        // ACTIONS R1P
+        async function takeR1P() {
+            const note = document.getElementById("note").value.trim();
+            const { error } = await _supabase.from('suivi_r1p').insert({
+                auteur: currentUser.name, equipe: currentUser.team, note: note,
+                semaine: new Date().toISOString().slice(0,10)
             });
 
-            await incrementCounter("Individuel", currentUser.name);
-            await incrementCounter("Equipe", currentUser.team);
-
-            lastR1PTake = Date.now();
-            launchEpicConfetti();
-            playR1PSuccessSound();
-            speakR1P();
-            showPersonalMotiv();
-            showToast("🎉 NOUVELLE AVENTURE COMMENCÉE !");
-            document.getElementById("note").value = "";
-            await refreshAll();
+            if(!error) {
+                await updateCounter("Individuel", currentUser.name);
+                await updateCounter("Equipe", currentUser.team);
+                
+                // EFFET DOPAMINE
+                launchEpicConfetti();
+                gsap.fromTo("#main-app", { x: -10 }, { x: 10, duration: 0.05, repeat: 10, yoyo: true });
+                
+                let msg = COMPLIMENTS[Math.floor(Math.random()*COMPLIMENTS.length)].replace("{name}", currentUser.name);
+                showToast(msg);
+                
+                document.getElementById("note").value = "";
+                refreshAll();
+            }
         }
 
-        async function incrementCounter(scope, key){
-            let { data } = await supabase.from('r1p_counters').select('*').eq('scope', scope).eq('key', key).single();
-            if (!data) {
-                await supabase.from('r1p_counters').insert({scope, key, count_week:1, count_session:1});
+        async function updateCounter(scope, key) {
+            let { data } = await _supabase.from('r1p_counters').select('*').eq('scope', scope).eq('key', key).single();
+            if(!data) {
+                await _supabase.from('r1p_counters').insert({ scope, key, count_week: 1, count_session: 1 });
             } else {
-                await supabase.from('r1p_counters').update({
-                    count_week: data.count_week + 1,
-                    count_session: data.count_session + 1,
-                    last_updated: new Date().toISOString()
+                await _supabase.from('r1p_counters').update({ 
+                    count_week: data.count_week + 1, count_session: data.count_session + 1
                 }).eq('id', data.id);
             }
         }
 
-        // ========================================
-        // REFRESH
-        // ========================================
-        async function refreshAll(){
-            const { data: indiv } = await supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false}).limit(10);
-            renderLB("indiv-week", indiv || [], false);
+        async function refreshAll() {
+            const { data: indiv } = await _supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false});
+            const { data: sess } = await _supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_session', {ascending: false});
+            const { data: feed } = await _supabase.from('suivi_r1p').select('*').order('created_at', {ascending: false}).limit(8);
 
-            const { data: sess } = await supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_session', {ascending: false}).limit(8);
-            renderLB("session-live", sess || [], true);
-
-            const { data: teams } = await supabase.from('r1p_counters').select('*').eq('scope', 'Equipe');
-            renderTeamMomentum(teams || []);
-
-            const { data: recent } = await supabase.from('suivi_r1p').select('*').order('created_at', {ascending: false}).limit(9);
-            renderLiveFeed(recent || []);
-
-            const my = indiv.find(i => i.key === currentUser.name) || {count_session:0, count_week:0};
-            document.getElementById("session-goal").textContent = `${my.count_session}/4`;
-            document.getElementById("session-fill").style.width = `${Math.min(100, my.count_session/4*100)}%`;
-            document.getElementById("week-goal").textContent = `${my.count_week}/8`;
-            document.getElementById("week-fill").style.width = `${Math.min(100, my.count_week/8*100)}%`;
-
-            const rank = indiv.findIndex(i => i.key === currentUser.name) + 1;
-            document.getElementById("personal-rank").innerHTML = rank === 1 ? `🏆 <strong>Tu es N°1 !</strong>` : `Ton rang : <strong>#${rank}</strong>`;
+            renderLB("lb-week", indiv || [], "count_week");
+            renderLB("lb-session", sess || [], "count_session");
+            renderFeed(feed || []);
         }
 
-        function renderLB(id, items, isSession){
-            let html = "";
-            items.forEach(it => {
-                const count = isSession ? it.count_session : it.count_week;
-                html += `<div class="feed-item"><span>${it.key}</span><span style="color:var(--gold);font-size:1.45rem;font-weight:900;">${count}</span></div>`;
-            });
-            document.getElementById(id).innerHTML = html || `<div style="padding:3rem;text-align:center;opacity:0.5;">Aucune donnée pour le moment</div>`;
+        function renderLB(id, items, field) {
+            document.getElementById(id).innerHTML = items.map((it, idx) => `
+                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <span>${idx+1}. ${it.key}</span>
+                    <span style="color:var(--gold); font-weight:900;">${it[field]}</span>
+                </div>
+            `).join('');
         }
 
-        function renderTeamMomentum(data){
-            let html = "";
-            data.forEach(t => {
-                const p = Math.min(100, Math.round((t.count_week||0)/60*100));
-                html += `<div style="margin-bottom:15px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span>${t.key}</span><span>${t.count_week||0}/60</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div></div>`;
-            });
-            document.getElementById("team-momentum").innerHTML = html;
+        function renderFeed(items) {
+            document.getElementById("live-feed").innerHTML = items.map(it => `
+                <div style="margin-bottom:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:5px;">
+                    <div style="color:var(--primary); font-weight:bold;">${it.auteur}</div>
+                    <div style="opacity:0.6;">${it.note || "Validation R1P"}</div>
+                </div>
+            `).join('');
         }
 
-        function renderLiveFeed(items){
-            let html = "";
-            items.forEach(item => {
-                const time = new Date(item.created_at).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
-                html += `<div class="feed-item"><span><strong>${item.auteur}</strong> • ${item.equipe}</span><span style="opacity:0.75">${time}</span></div>`;
-            });
-            document.getElementById("live-feed").innerHTML = html;
-        }
-
-        // ========================================
-        // ANIMATIONS & SON
-        // ========================================
-        function playR1PSuccessSound(){ /* premium sound */ }
-        function speakR1P(){ if('speechSynthesis' in window){ const u = new SpeechSynthesisUtterance("R1P !"); u.lang="fr-FR"; u.pitch=1.14; u.rate=1.07; u.volume=0.93; speechSynthesis.speak(u); }}
-
-        function showPersonalMotiv(){
-            const msgs = ["Tu viens de lancer une nouvelle aventure pour {team} !","Quelle prise de légende {name} !","L’équipe avance grâce à toi !","R1P validé avec style 🔥"];
-            let msg = msgs[Math.floor(Math.random()*msgs.length)].replace("{name}",currentUser.name).replace("{team}",currentUser.team);
-            const el = document.getElementById("motiv");
-            el.textContent = msg;
-            el.style.opacity = "1";
-            setTimeout(() => el.style.opacity = "0", 5200);
-        }
-
-        function showToast(txt){
+        function showToast(txt) {
             const t = document.getElementById("toast");
-            t.textContent = txt;
-            t.style.opacity = "1";
-            setTimeout(() => t.style.opacity = "0", 2600);
+            t.textContent = txt; t.style.display = "block";
+            gsap.fromTo(t, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out" });
+            setTimeout(() => { gsap.to(t, { opacity: 0, scale: 0.5, duration: 0.5, onComplete: () => t.style.display="none" }); }, 3000);
         }
 
-        function launchEpicConfetti(){
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+        function launchEpicConfetti() {
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#F7931E', '#ffffff', '#fbbf24'] });
         }
 
-        function initBackground(){
-            // Shooting stars élégantes
-            const c = document.getElementById("bg");
-            const ctx = c.getContext("2d");
-            let w = c.width = innerWidth, h = c.height = innerHeight;
-            // ... (code shooting stars élégant)
-        }
-
-        function init(){
-            initBackground();
-            document.getElementById("prenom-input").focus();
-        }
-
-        window.onload = init;
+        window.onload = initStars;
     </script>
 </body>
 </html>
