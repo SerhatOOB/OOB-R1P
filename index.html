@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -454,7 +454,7 @@ body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;back
    CONFIG
 ═══════════════════════════════════════ */
 const SB_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
-const SB_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkY2ZqbG9nc2JrbXp6emt4dmdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMDQ0MDksImV4cCI6MjA4Nzc4MDQwOX0.nF-ZZWucb6BMQvGxZ1iK1SjYyrZ-0dW0fAaYw9cPzls";
 const _sb    = supabase.createClient(SB_URL, SB_KEY);
 const ADMIN_PW = "oob2026"; // ← modifier ici
 
@@ -672,11 +672,14 @@ async function takeR1P(){
     btn.disabled=true; btn.textContent='⏳ ENVOI...';
 
     try{
-        const{error}=await _sb.from('suivi_r1p').insert({
+        const{data, error}=await _sb.from('suivi_r1p').insert({
             auteur:user.name, equipe:user.team,
             note:note||null, semaine:today()
         });
-        if(error) throw error;
+        if(error){
+            console.error('❌ INSERT suivi_r1p:', error.message, error.details, error.hint, error.code);
+            throw error;
+        }
 
         await Promise.all([
             upsert('Individuel',user.name),
@@ -708,8 +711,9 @@ async function takeR1P(){
         refreshAll(); // sans await — tourne en arrière-plan
 
     }catch(e){
-        console.error(e);
-        showToast('ERREUR RÉSEAU','Réessaie dans un instant',0,true);
+        console.error('❌ Erreur R1P complète:', e);
+        const msg = e?.message || e?.error_description || JSON.stringify(e) || 'Erreur inconnue';
+        showToast('ERREUR', msg.slice(0,60), 0, true);
         btn.disabled=false;
         btn.innerHTML='📞 R1P +1';
     }
