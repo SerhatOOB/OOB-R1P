@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOBJECTIF R1P • PROTOCOLE ÉLITE 2026</title>
+    <title>OOBjectif R1P • PROTOCOLE ÉLITE 2026</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -13,1611 +13,1136 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <style>
-        /* ============================================================
-           VARIABLES & RESET
-        ============================================================ */
-        :root {
-            --primary:  #F7931E;
-            --primary2: #ff6b00;
-            --gold:     #fbbf24;
-            --gold2:    #f59e0b;
-            --dark:     #02040A;
-            --dark2:    #060C18;
-            --glass:    rgba(8, 16, 32, 0.85);
-            --border:   rgba(247, 147, 30, 0.15);
-            --border2:  rgba(255, 255, 255, 0.06);
-            --text-dim: rgba(255,255,255,0.45);
-            --green:    #22c55e;
-            --red:      #ef4444;
-            --blue:     #3b82f6;
-            --rank-s:   #ff4ecd;
-            --rank-a:   #fbbf24;
-            --rank-b:   #60a5fa;
-            --rank-c:   #34d399;
-            --font-hud: 'Orbitron', monospace;
-            --font-body:'Rajdhani', sans-serif;
-            --font-mono:'Space Mono', monospace;
-        }
-
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-        html { height: 100%; }
-
-        body {
-            font-family: var(--font-body);
-            background: var(--dark);
-            color: #fff;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Custom cursor crosshair */
-        body { cursor: none; }
-        #cursor {
-            width: 20px; height: 20px;
-            border: 1.5px solid var(--primary);
-            border-radius: 50%;
-            position: fixed; pointer-events: none; z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.08s ease, width 0.2s, height 0.2s, opacity 0.2s;
-            mix-blend-mode: difference;
-        }
-        #cursor::after {
-            content: '';
-            position: absolute; top: 50%; left: 50%;
-            width: 3px; height: 3px;
-            background: var(--primary);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
-        #cursor.big { width: 40px; height: 40px; opacity: 0.6; }
-
-        /* ============================================================
-           BACKGROUND CANVAS
-        ============================================================ */
-        #star-canvas {
-            position: fixed; inset: 0; z-index: 0;
-        }
-
-        /* Grid overlay */
-        #grid-overlay {
-            position: fixed; inset: 0; z-index: 1; pointer-events: none;
-            background-image:
-                linear-gradient(rgba(247,147,30,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(247,147,30,0.025) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: radial-gradient(ellipse at center, black 40%, transparent 100%);
-        }
-
-        /* Vignette */
-        body::after {
-            content: ''; position: fixed; inset: 0; z-index: 2; pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
-        }
-
-        /* Scanlines */
-        body::before {
-            content: ''; position: fixed; inset: 0; z-index: 2; pointer-events: none;
-            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-            animation: scanMove 8s linear infinite;
-        }
-        @keyframes scanMove { from{background-position:0 0} to{background-position:0 100px} }
-
-        /* ============================================================
-           LOGIN SCREEN
-        ============================================================ */
-        #login-modal {
-            position: fixed; inset: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column; gap: 20px;
-        }
-
-        .login-outer {
-            position: relative;
-        }
-
-        /* Rotating ring */
-        .login-ring {
-            position: absolute; inset: -30px;
-            border: 1px solid rgba(247,147,30,0.2);
-            border-radius: 50%;
-            animation: spin 20s linear infinite;
-        }
-        .login-ring::before {
-            content: '';
-            position: absolute; top: -3px; left: 50%;
-            width: 6px; height: 6px;
-            background: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 12px var(--primary);
-            transform: translateX(-50%);
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .login-frame {
-            position: relative;
-            width: 440px;
-            padding: 50px 45px 40px;
-            background: rgba(2, 6, 18, 0.92);
-            border: 1px solid rgba(247,147,30,0.25);
-            backdrop-filter: blur(20px) saturate(1.5);
-            text-align: center;
-            box-shadow:
-                0 0 0 1px rgba(255,255,255,0.03),
-                0 30px 80px rgba(0,0,0,0.9),
-                0 0 60px rgba(247,147,30,0.08) inset;
-        }
-
-        /* Corner brackets */
-        .login-frame::before, .login-frame::after,
-        .login-frame .corner-br, .login-frame .corner-tl2 {
-            content: ''; position: absolute;
-            width: 16px; height: 16px;
-        }
-        .login-frame::before { top: -2px; left: -2px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); }
-        .login-frame::after  { bottom: -2px; right: -2px; border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); }
-
-        .login-sys-line {
-            display: flex; align-items: center; justify-content: center;
-            gap: 8px; margin-bottom: 28px;
-            font-family: var(--font-mono); font-size: 0.6rem;
-            color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase;
-        }
-
-        .blink-dot {
-            width: 6px; height: 6px;
-            background: var(--green); border-radius: 50%;
-            box-shadow: 0 0 8px var(--green);
-            animation: blink 1.2s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-        @keyframes blink { 50% { opacity: 0.15; } }
-
-        .login-logo {
-            font-family: var(--font-hud);
-            font-size: 2.6rem; font-weight: 900;
-            letter-spacing: 8px; line-height: 1;
-            margin-bottom: 6px;
-            text-shadow: 0 0 40px rgba(247,147,30,0.4);
-        }
-        .login-logo .logo-accent { color: var(--primary); }
-
-        .login-tagline {
-            font-family: var(--font-mono); font-size: 0.62rem;
-            letter-spacing: 4px; color: var(--text-dim);
-            margin-bottom: 40px; text-transform: uppercase;
-        }
-
-        .input-wrap {
-            position: relative; margin-bottom: 20px;
-        }
-        .input-label {
-            position: absolute; top: -9px; left: 14px;
-            font-family: var(--font-mono); font-size: 0.58rem;
-            color: var(--primary); letter-spacing: 3px;
-            background: var(--dark2); padding: 0 6px;
-        }
-
-        input#prenom-input {
-            width: 100%;
-            background: rgba(247,147,30,0.03);
-            border: 1px solid rgba(247,147,30,0.2);
-            padding: 18px 20px;
-            color: white;
-            font-family: var(--font-hud);
-            font-size: 1.1rem;
-            letter-spacing: 6px;
-            text-align: center;
-            text-transform: uppercase;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
-        }
-        input#prenom-input:focus {
-            border-color: var(--primary);
-            background: rgba(247,147,30,0.06);
-            box-shadow: 0 0 24px rgba(247,147,30,0.15);
-        }
-        input#prenom-input::placeholder { color: rgba(255,255,255,0.2); letter-spacing: 3px; font-size: 0.75rem; }
-
-        .btn-launch {
-            width: 100%;
-            padding: 18px;
-            background: var(--primary);
-            color: #000;
-            font-family: var(--font-hud);
-            font-weight: 700;
-            border: none;
-            letter-spacing: 4px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-            clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0% 100%);
-        }
-        .btn-launch::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-        }
-        .btn-launch:hover::before { transform: translateX(100%); }
-        .btn-launch:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(247,147,30,0.5);
-        }
-        .btn-launch:active { transform: translateY(0); }
-
-        #login-error {
-            font-family: var(--font-mono); font-size: 0.65rem;
-            color: var(--red); margin-top: 16px; min-height: 16px;
-            letter-spacing: 2px; text-transform: uppercase;
-        }
-
-        .login-footer {
-            margin-top: 35px;
-            font-family: var(--font-mono); font-size: 0.55rem;
-            color: var(--text-dim); line-height: 1.8; letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Live pilot count */
-        .live-pilots {
-            font-family: var(--font-mono); font-size: 0.65rem;
-            color: rgba(255,255,255,0.5); letter-spacing: 3px;
-            display: flex; align-items: center; gap: 8px; justify-content: center;
-        }
-        .live-dot {
-            width: 5px; height: 5px; background: var(--green); border-radius: 50%;
-            box-shadow: 0 0 6px var(--green); animation: blink 1s infinite;
-        }
-
-        /* ============================================================
-           MAIN APP
-        ============================================================ */
-        #main-app {
-            position: relative; z-index: 10;
-            display: none; opacity: 0;
-            height: 100vh;
-            overflow: hidden;
-            padding: 16px 20px;
-            display: grid;
-            grid-template-rows: 56px 1fr;
-            gap: 14px;
-        }
-
-        /* ---- HEADER ---- */
-        #app-header {
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border2);
-            padding-bottom: 14px;
-        }
-
-        .header-logo {
-            font-family: var(--font-hud); font-size: 1.1rem; font-weight: 900;
-            letter-spacing: 5px; display: flex; align-items: center; gap: 12px;
-        }
-        .header-logo .h-accent { color: var(--primary); }
-
-        .header-meta {
-            display: flex; gap: 24px; align-items: center;
-        }
-        .meta-chip {
-            font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 2px;
-            color: var(--text-dim); display: flex; align-items: center; gap: 6px;
-        }
-        .meta-chip .live-dot { width: 4px; height: 4px; }
-
-        #clock-display {
-            font-family: var(--font-hud); font-size: 0.8rem; color: var(--primary);
-            letter-spacing: 3px;
-        }
-
-        #user-pill {
-            background: rgba(247,147,30,0.12);
-            border: 1px solid rgba(247,147,30,0.3);
-            color: var(--primary);
-            padding: 6px 18px;
-            font-family: var(--font-hud); font-weight: 700; font-size: 0.75rem;
-            letter-spacing: 3px;
-            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
-        }
-
-        /* ---- GRID LAYOUT ---- */
-        #app-body {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            gap: 14px;
-            overflow: hidden;
-        }
-
-        /* ---- GLASS CARD ---- */
-        .glass-card {
-            background: var(--glass);
-            border: 1px solid var(--border2);
-            border-radius: 8px;
-            padding: 18px;
-            overflow: hidden;
-            position: relative;
-        }
-        .glass-card::before {
-            content: ''; position: absolute;
-            top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(247,147,30,0.3), transparent);
-        }
-
-        .card-title {
-            font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 3px;
-            color: var(--text-dim); text-transform: uppercase;
-            margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-        }
-        .card-title .ct-icon { font-size: 0.75rem; }
-
-        /* ---- LEFT PANEL ---- */
-        #left-panel {
-            display: flex; flex-direction: column; gap: 14px; overflow: hidden;
-        }
-
-        /* Avatar & Profile */
-        .profile-card {
-            text-align: center; padding: 24px 18px 20px;
-        }
-
-        #avatar {
-            width: 72px; height: 72px;
-            background: linear-gradient(135deg, var(--primary), var(--primary2));
-            color: black; font-family: var(--font-hud); font-size: 2rem; font-weight: 900;
-            border-radius: 50%;
-            margin: 0 auto 14px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 0 3px rgba(247,147,30,0.15), 0 0 30px rgba(247,147,30,0.3);
-            position: relative;
-        }
-        #avatar::after {
-            content: ''; position: absolute; inset: -6px;
-            border: 1px dashed rgba(247,147,30,0.3);
-            border-radius: 50%;
-            animation: spin 8s linear infinite;
-        }
-
-        #display-name {
-            font-family: var(--font-hud); font-size: 1.3rem; font-weight: 700;
-            letter-spacing: 4px; margin-bottom: 4px;
-        }
-
-        #display-team {
-            font-family: var(--font-mono); font-size: 0.6rem;
-            color: var(--text-dim); letter-spacing: 3px; margin-bottom: 14px;
-        }
-
-        /* Rank badge */
-        .rank-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 14px;
-            border: 1px solid currentColor;
-            font-family: var(--font-hud); font-size: 0.7rem; letter-spacing: 3px;
-            margin-bottom: 18px;
-        }
-        .rank-badge.s { color: var(--rank-s); background: rgba(255,78,205,0.06); }
-        .rank-badge.a { color: var(--rank-a); background: rgba(251,191,36,0.06); }
-        .rank-badge.b { color: var(--rank-b); background: rgba(96,165,250,0.06); }
-        .rank-badge.c { color: var(--rank-c); background: rgba(52,211,153,0.06); }
-
-        /* Streak */
-        .streak-row {
-            display: flex; justify-content: center; gap: 6px; margin-bottom: 18px;
-        }
-        .streak-dot {
-            width: 10px; height: 10px;
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 50%;
-            transition: 0.3s;
-        }
-        .streak-dot.on {
-            background: var(--gold);
-            border-color: var(--gold);
-            box-shadow: 0 0 8px rgba(251,191,36,0.6);
-        }
-
-        /* Progress to next rank */
-        .progress-section { margin-bottom: 6px; }
-        .progress-label {
-            display: flex; justify-content: space-between;
-            font-family: var(--font-mono); font-size: 0.58rem;
-            color: var(--text-dim); margin-bottom: 6px;
-        }
-        .progress-track {
-            height: 3px; background: rgba(255,255,255,0.07);
-            border-radius: 10px; overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--gold));
-            border-radius: 10px;
-            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
-        .progress-fill::after {
-            content: '';
-            position: absolute; top: 0; right: 0; bottom: 0; width: 20px;
-            background: linear-gradient(90deg, transparent, white);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0%,100% { opacity: 0; }
-            50% { opacity: 0.6; }
-        }
-
-        /* R1P Button */
-        .action-card { padding: 20px 18px 18px; }
-
-        .my-score-big {
-            font-family: var(--font-hud); font-size: 3.5rem; font-weight: 900;
-            color: var(--primary); text-align: center; line-height: 1;
-            margin-bottom: 2px;
-            text-shadow: 0 0 40px rgba(247,147,30,0.5);
-            transition: transform 0.3s;
-        }
-        .my-score-label {
-            font-family: var(--font-mono); font-size: 0.58rem; text-align: center;
-            color: var(--text-dim); letter-spacing: 3px; margin-bottom: 16px;
-        }
-
-        #note {
-            width: 100%;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border2);
-            border-radius: 4px; color: white;
-            font-family: var(--font-body); font-size: 0.85rem;
-            padding: 12px; margin-bottom: 14px; resize: none; height: 70px;
-            outline: none; transition: border-color 0.3s;
-        }
-        #note:focus { border-color: rgba(247,147,30,0.4); }
-        #note::placeholder { color: rgba(255,255,255,0.2); font-size: 0.8rem; }
-
-        #btn-r1p {
-            width: 100%; padding: 22px;
-            background: linear-gradient(135deg, var(--primary), var(--primary2));
-            color: black;
-            font-family: var(--font-hud); font-weight: 900;
-            border: none; letter-spacing: 4px; font-size: 1.2rem;
-            cursor: pointer;
-            position: relative; overflow: hidden;
-            clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
-            transition: transform 0.15s, box-shadow 0.3s;
-            box-shadow: 0 8px 32px rgba(247,147,30,0.3), 0 0 0 0 rgba(247,147,30,0.4);
-        }
-        #btn-r1p::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
-            transform: translateX(-100%); transition: transform 0.6s;
-        }
-        #btn-r1p:hover::before { transform: translateX(100%); }
-        #btn-r1p:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 48px rgba(247,147,30,0.45), 0 0 0 0 rgba(247,147,30,0.4);
-        }
-        #btn-r1p:active { transform: scale(0.97); }
-        #btn-r1p:disabled {
-            opacity: 0.5; cursor: not-allowed; transform: none;
-            box-shadow: none;
-        }
-        #btn-r1p .btn-pulse {
-            position: absolute; inset: 0; border-radius: inherit;
-            animation: btnPulse 2s ease-in-out infinite;
-        }
-        @keyframes btnPulse {
-            0%,100% { box-shadow: 0 0 0 0 rgba(247,147,30,0.4); }
-            50% { box-shadow: 0 0 0 10px rgba(247,147,30,0); }
-        }
-
-        /* FOMO Urgency chip */
-        .fomo-chip {
-            font-family: var(--font-mono); font-size: 0.58rem; text-align: center;
-            margin-top: 10px; padding: 6px;
-            background: rgba(239,68,68,0.08);
-            border: 1px solid rgba(239,68,68,0.2);
-            color: #ff6b6b; letter-spacing: 1.5px;
-            border-radius: 4px;
-            animation: fomoFlash 3s ease-in-out infinite;
-        }
-        @keyframes fomoFlash {
-            0%,100% { border-color: rgba(239,68,68,0.2); }
-            50%  { border-color: rgba(239,68,68,0.5); box-shadow: 0 0 12px rgba(239,68,68,0.15); }
-        }
-
-        /* ---- CENTER PANEL ---- */
-        #center-panel {
-            display: flex; flex-direction: column; gap: 14px; overflow: hidden;
-        }
-
-        /* Team battle */
-        .team-battle {
-            padding: 18px;
-        }
-        .battle-grid {
-            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-            gap: 10px; margin-top: 10px;
-        }
-        .team-side {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border2);
-            border-radius: 6px; padding: 12px; text-align: center;
-        }
-        .team-side.mine { border-color: rgba(247,147,30,0.25); background: rgba(247,147,30,0.04); }
-        .team-name {
-            font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 3px;
-            color: var(--text-dim); margin-bottom: 6px;
-        }
-        .team-score {
-            font-family: var(--font-hud); font-size: 2.2rem; font-weight: 900;
-            color: white; line-height: 1;
-        }
-        .team-side.mine .team-score { color: var(--primary); }
-        .vs-badge {
-            font-family: var(--font-hud); font-size: 0.9rem; color: var(--text-dim);
-        }
-
-        /* Team battle bar */
-        .battle-bar-wrap { margin-top: 10px; }
-        .battle-bar {
-            height: 4px; background: rgba(255,255,255,0.07);
-            border-radius: 10px; overflow: hidden;
-        }
-        .battle-bar-fill {
-            height: 100%; background: linear-gradient(90deg, var(--primary), var(--gold));
-            transition: width 1s ease;
-        }
-
-        /* Leaderboard items */
-        .lb-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 9px 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            transition: background 0.2s;
-            border-radius: 4px;
-        }
-        .lb-item:hover { background: rgba(255,255,255,0.03); }
-        .lb-item:last-child { border-bottom: none; }
-
-        .lb-rank {
-            font-family: var(--font-hud); font-size: 0.7rem; font-weight: 700;
-            width: 22px; text-align: center; flex-shrink: 0;
-        }
-        .lb-rank.r1 { color: #ffd700; text-shadow: 0 0 10px #ffd700; }
-        .lb-rank.r2 { color: #c0c0c0; }
-        .lb-rank.r3 { color: #cd7f32; }
-        .lb-rank.rn { color: var(--text-dim); }
-
-        .lb-avatar-sm {
-            width: 28px; height: 28px;
-            background: rgba(247,147,30,0.2);
-            border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--font-hud); font-size: 0.7rem; font-weight: 700; color: var(--primary);
-        }
-        .lb-avatar-sm.me { background: rgba(247,147,30,0.35); border: 1px solid rgba(247,147,30,0.5); }
-
-        .lb-name {
-            flex: 1; font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-        .lb-name.me { color: var(--primary); }
-
-        .lb-count {
-            font-family: var(--font-hud); font-size: 1rem; font-weight: 700;
-            color: var(--gold);
-        }
-
-        .lb-bar-mini {
-            height: 2px; background: var(--border2);
-            margin: 3px 0 0 32px; border-radius: 10px; overflow: hidden;
-        }
-        .lb-bar-mini-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--gold));
-            transition: width 1s ease;
-        }
-
-        /* Gap to leader */
-        .gap-label {
-            font-family: var(--font-mono); font-size: 0.58rem; color: var(--red);
-            opacity: 0.7;
-        }
-
-        /* ---- RIGHT PANEL ---- */
-        #right-panel {
-            display: flex; flex-direction: column; gap: 14px; overflow: hidden;
-        }
-
-        /* Live feed */
-        .feed-item {
-            padding: 10px 12px;
-            background: rgba(255,255,255,0.02);
-            border-left: 2px solid rgba(247,147,30,0.3);
-            border-radius: 0 4px 4px 0;
-            margin-bottom: 8px;
-            animation: feedIn 0.4s ease;
-        }
-        .feed-item:last-child { margin-bottom: 0; }
-        @keyframes feedIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-        .feed-name {
-            font-family: var(--font-hud); font-size: 0.75rem; font-weight: 700;
-            color: var(--primary); letter-spacing: 2px; margin-bottom: 2px;
-        }
-        .feed-note {
-            font-size: 0.8rem; color: rgba(255,255,255,0.5); letter-spacing: 0.5px;
-        }
-        .feed-time {
-            font-family: var(--font-mono); font-size: 0.55rem;
-            color: var(--text-dim); margin-top: 4px;
-        }
-
-        /* Stats mini */
-        .stat-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .stat-row:last-child { border-bottom: none; }
-        .stat-lbl {
-            font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 2px;
-        }
-        .stat-val {
-            font-family: var(--font-hud); font-size: 0.85rem; font-weight: 700; color: white;
-        }
-        .stat-val.up { color: var(--green); }
-        .stat-val.hl { color: var(--primary); }
-
-        /* ============================================================
-           TOAST / CELEBRATION
-        ============================================================ */
-        #toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            z-index: 500; display: none; text-align: center; pointer-events: none;
-        }
-        .toast-inner {
-            background: linear-gradient(135deg, #000 0%, #0a0f1e 100%);
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 0 1px rgba(247,147,30,0.2), 0 0 80px rgba(247,147,30,0.3), 0 30px 80px rgba(0,0,0,0.9);
-            padding: 40px 60px;
-            clip-path: polygon(20px 0, 100% 0, calc(100% - 20px) 100%, 0 100%);
-            position: relative; overflow: hidden;
-        }
-        .toast-inner::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 50% 0%, rgba(247,147,30,0.1), transparent 70%);
-        }
-        .toast-title {
-            font-family: var(--font-hud); font-size: 2rem; font-weight: 900;
-            letter-spacing: 4px; color: var(--primary);
-            position: relative;
-        }
-        .toast-sub {
-            font-family: var(--font-mono); font-size: 0.65rem;
-            color: rgba(255,255,255,0.4); letter-spacing: 4px; margin-top: 8px;
-            position: relative;
-        }
-
-        /* ============================================================
-           OVERLAY LOADING SEQUENCE
-        ============================================================ */
-        #boot-overlay {
-            position: fixed; inset: 0; z-index: 300;
-            background: var(--dark);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-            pointer-events: none;
-        }
-        .boot-line {
-            font-family: var(--font-mono); font-size: 0.65rem; color: var(--primary);
-            letter-spacing: 3px; opacity: 0;
-        }
-
-        /* ============================================================
-           SCROLLABLE SECTIONS
-        ============================================================ */
-        .scroll-inner {
-            overflow-y: auto;
-            overflow-x: hidden;
-            flex: 1;
-        }
-        .scroll-inner::-webkit-scrollbar { width: 3px; }
-        .scroll-inner::-webkit-scrollbar-track { background: transparent; }
-        .scroll-inner::-webkit-scrollbar-thumb { background: rgba(247,147,30,0.3); border-radius: 3px; }
-
-        /* ============================================================
-           RESPONSIVE SCALING
-        ============================================================ */
-        @media (max-height: 700px) {
-            #btn-r1p { padding: 16px; font-size: 1rem; }
-            .my-score-big { font-size: 2.8rem; }
-        }
-
-        /* ============================================================
-           UTILITY ANIMATIONS
-        ============================================================ */
-        @keyframes countUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to   { transform: translateY(0); opacity: 1; }
-        }
-        .num-pop { animation: countUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
-        @keyframes shakeX {
-            0%,100% { transform: translateX(0); }
-            20% { transform: translateX(-8px); }
-            40% { transform: translateX(8px); }
-            60% { transform: translateX(-6px); }
-            80% { transform: translateX(6px); }
-        }
-    </style>
+<style>
+:root {
+    --p:    #F7931E;
+    --p2:   #ff6200;
+    --gold: #fbbf24;
+    --dark: #02040A;
+    --d2:   #060C18;
+    --gl:   rgba(6,12,28,.9);
+    --bd:   rgba(247,147,30,.17);
+    --bd2:  rgba(255,255,255,.06);
+    --dim:  rgba(255,255,255,.4);
+    --grn:  #22c55e;
+    --red:  #ef4444;
+    --rs:   #ff4ecd;
+    --ra:   #fbbf24;
+    --rb:   #60a5fa;
+    --rc:   #34d399;
+    --fh:   'Orbitron', monospace;
+    --fu:   'Rajdhani', sans-serif;
+    --fm:   'Space Mono', monospace;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
+
+#cur{position:fixed;width:18px;height:18px;border:1.5px solid var(--p);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .18s,height .18s;mix-blend-mode:difference;}
+#cur::after{content:'';position:absolute;top:50%;left:50%;width:3px;height:3px;background:var(--p);border-radius:50%;transform:translate(-50%,-50%);}
+#cur.big{width:38px;height:38px;opacity:.5;}
+
+#sc{position:fixed;inset:0;z-index:0;}
+#gb{position:fixed;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(247,147,30,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(247,147,30,.022) 1px,transparent 1px);background-size:55px 55px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);}
+body::before{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);}
+body::after{content:'';position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.75) 100%);}
+
+@keyframes blink{50%{opacity:.12;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes feedIn{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:translateX(0);}}
+@keyframes pulseBtn{0%,100%{box-shadow:0 0 0 0 rgba(247,147,30,.4);}50%{box-shadow:0 0 0 14px rgba(247,147,30,0);}}
+@keyframes shimmer{0%,100%{opacity:0;}50%{opacity:.7;}}
+@keyframes holoPulse{0%{opacity:.3;transform:scale(.8);}100%{opacity:0;transform:scale(1.8);}}
+@keyframes matrixDrop{0%{top:-60px;opacity:1;}100%{top:110%;opacity:0;}}
+@keyframes zoomPop{0%{transform:scale(1);}40%{transform:scale(1.04);}100%{transform:scale(1);}}
+@keyframes countUp{from{transform:translateY(14px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes glow{0%,100%{text-shadow:0 0 10px var(--p);}50%{text-shadow:0 0 40px var(--p),0 0 80px var(--gold);}}
+
+/* ─── LOGIN ─── */
+#lm{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;}
+.lo{position:relative;}
+.lr{position:absolute;inset:-34px;border:1px solid rgba(247,147,30,.14);border-radius:50%;animation:spin 24s linear infinite;}
+.lr::before{content:'';position:absolute;top:-4px;left:50%;width:8px;height:8px;background:var(--p);border-radius:50%;box-shadow:0 0 14px var(--p);transform:translateX(-50%);}
+.lr2{position:absolute;inset:-19px;border:1px dashed rgba(247,147,30,.07);border-radius:50%;animation:spin 11s linear infinite reverse;}
+.lf{position:relative;width:460px;padding:50px 46px 42px;background:rgba(2,5,14,.94);border:1px solid rgba(247,147,30,.2);backdrop-filter:blur(24px) saturate(1.5);text-align:center;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 40px 100px rgba(0,0,0,.95);}
+.lf::before{content:'';position:absolute;top:-2px;left:-2px;width:17px;height:17px;border-top:2px solid var(--p);border-left:2px solid var(--p);}
+.lf::after {content:'';position:absolute;bottom:-2px;right:-2px;width:17px;height:17px;border-bottom:2px solid var(--p);border-right:2px solid var(--p);}
+
+.sysline{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:28px;font-family:var(--fm);font-size:.58rem;color:var(--dim);letter-spacing:3px;}
+.dg{width:5px;height:5px;background:var(--grn);border-radius:50%;box-shadow:0 0 8px var(--grn);animation:blink 1.2s infinite;flex-shrink:0;}
+
+.oob-badge{font-family:var(--fh);font-size:.85rem;font-weight:900;letter-spacing:8px;color:rgba(255,255,255,.35);margin-bottom:6px;}
+.oob-badge .oo{color:var(--p);}
+
+.biglogo{font-family:var(--fh);font-size:2.7rem;font-weight:900;letter-spacing:5px;line-height:1;margin-bottom:8px;text-shadow:0 0 50px rgba(247,147,30,.3);}
+.biglogo em{font-style:normal;color:var(--p);}
+
+.tagline{font-family:var(--fm);font-size:.57rem;letter-spacing:3px;color:var(--dim);margin-bottom:38px;text-transform:uppercase;}
+
+.iw{position:relative;margin-bottom:18px;}
+.ilbl{position:absolute;top:-9px;left:13px;font-family:var(--fm);font-size:.54rem;color:var(--p);background:rgba(2,5,14,1);padding:0 6px;letter-spacing:3px;}
+
+#pi{width:100%;background:rgba(247,147,30,.03);border:1px solid rgba(247,147,30,.2);padding:17px 18px;color:white;font-family:var(--fh);font-size:1.05rem;letter-spacing:6px;text-align:center;text-transform:uppercase;outline:none;transition:all .3s;}
+#pi:focus{border-color:var(--p);background:rgba(247,147,30,.06);box-shadow:0 0 26px rgba(247,147,30,.13);}
+#pi::placeholder{color:rgba(255,255,255,.18);letter-spacing:2px;font-size:.75rem;}
+
+.blbtn{width:100%;padding:18px;background:linear-gradient(135deg,var(--p),var(--p2));color:#000;font-family:var(--fh);font-weight:700;border:none;letter-spacing:4px;font-size:.88rem;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.blbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:translateX(-100%);transition:.55s;}
+.blbtn:hover::before{transform:translateX(100%);}
+.blbtn:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(247,147,30,.48);}
+
+#lerr{font-family:var(--fm);font-size:.6rem;color:var(--red);margin-top:12px;min-height:13px;letter-spacing:2px;}
+
+.lfoot{margin-top:28px;font-family:var(--fm);font-size:.52rem;color:var(--dim);line-height:2;letter-spacing:2px;text-transform:uppercase;}
+.lpilots{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-family:var(--fm);font-size:.58rem;color:var(--dim);letter-spacing:2px;}
+.ld{width:5px;height:5px;background:var(--grn);border-radius:50%;box-shadow:0 0 6px var(--grn);animation:blink 1s infinite;flex-shrink:0;}
+.admlink{margin-top:16px;font-family:var(--fm);font-size:.52rem;color:rgba(255,255,255,.13);letter-spacing:2px;cursor:pointer;transition:color .3s;user-select:none;}
+.admlink:hover{color:var(--p);}
+
+/* ─── APP ─── */
+#app{position:relative;z-index:10;height:100vh;overflow:hidden;padding:13px 17px;display:grid;grid-template-rows:50px 1fr;gap:11px;}
+
+#ah{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd2);padding-bottom:11px;}
+.hbrand{display:flex;align-items:baseline;font-family:var(--fh);font-weight:900;letter-spacing:4px;}
+.hoo{color:var(--p);font-size:1.1rem;}
+.hb{color:white;font-size:1.1rem;}
+.hj{color:rgba(255,255,255,.45);font-size:.72rem;letter-spacing:3px;}
+.hr1p{color:var(--p);font-size:1.1rem;margin-left:10px;}
+.hr{display:flex;align-items:center;gap:18px;}
+.lchip{display:flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.56rem;color:var(--dim);letter-spacing:2px;}
+#clk{font-family:var(--fh);font-size:.78rem;color:var(--p);letter-spacing:3px;}
+#upill{background:rgba(247,147,30,.1);border:1px solid rgba(247,147,30,.24);color:var(--p);padding:5px 15px;font-family:var(--fh);font-weight:700;font-size:.7rem;letter-spacing:3px;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);}
+.abtn{cursor:pointer;font-family:var(--fm);font-size:.52rem;color:rgba(255,255,255,.16);letter-spacing:2px;padding:4px 8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;transition:.25s;}
+.abtn:hover{color:var(--red);border-color:rgba(239,68,68,.3);}
+
+#ab{display:grid;grid-template-columns:285px 1fr 285px;gap:11px;overflow:hidden;}
+#lp,#rp{display:flex;flex-direction:column;gap:11px;overflow:hidden;}
+#cp{display:flex;flex-direction:column;gap:11px;overflow:hidden;}
+
+.gc{background:var(--gl);border:1px solid var(--bd2);border-radius:8px;padding:15px;overflow:hidden;position:relative;}
+.gc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(247,147,30,.22),transparent);}
+.ct{font-family:var(--fm);font-size:.57rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.si{overflow-y:auto;overflow-x:hidden;flex:1;}
+.si::-webkit-scrollbar{width:2px;}
+.si::-webkit-scrollbar-thumb{background:rgba(247,147,30,.22);border-radius:2px;}
+
+/* Profile */
+.pgc{text-align:center;padding:20px 15px 16px;}
+#av{width:66px;height:66px;background:linear-gradient(135deg,var(--p),var(--p2));color:#000;font-family:var(--fh);font-size:1.8rem;font-weight:900;border-radius:50%;margin:0 auto 11px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(247,147,30,.12),0 0 26px rgba(247,147,30,.26);position:relative;}
+#av::after{content:'';position:absolute;inset:-7px;border:1px dashed rgba(247,147,30,.24);border-radius:50%;animation:spin 9s linear infinite;}
+#dn{font-family:var(--fh);font-size:1.15rem;font-weight:700;letter-spacing:4px;margin-bottom:3px;}
+#dt{font-family:var(--fm);font-size:.57rem;color:var(--dim);letter-spacing:3px;margin-bottom:11px;}
+.rb{display:inline-flex;align-items:center;gap:4px;padding:3px 11px;border:1px solid currentColor;font-family:var(--fh);font-size:.66rem;letter-spacing:3px;margin-bottom:12px;}
+.rc{color:var(--rc);background:rgba(52,211,153,.06);}
+.rbb{color:var(--rb);background:rgba(96,165,250,.06);}
+.ra{color:var(--ra);background:rgba(251,191,36,.06);}
+.rs{color:var(--rs);background:rgba(255,78,205,.06);}
+.srow{display:flex;justify-content:center;gap:5px;margin-bottom:12px;}
+.sd{width:10px;height:10px;border:1px solid rgba(255,255,255,.12);border-radius:50%;transition:.3s;}
+.sd.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(251,191,36,.6);}
+.plbl{display:flex;justify-content:space-between;font-family:var(--fm);font-size:.54rem;color:var(--dim);margin-bottom:5px;}
+.ptr{height:3px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--p),var(--gold));border-radius:10px;transition:width 1.2s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.pf::after{content:'';position:absolute;top:0;right:0;bottom:0;width:14px;background:linear-gradient(90deg,transparent,white);animation:shimmer 2s infinite;}
+
+/* Action card */
+.agc{padding:16px 15px 14px;}
+.bigs{font-family:var(--fh);font-size:3.5rem;font-weight:900;color:var(--p);text-align:center;line-height:1;margin-bottom:2px;text-shadow:0 0 38px rgba(247,147,30,.42);display:block;}
+.sl2{font-family:var(--fm);font-size:.54rem;text-align:center;color:var(--dim);letter-spacing:3px;margin-bottom:13px;}
+#note{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--bd2);border-radius:4px;color:white;font-family:var(--fu);font-size:.83rem;padding:10px 11px;margin-bottom:11px;resize:none;height:60px;outline:none;transition:.3s;}
+#note:focus{border-color:rgba(247,147,30,.34);}
+#note::placeholder{color:rgba(255,255,255,.18);font-size:.76rem;}
+#br1p{width:100%;padding:20px;background:linear-gradient(135deg,var(--p) 0%,var(--p2) 100%);color:#000;font-family:var(--fh);font-weight:900;border:none;letter-spacing:4px;font-size:1.12rem;cursor:pointer;clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%);position:relative;overflow:hidden;transition:transform .15s,box-shadow .3s;animation:pulseBtn 2.5s ease-in-out infinite;}
+#br1p::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:translateX(-100%);transition:.55s;}
+#br1p:hover::before{transform:translateX(100%);}
+#br1p:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(247,147,30,.44);}
+#br1p:active{transform:scale(.97);}
+#br1p:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;animation:none;}
+.fomo{margin-top:8px;padding:6px 9px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.17);font-family:var(--fm);font-size:.55rem;color:#ff7070;letter-spacing:1px;border-radius:4px;text-align:center;}
+
+/* Battle */
+.bg{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-top:9px;}
+.ts{background:rgba(255,255,255,.02);border:1px solid var(--bd2);border-radius:6px;padding:9px;text-align:center;}
+.ts.mine{border-color:rgba(247,147,30,.21);background:rgba(247,147,30,.04);}
+.tn{font-family:var(--fm);font-size:.54rem;letter-spacing:2px;color:var(--dim);margin-bottom:4px;}
+.tsco{font-family:var(--fh);font-size:1.9rem;font-weight:900;color:white;line-height:1;}
+.ts.mine .tsco{color:var(--p);}
+.vs{font-family:var(--fh);font-size:.82rem;color:var(--dim);}
+.bbar{height:3px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin-top:9px;}
+.bbf{height:100%;background:linear-gradient(90deg,var(--p),var(--gold));transition:width 1s ease;}
+
+/* LB */
+.li{display:flex;align-items:center;gap:8px;padding:7px 7px;border-bottom:1px solid rgba(255,255,255,.04);border-radius:4px;transition:.2s;}
+.li:hover{background:rgba(255,255,255,.03);}
+.li:last-child{border-bottom:none;}
+.lrk{font-family:var(--fh);font-size:.66rem;width:21px;text-align:center;flex-shrink:0;}
+.r1{color:#ffd700;text-shadow:0 0 10px #ffd700;}
+.r2{color:#c0c0c0;}
+.r3{color:#cd7f32;}
+.rn{color:var(--dim);}
+.lav{width:25px;height:25px;background:rgba(247,147,30,.17);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:.62rem;font-weight:700;color:var(--p);}
+.lav.me{background:rgba(247,147,30,.3);border:1px solid rgba(247,147,30,.5);}
+.lnm{flex:1;font-family:var(--fu);font-weight:600;font-size:.85rem;letter-spacing:1px;}
+.lnm.me{color:var(--p);}
+.lct{font-family:var(--fh);font-size:.9rem;font-weight:700;color:var(--gold);}
+.lbar{height:2px;background:var(--bd2);margin:2px 0 0 29px;border-radius:10px;overflow:hidden;}
+.lbf{height:100%;background:linear-gradient(90deg,var(--p),var(--gold));transition:width 1s ease;}
+
+/* Stats */
+.str{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.str:last-child{border-bottom:none;}
+.stl{font-family:var(--fm);font-size:.57rem;color:var(--dim);letter-spacing:2px;}
+.stv{font-family:var(--fh);font-size:.8rem;font-weight:700;color:white;}
+.stv.up{color:var(--grn);}
+.stv.hl{color:var(--p);}
+.stv.rd{color:var(--red);}
+
+/* Feed */
+.fi{padding:8px 10px;background:rgba(255,255,255,.02);border-left:2px solid rgba(247,147,30,.24);border-radius:0 4px 4px 0;margin-bottom:7px;animation:feedIn .35s ease;}
+.fi:last-child{margin-bottom:0;}
+.fn{font-family:var(--fh);font-size:.68rem;font-weight:700;color:var(--p);letter-spacing:2px;margin-bottom:2px;}
+.fb{font-size:.76rem;color:rgba(255,255,255,.44);}
+.ft{font-family:var(--fm);font-size:.5rem;color:var(--dim);margin-top:3px;}
+
+.qgc{padding:13px 14px;}
+#qtxt{font-family:var(--fu);font-size:.86rem;color:rgba(255,255,255,.52);line-height:1.7;font-style:italic;}
+
+/* ─── TOAST ÉPIQUE ─── */
+#toast{position:fixed;top:50%;left:50%;z-index:600;transform:translate(-50%,-50%) scale(0);pointer-events:none;text-align:center;display:none;min-width:420px;}
+.tbox{background:linear-gradient(145deg,#000 0%,#070d1e 100%);border:1px solid var(--p);box-shadow:0 0 0 1px rgba(247,147,30,.14),0 0 80px rgba(247,147,30,.22),0 40px 100px rgba(0,0,0,.95);padding:32px 52px 28px;clip-path:polygon(18px 0,100% 0,calc(100% - 18px) 100%,0 100%);position:relative;overflow:hidden;}
+.tbox::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(247,147,30,.1),transparent 65%);}
+.tpilot{font-family:var(--fh);font-size:.9rem;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:6px;margin-bottom:3px;position:relative;}
+.tmsg{font-family:var(--fh);font-size:1.75rem;font-weight:900;color:var(--p);letter-spacing:2px;position:relative;line-height:1.2;white-space:pre-line;}
+.tcnt{font-family:var(--fh);font-size:2.6rem;font-weight:900;color:white;position:relative;text-shadow:0 0 30px rgba(247,147,30,.5);}
+.tcnt span{color:var(--p);}
+.tsub{font-family:var(--fm);font-size:.58rem;color:rgba(255,255,255,.32);letter-spacing:4px;margin-top:8px;position:relative;}
+
+/* ─── CELEBRATION OVERLAYS ─── */
+#mxo{position:fixed;inset:0;z-index:500;pointer-events:none;display:none;overflow:hidden;}
+.mcol{position:absolute;top:0;font-family:var(--fm);font-size:.7rem;color:var(--p);writing-mode:vertical-rl;animation:matrixDrop 1.6s linear forwards;}
+#flo{position:fixed;inset:0;z-index:490;pointer-events:none;display:none;background:rgba(247,147,30,.04);}
+#holo{position:fixed;top:50%;left:50%;z-index:480;pointer-events:none;display:none;transform:translate(-50%,-50%);}
+.hring{position:absolute;border-radius:50%;border:1.5px solid rgba(247,147,30,.3);animation:holoPulse .7s ease-out forwards;}
+
+/* ─── ADMIN PW ─── */
+#pwo{position:fixed;inset:0;z-index:900;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);}
+.pwbox{width:340px;padding:38px;background:rgba(2,6,18,.97);border:1px solid rgba(239,68,68,.2);text-align:center;}
+.pwtit{font-family:var(--fh);font-size:.95rem;letter-spacing:4px;color:var(--red);margin-bottom:18px;}
+#apw{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(239,68,68,.18);padding:13px;color:white;font-family:var(--fm);font-size:.9rem;text-align:center;letter-spacing:6px;outline:none;margin-bottom:12px;}
+#apw:focus{border-color:var(--red);}
+.pwbtn{width:100%;padding:13px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);color:var(--red);font-family:var(--fh);font-size:.72rem;letter-spacing:3px;cursor:pointer;transition:.25s;}
+.pwbtn:hover{background:rgba(239,68,68,.22);}
+#pwerr{font-family:var(--fm);font-size:.56rem;color:var(--red);margin-top:8px;min-height:13px;letter-spacing:2px;}
+.pwcanc{margin-top:14px;font-family:var(--fm);font-size:.52rem;color:rgba(255,255,255,.14);cursor:pointer;letter-spacing:2px;}
+.pwcanc:hover{color:var(--dim);}
+
+/* ─── ADMIN MODAL ─── */
+#adm{position:fixed;inset:0;z-index:800;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.84);backdrop-filter:blur(6px);}
+.aframe{width:640px;max-height:88vh;overflow-y:auto;background:rgba(2,6,18,.97);border:1px solid rgba(239,68,68,.22);box-shadow:0 0 0 1px rgba(239,68,68,.07),0 40px 100px rgba(0,0,0,.95);padding:34px;position:relative;}
+.aframe::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(239,68,68,.35),transparent);}
+.atit{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:var(--red);letter-spacing:5px;margin-bottom:4px;}
+.asub{font-family:var(--fm);font-size:.57rem;color:var(--dim);letter-spacing:3px;margin-bottom:26px;}
+.asect{margin-bottom:24px;}
+.asect-t{font-family:var(--fm);font-size:.58rem;letter-spacing:3px;color:var(--dim);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--bd2);text-transform:uppercase;}
+.abtn{padding:10px 18px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.04);color:white;font-family:var(--fh);font-size:.67rem;letter-spacing:2px;cursor:pointer;border-radius:4px;margin-right:7px;margin-bottom:7px;display:inline-block;transition:.25s;}
+.abtn:hover{border-color:var(--p);color:var(--p);background:rgba(247,147,30,.07);}
+.abtn.d{border-color:rgba(239,68,68,.28);color:var(--red);}
+.abtn.d:hover{border-color:var(--red);background:rgba(239,68,68,.1);}
+.abtn.g{border-color:rgba(34,197,94,.28);color:var(--grn);}
+.abtn.g:hover{border-color:var(--grn);background:rgba(34,197,94,.1);}
+.alog{font-family:var(--fm);font-size:.58rem;color:var(--grn);background:rgba(0,0,0,.5);border:1px solid rgba(34,197,94,.13);border-radius:4px;padding:11px;margin-top:10px;min-height:46px;line-height:1.9;letter-spacing:1px;max-height:110px;overflow-y:auto;}
+.ainp{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--bd2);border-radius:4px;color:white;font-family:var(--fm);font-size:.67rem;padding:9px 11px;outline:none;margin-bottom:7px;transition:.3s;}
+.ainp:focus{border-color:rgba(247,147,30,.38);}
+.aclose{position:absolute;top:14px;right:14px;font-family:var(--fh);font-size:.62rem;letter-spacing:2px;color:var(--dim);cursor:pointer;padding:5px 11px;border:1px solid var(--bd2);border-radius:4px;transition:.25s;}
+.aclose:hover{border-color:var(--red);color:var(--red);}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px;}
+.astat{background:rgba(255,255,255,.03);border:1px solid var(--bd2);border-radius:6px;padding:11px;text-align:center;}
+.asv{font-family:var(--fh);font-size:1.4rem;font-weight:700;color:var(--p);}
+.asl{font-family:var(--fm);font-size:.52rem;color:var(--dim);letter-spacing:2px;margin-top:3px;}
+</style>
 </head>
 <body>
 
-    <!-- Custom cursor -->
-    <div id="cursor"></div>
+<div id="cur"></div>
+<div id="gb"></div>
+<canvas id="sc"></canvas>
 
-    <!-- Grid & canvas -->
-    <div id="grid-overlay"></div>
-    <canvas id="star-canvas"></canvas>
+<!-- Celebration layers -->
+<div id="mxo"></div>
+<div id="flo"></div>
+<div id="holo"></div>
 
-    <!-- Boot overlay (hidden after stars init) -->
-    <div id="boot-overlay" style="opacity:0; display:none;"></div>
+<!-- Toast -->
+<div id="toast">
+    <div class="tbox">
+        <div class="tpilot" id="tp"></div>
+        <div class="tmsg"   id="tm"></div>
+        <div class="tcnt"   id="tc"></div>
+        <div class="tsub"   id="ts"></div>
+    </div>
+</div>
 
-    <!-- Toast -->
-    <div id="toast">
-        <div class="toast-inner">
-            <div class="toast-title" id="toast-title">MISSION ACCOMPLIE</div>
-            <div class="toast-sub" id="toast-sub">R1P VALIDÉ ✓</div>
+<!-- ══════════════════════ LOGIN ══════════════════════ -->
+<div id="lm">
+    <div class="lo">
+        <div class="lr"></div>
+        <div class="lr2"></div>
+        <div class="lf">
+            <div class="sysline"><span class="dg"></span>SYSTÈME OPÉRATIONNEL — v3.1</div>
+            <div class="oob-badge"><span class="oo">OO</span>B</div>
+            <div class="biglogo"><em>OOB</em>JECTIF<br><em>R1P</em></div>
+            <div class="tagline">RENDEZ-VOUS 1 PROSPECTION · PERFORMANCE ÉLITE</div>
+            <div class="iw">
+                <span class="ilbl">IDENTIFIANT PILOTE</span>
+                <input id="pi" type="text" placeholder="ENTREZ VOTRE NOM" autocomplete="off">
+            </div>
+            <button class="blbtn" id="blbtn" onclick="doLogin()">⚡ LANCER LA SÉQUENCE</button>
+            <p id="lerr"></p>
+            <div class="lfoot">ACCÈS RÉSERVÉ · ÉQUIPE OOB · SESSION SÉCURISÉE</div>
+            <div class="lpilots"><span class="ld"></span><span id="pcnt">—</span>&nbsp;PILOTES ACTIFS AUJOURD'HUI</div>
+            <div class="admlink" onclick="openPW()">[ ACCÈS ADMIN ]</div>
         </div>
     </div>
+</div>
 
-    <!-- ================================================================
-         LOGIN SCREEN
-    ================================================================ -->
-    <div id="login-modal">
-        <div class="login-outer">
-            <div class="login-ring"></div>
-            <div class="login-frame">
-                <div class="login-sys-line">
-                    <span class="blink-dot"></span>
-                    SYSTÈME OPÉRATIONNEL — v2.6.1
+<!-- ══════════════════════ APP ══════════════════════ -->
+<div id="app" style="display:none;opacity:0;">
+    <header id="ah">
+        <div class="hbrand">
+            <span class="hoo">OO</span><span class="hb">B</span><span class="hj">JECTIF</span><span class="hr1p">R1P</span>
+        </div>
+        <div class="hr">
+            <div class="lchip"><span class="ld"></span>LIVE</div>
+            <div id="clk">--:--:--</div>
+            <div id="upill">—</div>
+            <div class="abtn" onclick="openPW()">⚙ ADMIN</div>
+        </div>
+    </header>
+
+    <div id="ab">
+        <!-- LEFT -->
+        <div id="lp">
+            <div class="gc pgc">
+                <div id="av">?</div>
+                <h3 id="dn">---</h3>
+                <p  id="dt">---</p>
+                <div class="rb rbb" id="rbadge">◆ RANG B</div>
+                <div class="ct" style="justify-content:center;margin-bottom:7px;"><span>🔥</span>SÉRIE DE VICTOIRES</div>
+                <div class="srow" id="srow"></div>
+                <div class="plbl"><span id="plbl">VERS RANG A</span><span id="ppct">0%</span></div>
+                <div class="ptr"><div class="pf" id="pfill" style="width:0%"></div></div>
+            </div>
+            <div class="gc agc">
+                <div class="ct"><span>🎯</span>MA SESSION LIVE</div>
+                <span class="bigs" id="myscore">0</span>
+                <div class="sl2">R1P PRIS CETTE SESSION</div>
+                <textarea id="note" placeholder="Commentaire du R1P..."></textarea>
+                <button id="br1p" onclick="takeR1P()">📞 R1P +1</button>
+                <div class="fomo" id="fomo">⚡ CHAQUE APPEL EST UNE CHANCE</div>
+            </div>
+        </div>
+
+        <!-- CENTER -->
+        <div id="cp">
+            <div class="gc" style="padding:15px;">
+                <div class="ct"><span>⚔️</span>BATTLE ÉQUIPES — SEMAINE</div>
+                <div class="bg">
+                    <div class="ts mine"><div class="tn" id="tml">MON ÉQUIPE</div><div class="tsco" id="tms">0</div></div>
+                    <div class="vs">VS</div>
+                    <div class="ts"><div class="tn" id="trl">RIVAL</div><div class="tsco" id="trs">0</div></div>
                 </div>
+                <div class="bbar"><div class="bbf" id="bbf" style="width:50%"></div></div>
+            </div>
+            <div class="gc" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+                <div class="ct"><span>🏆</span>TOP PERFORMANCE — SEMAINE</div>
+                <div class="si" id="lbw"></div>
+            </div>
+            <div class="gc" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+                <div class="ct"><span>⚡</span>CLASSEMENT SESSION</div>
+                <div class="si" id="lbs"></div>
+            </div>
+        </div>
 
-                <div class="login-logo">OBJECTIF<br><span class="logo-accent">R1P</span></div>
-                <div class="login-tagline">PROTOCOLE ÉLITE · PROSPECTION HAUTE PERFORMANCE</div>
-
-                <div class="input-wrap">
-                    <span class="input-label">IDENTIFIANT PILOTE</span>
-                    <input id="prenom-input" type="text" placeholder="ENTREZ VOTRE NOM" autocomplete="off">
-                </div>
-
-                <button class="btn-launch" id="btn-login" onclick="initiateLaunch()">
-                    ⚡ LANCER LA SÉQUENCE
-                </button>
-                <p id="login-error"></p>
-
-                <div class="login-footer">
-                    ACCÈS RÉSERVÉ AUX MEMBRES DE L'ÉLITE<br>
-                    DONNÉES CHIFFRÉES · SESSION SÉCURISÉE
-                </div>
-
-                <div class="live-pilots" style="margin-top:16px;">
-                    <span class="live-dot"></span>
-                    <span id="pilot-count">—</span> PILOTES CONNECTÉS AUJOURD'HUI
-                </div>
+        <!-- RIGHT -->
+        <div id="rp">
+            <div class="gc">
+                <div class="ct"><span>📊</span>MES STATS</div>
+                <div class="str"><span class="stl">TOTAL SEMAINE</span><span class="stv hl" id="stw">—</span></div>
+                <div class="str"><span class="stl">POSITION</span><span class="stv" id="stp">—</span></div>
+                <div class="str"><span class="stl">ÉCART LEADER</span><span class="stv" id="stg">—</span></div>
+                <div class="str"><span class="stl">R1P / HEURE</span><span class="stv up" id="str2">—</span></div>
+                <div class="str"><span class="stl">SESSION</span><span class="stv" id="stse">—</span></div>
+            </div>
+            <div class="gc" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+                <div class="ct"><span>📡</span>FLUX EN DIRECT</div>
+                <div class="si" id="feed"></div>
+            </div>
+            <div class="gc qgc">
+                <div class="ct"><span>🧠</span>MINDSET OOB</div>
+                <p id="qtxt">"La prospection est un sport de contact."</p>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ================================================================
-         MAIN APP
-    ================================================================ -->
-    <div id="main-app" style="display:none;">
-        <!-- HEADER -->
-        <header id="app-header">
-            <div class="header-logo">
-                OBJECTIF <span class="h-accent">R1P</span>
-                <span style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-dim);letter-spacing:3px;font-weight:400;">
-                    DASHBOARD ÉLITE
-                </span>
+<!-- ══════════════════════ ADMIN PW ══════════════════════ -->
+<div id="pwo">
+    <div class="pwbox">
+        <div class="pwtit">🔐 ACCÈS ADMIN OOB</div>
+        <input id="apw" type="password" placeholder="••••••••" autocomplete="off">
+        <button class="pwbtn" onclick="checkPW()">DÉVERROUILLER</button>
+        <p id="pwerr"></p>
+        <div class="pwcanc" onclick="closePW()">ANNULER</div>
+    </div>
+</div>
+
+<!-- ══════════════════════ ADMIN PANEL ══════════════════════ -->
+<div id="adm">
+    <div class="aframe">
+        <div class="aclose" onclick="closeAdm()">✕ FERMER</div>
+        <div class="atit">🛡 PANNEAU ADMIN — OOB</div>
+        <div class="asub">GESTION SESSIONS · CONTRÔLE TOTAL · ACCÈS RESTREINT</div>
+
+        <div class="asect">
+            <div class="asect-t">📊 STATS GLOBALES</div>
+            <div class="agrid">
+                <div class="astat"><div class="asv" id="ast">—</div><div class="asl">TOTAL R1P</div></div>
+                <div class="astat"><div class="asv" id="asp">—</div><div class="asl">PILOTES ACTIFS</div></div>
+                <div class="astat"><div class="asv" id="aseq">—</div><div class="asl">ÉQUIPES</div></div>
             </div>
-            <div class="header-meta">
-                <div class="meta-chip">
-                    <span class="live-dot"></span>
-                    LIVE
-                </div>
-                <div id="clock-display">00:00:00</div>
-                <div id="user-pill">—</div>
-            </div>
-        </header>
+        </div>
 
-        <!-- BODY -->
-        <div id="app-body">
+        <div class="asect">
+            <div class="asect-t">🔄 RESET COMPTEURS</div>
+            <button class="abtn d" onclick="admDo('reset_session')">⚡ RESET SESSION</button>
+            <button class="abtn d" onclick="admDo('reset_week')">📅 RESET SEMAINE</button>
+            <button class="abtn d" onclick="admDo('reset_all')">💣 RESET TOTAL</button>
+            <div class="alog" id="alog">En attente d'action...</div>
+        </div>
 
-            <!-- === LEFT PANEL === -->
-            <div id="left-panel">
+        <div class="asect">
+            <div class="asect-t">👤 AJOUTER UN PILOTE</div>
+            <input class="ainp" id="npn" placeholder="Prénom (ex: thomas)">
+            <input class="ainp" id="npt" placeholder="Équipe (ex: Caen)">
+            <button class="abtn g" onclick="admAddPilot()">➕ AJOUTER LE PILOTE</button>
+        </div>
 
-                <!-- Profile -->
-                <div class="glass-card profile-card">
-                    <div id="avatar">?</div>
-                    <h3 id="display-name">---</h3>
-                    <p id="display-team">---</p>
+        <div class="asect">
+            <div class="asect-t">📣 MESSAGE DIFFUSION (tous les écrans)</div>
+            <input class="ainp" id="bmsg" placeholder="Ex: DERNIÈRE HEURE — À FOND !">
+            <button class="abtn" onclick="admBroadcast()">📡 DIFFUSER LE MESSAGE</button>
+        </div>
 
-                    <div class="rank-badge b" id="rank-badge">
-                        ◆ RANG B
-                    </div>
+        <div class="asect">
+            <div class="asect-t">⏱ CONTRÔLE SESSION</div>
+            <button class="abtn g" onclick="admDo('start')">▶ DÉMARRER</button>
+            <button class="abtn d" onclick="admDo('stop')">■ TERMINER</button>
+            <button class="abtn"   onclick="admRefresh()">🔄 FORCER REFRESH</button>
+        </div>
 
-                    <!-- Streak -->
-                    <div class="card-title" style="justify-content:center;margin-bottom:8px;">
-                        <span class="ct-icon">🔥</span> SÉRIE EN COURS
-                    </div>
-                    <div class="streak-row" id="streak-row">
-                        <!-- dots generated by JS -->
-                    </div>
-
-                    <!-- Progress -->
-                    <div class="progress-section">
-                        <div class="progress-label">
-                            <span>VERS RANG A</span>
-                            <span id="progress-pct">0%</span>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Card -->
-                <div class="glass-card action-card">
-                    <div class="card-title">
-                        <span class="ct-icon">🎯</span> MA SESSION
-                    </div>
-
-                    <div class="my-score-big" id="my-score">0</div>
-                    <div class="my-score-label">R1P CETTE SESSION</div>
-
-                    <textarea id="note" placeholder="Commentaire de mission..."></textarea>
-
-                    <button id="btn-r1p" onclick="takeR1P()">
-                        <div class="btn-pulse"></div>
-                        R1P +1
-                    </button>
-
-                    <div class="fomo-chip" id="fomo-chip">
-                        ⚡ NE LAISSE PERSONNE PRENDRE TON AVANCE
-                    </div>
-                </div>
-            </div>
-
-            <!-- === CENTER PANEL === -->
-            <div id="center-panel">
-
-                <!-- Team Battle -->
-                <div class="glass-card team-battle">
-                    <div class="card-title">
-                        <span class="ct-icon">⚔️</span> BATTLE D'ÉQUIPES — SEMAINE
-                    </div>
-                    <div class="battle-grid">
-                        <div class="team-side mine" id="team-mine">
-                            <div class="team-name" id="team-mine-label">MON ÉQUIPE</div>
-                            <div class="team-score" id="team-mine-score">0</div>
-                        </div>
-                        <div class="vs-badge">VS</div>
-                        <div class="team-side" id="team-best">
-                            <div class="team-name" id="team-best-label">RIVAL</div>
-                            <div class="team-score" id="team-best-score">0</div>
-                        </div>
-                    </div>
-                    <div class="battle-bar-wrap">
-                        <div class="battle-bar">
-                            <div class="battle-bar-fill" id="battle-bar-fill" style="width:50%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TOP SEMAINE -->
-                <div class="glass-card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-                    <div class="card-title">
-                        <span class="ct-icon">🏆</span> TOP PERFORMANCE — SEMAINE
-                    </div>
-                    <div class="scroll-inner" id="lb-week"></div>
-                </div>
-
-                <!-- TOP SESSION -->
-                <div class="glass-card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-                    <div class="card-title">
-                        <span class="ct-icon">⚡</span> LIVE SESSION
-                    </div>
-                    <div class="scroll-inner" id="lb-session"></div>
-                </div>
-            </div>
-
-            <!-- === RIGHT PANEL === -->
-            <div id="right-panel">
-
-                <!-- Live Stats -->
-                <div class="glass-card">
-                    <div class="card-title">
-                        <span class="ct-icon">📊</span> MES STATS
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-lbl">TOTAL SEMAINE</span>
-                        <span class="stat-val hl" id="stat-week">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-lbl">POSITION</span>
-                        <span class="stat-val" id="stat-pos">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-lbl">ÉCART LEADER</span>
-                        <span class="stat-val" id="stat-gap">—</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-lbl">TAUX / HEURE</span>
-                        <span class="stat-val up" id="stat-rate">—</span>
-                    </div>
-                </div>
-
-                <!-- Live Feed -->
-                <div class="glass-card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-                    <div class="card-title">
-                        <span class="ct-icon">🔥</span> FLUX EN DIRECT
-                    </div>
-                    <div class="scroll-inner" id="live-feed"></div>
-                </div>
-
-                <!-- Motivation -->
-                <div class="glass-card" style="padding:16px 18px;">
-                    <div class="card-title">
-                        <span class="ct-icon">🧠</span> MINDSET
-                    </div>
-                    <p id="motivation-quote" style="font-family:var(--font-body);font-size:0.9rem;color:rgba(255,255,255,0.6);line-height:1.6;font-style:italic;letter-spacing:0.5px;">
-                        "Chaque R1P est une brique de ton succès."
-                    </p>
-                </div>
-            </div>
-
-        </div><!-- /#app-body -->
-    </div><!-- /#main-app -->
-
+        <div class="asect">
+            <div class="asect-t">🗂 PILOTES & SCORES</div>
+            <button class="abtn" onclick="admLoadPilots()">📥 CHARGER LES DONNÉES</button>
+            <div class="si" style="max-height:190px;margin-top:9px;" id="aplist"></div>
+        </div>
+    </div>
+</div>
 
 <script>
-/* ================================================================
+/* ═══════════════════════════════════════
    CONFIG
-================================================================ */
-const SUPABASE_URL      = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
-const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+═══════════════════════════════════════ */
+const SB_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
+const SB_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
+const _sb    = supabase.createClient(SB_URL, SB_KEY);
+const ADMIN_PW = "oob2026"; // ← modifier ici
 
 const TEAM_MAP = {
     "sofia":"Caen","david":"Caen","kevin":"Caen",
-    "durmus":"Evreux","merwan":"Courbevoie","diassivi":"Courbevoie",
-    "sertag":"Courbevoie","roxanne":"Rouen"
+    "durmus":"Evreux",
+    "merwan":"Courbevoie","diassivi":"Courbevoie","sertag":"Courbevoie",
+    "roxanne":"Rouen"
 };
 
-const COMPLIMENTS = [
-    ["MAGISTRAL !", "Ton pipeline s'agrandit."],
-    ["GOD MODE !", "Tu es en train de dominer."],
-    ["INARRÊTABLE !", "Le leadership te revient."],
-    ["DOMINATION TOTALE !", "Personne ne peut te suivre."],
-    ["LÉGENDAIRE !", "Tu écris l'histoire de la semaine."],
-    ["MACHINE DE GUERRE !", "Ton énergie est contagieuse."],
+// Messages dopamine hyper-personnalisés — varient avec le count
+const HYPE = [
+    { m:"{name},\nINSTINCT DE CHASSEUR !", s:"Ce R1P ouvre une porte. Continue 📞" },
+    { m:"{name}\nTU DÉCHIRES TOUT !", s:"Le pipeline grossit à chaque appel 🏆" },
+    { m:"MACHINE DE GUERRE\n{name} !", s:"Personne ne peut suivre ton rythme 🔥" },
+    { m:"{name}\nEN ÉTAT DE GRÂCE !", s:"Tu touches la performance absolue ⚡" },
+    { m:"LÉGENDAIRE,\n{name} !", s:"Tu écris l'histoire de cette semaine 📖" },
+    { m:"{name} —\nGOD MODE ACTIVÉ !", s:"Ce RDV peut changer une carrière 🎯" },
+    { m:"INARRÊTABLE\n{name} !", s:"L'équipe OOB est fière de toi 🫡" },
+    { m:"{name},\nR1P VALIDÉ !", s:"Chaque appel est une victoire 📞" },
+    { m:"LA PUISSANCE\nOOB EN {name} !", s:"Ton énergie est contagieuse 🌟" },
+    { m:"{name},\nAU SOMMET !", s:"Garde ce rythme jusqu'à la fin 🚀" },
+    { m:"WOW {name}\nTU ENVOIES DU LOURD !", s:"OOB s'incline devant toi 🙌" },
+    { m:"{name} —\nFEU SACRÉ !", s:"La régularité forge les légendes ⭐" },
+];
+
+// Messages FOMO
+const FOMO = [
+    "⚡ {rival} vient de passer devant toi — React !",
+    "🎯 Tu es à {gap} R1P du leader. Ferme l'écart !",
+    "📞 {rival} ne s'arrête pas. Et toi ?",
+    "⚠ Chaque minute sans appel = un R1P offert.",
+    "🔥 L'écart se creuse. C'est maintenant !",
+    "💥 {rival} prend de l'avance. Réagis !",
+    "⏱ La session avance. Reste concentré !",
 ];
 
 const QUOTES = [
-    "Chaque R1P est une brique de ton succès.",
+    "La prospection est un sport de contact. OOB gagne.",
+    "Chaque R1P est un pas vers l'objectif.",
     "La régularité bat le talent qui se repose.",
-    "Les champions font ce que les autres ne font pas.",
     "Un refus de plus, une victoire en chemin.",
-    "Ta persévérance forge ta réputation.",
-    "L'élite n'attend pas la motivation, elle agit.",
+    "Les champions font ce que les autres évitent.",
+    "Ton énergie d'aujourd'hui forge ta réputation.",
+    "L'élite n'attend pas la motivation : elle agit.",
+    "OOB — l'excellence n'est pas un hasard.",
+    "Chaque non rapproche du oui.",
+    "La prospection est une loterie où tu achètes les tickets.",
 ];
 
-const FOMO_MSGS = [
-    "⚡ {rival} vient de passer devant toi. React !",
-    "🎯 Tu es à {gap} R1P du leader — ferme l'écart !",
-    "🔥 L'équipe {team} monte. Tiens bon !",
-    "⚠️ Ta série s'arrête si tu n'agis pas maintenant.",
-    "💥 {rival} est en train de te doubler.",
-];
+// Animations aléatoires
+const ANIM = ["confetti_rain","confetti_cannon","matrix","lightning","holo","spotlight","zoom","particles","color_flash","star_burst"];
 
-let currentUser = { name: "", team: "" };
-let mySessionCount = 0;
-let myWeekCount = 0;
-let sessionStart = Date.now();
-let lastLeaderboard = [];
-let fomoInterval = null;
-let refreshInterval = null;
+let user = { name:"", team:"" };
+let ses  = 0;   // session count local
+let week = 0;   // week count
+let t0   = Date.now();
+let board = [];
 
-/* ================================================================
+/* ═══════════════════════════════════════
    CURSOR
-================================================================ */
-const cursor = document.getElementById('cursor');
+═══════════════════════════════════════ */
+const cur = document.getElementById('cur');
 document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
+    cur.style.left = e.clientX+'px';
+    cur.style.top  = e.clientY+'px';
 });
-document.querySelectorAll('button, a, input, textarea').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+document.querySelectorAll('button,input,textarea').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cur.classList.add('big'));
+    el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
 });
 
-/* ================================================================
-   THREE.JS STARFIELD  (BufferGeometry — compatible r128)
-================================================================ */
-let starRenderer, starScene, starCam, starMesh;
-let starPositions, starVelocities, starAccelerations;
-const STAR_COUNT = 6000;
+/* ═══════════════════════════════════════
+   THREE.JS STARFIELD — BufferGeometry (r128 safe)
+═══════════════════════════════════════ */
+let SR, SS, SC, SM;
+const N=6000;
+let SP, SV, SA;
 
-function initStars() {
-    starScene = new THREE.Scene();
-    starCam = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
-    starCam.position.z = 1;
-    starCam.rotation.x = Math.PI / 2;
+function initStars(){
+    SS = new THREE.Scene();
+    SC = new THREE.PerspectiveCamera(60,innerWidth/innerHeight,1,1000);
+    SC.position.z=1; SC.rotation.x=Math.PI/2;
+    SR = new THREE.WebGLRenderer({canvas:document.getElementById('sc'),antialias:false});
+    SR.setPixelRatio(Math.min(devicePixelRatio,2));
+    SR.setSize(innerWidth,innerHeight);
 
-    starRenderer = new THREE.WebGLRenderer({
-        canvas: document.getElementById('star-canvas'),
-        antialias: false,
-        alpha: false,
-    });
-    starRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    starRenderer.setSize(innerWidth, innerHeight);
-
-    // BufferGeometry
     const geo = new THREE.BufferGeometry();
-    starPositions     = new Float32Array(STAR_COUNT * 3);
-    starVelocities    = new Float32Array(STAR_COUNT);
-    starAccelerations = new Float32Array(STAR_COUNT);
-
-    for (let i = 0; i < STAR_COUNT; i++) {
-        starPositions[i*3]     = Math.random() * 600 - 300;
-        starPositions[i*3 + 1] = Math.random() * 600 - 300;
-        starPositions[i*3 + 2] = Math.random() * 600 - 300;
-        starVelocities[i]    = 0;
-        starAccelerations[i] = 0.01;
+    SP=new Float32Array(N*3); SV=new Float32Array(N); SA=new Float32Array(N);
+    for(let i=0;i<N;i++){
+        SP[i*3]=Math.random()*600-300;
+        SP[i*3+1]=Math.random()*600-300;
+        SP[i*3+2]=Math.random()*600-300;
+        SV[i]=0; SA[i]=0.01;
     }
-
-    geo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-
-    const mat = new THREE.PointsMaterial({
-        color: 0xbbbbcc,
-        size: 0.5,
-        transparent: true,
-        depthWrite: false,
-    });
-
-    starMesh = new THREE.Points(geo, mat);
-    starScene.add(starMesh);
-    animateStars();
-
-    window.addEventListener('resize', () => {
-        starCam.aspect = innerWidth / innerHeight;
-        starCam.updateProjectionMatrix();
-        starRenderer.setSize(innerWidth, innerHeight);
-    });
+    geo.setAttribute('position',new THREE.BufferAttribute(SP,3));
+    SM=new THREE.Points(geo,new THREE.PointsMaterial({color:0xaaaacc,size:.5,transparent:true,depthWrite:false}));
+    SS.add(SM);
+    window.addEventListener('resize',()=>{SC.aspect=innerWidth/innerHeight;SC.updateProjectionMatrix();SR.setSize(innerWidth,innerHeight);});
+    animS();
+}
+function animS(){
+    const p=SM.geometry.attributes.position;
+    for(let i=0;i<N;i++){SV[i]+=SA[i];p.array[i*3+1]-=SV[i];if(p.array[i*3+1]<-200){p.array[i*3+1]=200;SV[i]=0;}}
+    p.needsUpdate=true; SM.rotation.y+=.0004;
+    SR.render(SS,SC); requestAnimationFrame(animS);
+}
+function hyper(on){
+    const ta=on?.9:.01, ts=on?4:.5;
+    const o={v:on?.01:.9};
+    gsap.to(o,{v:ta,duration:on?2.2:1.2,ease:on?"power4.in":"power2.out",onUpdate:()=>{for(let i=0;i<N;i++)SA[i]=o.v;}});
+    gsap.to(SM.material,{size:ts,duration:on?2:1});
 }
 
-let hyperDrive = false;
-function animateStars() {
-    const pos = starMesh.geometry.attributes.position;
-    for (let i = 0; i < STAR_COUNT; i++) {
-        starVelocities[i] += starAccelerations[i];
-        pos.array[i*3 + 1] -= starVelocities[i];
-        if (pos.array[i*3 + 1] < -200) {
-            pos.array[i*3 + 1] = 200;
-            starVelocities[i] = 0;
-        }
-    }
-    pos.needsUpdate = true;
-    starMesh.rotation.y += 0.0005;
-    starRenderer.render(starScene, starCam);
-    requestAnimationFrame(animateStars);
-}
-
-function activateHyperdrive(on) {
-    const targetAcc = on ? 0.9 : 0.01;
-    const targetSize = on ? 4 : 0.5;
-    for (let i = 0; i < STAR_COUNT; i++) {
-        gsap.to(starAccelerations, { [i]: targetAcc, duration: on ? 2 : 1, ease: on ? "power4.in" : "power2.out" });
-    }
-    gsap.to(starMesh.material, { size: targetSize, duration: on ? 2 : 1 });
-}
-
-/* ================================================================
+/* ═══════════════════════════════════════
    CLOCK
-================================================================ */
-function startClock() {
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('clock-display').textContent =
-            now.toTimeString().slice(0, 8);
-    }, 1000);
+═══════════════════════════════════════ */
+function startClock(){
+    const el=document.getElementById('clk');
+    setInterval(()=>{el.textContent=new Date().toTimeString().slice(0,8);},1000);
 }
 
-/* ================================================================
+/* ═══════════════════════════════════════
    LOGIN
-================================================================ */
-function initiateLaunch() {
-    const raw = document.getElementById("prenom-input").value.trim().toLowerCase();
-    const errEl = document.getElementById("login-error");
+═══════════════════════════════════════ */
+function doLogin(){
+    const raw=(document.getElementById('pi').value||'').trim().toLowerCase();
+    const err=document.getElementById('lerr');
+    err.textContent='';
+    if(!raw){err.textContent='⚠ ENTREZ VOTRE IDENTIFIANT';return;}
+    if(!TEAM_MAP[raw]){err.textContent='✕ PILOTE NON RECONNU — CONTACTEZ ADMIN';shake('pi');return;}
 
-    if (!raw) { errEl.textContent = "⚠ ENTREZ VOTRE IDENTIFIANT"; return; }
-    if (!TEAM_MAP[raw]) { errEl.textContent = "✗ ACCÈS REFUSÉ : PILOTE NON RECONNU"; shakeEl("prenom-input"); return; }
+    user.name=raw.charAt(0).toUpperCase()+raw.slice(1);
+    user.team=TEAM_MAP[raw];
 
-    errEl.textContent = "";
-    currentUser.name = raw.charAt(0).toUpperCase() + raw.slice(1);
-    currentUser.team = TEAM_MAP[raw];
+    const btn=document.getElementById('blbtn');
+    btn.disabled=true; btn.textContent='INITIALISATION...';
 
-    const btn = document.getElementById('btn-login');
-    btn.disabled = true;
-    btn.textContent = "INITIALISATION...";
+    hyper(true);
+    gsap.to('#lm',{opacity:0,duration:1,delay:1.9});
 
-    // Hyperdrive
-    activateHyperdrive(true);
-    gsap.to("#login-modal", { opacity: 0, duration: 1, delay: 1.8 });
-
-    setTimeout(() => {
-        document.getElementById("login-modal").style.display = "none";
-        document.getElementById("main-app").style.display = "grid";
-        gsap.fromTo("#main-app", { opacity: 0 }, { opacity: 1, duration: 0.8 });
-
-        // Slow stars back
-        setTimeout(() => activateHyperdrive(false), 500);
-
-        setupDashboard();
+    setTimeout(()=>{
+        document.getElementById('lm').style.display='none';
+        const ap=document.getElementById('app');
+        ap.style.display='grid';
+        gsap.fromTo(ap,{opacity:0},{opacity:1,duration:.8});
+        setTimeout(()=>hyper(false),700);
+        boot();
         startClock();
-    }, 2600);
+    },2700);
 }
+document.getElementById('pi').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-document.getElementById('prenom-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') initiateLaunch();
-});
-
-/* ================================================================
-   DASHBOARD SETUP
-================================================================ */
-function setupDashboard() {
-    document.getElementById("display-name").textContent = currentUser.name.toUpperCase();
-    document.getElementById("user-pill").textContent    = currentUser.name.toUpperCase();
-    document.getElementById("avatar").textContent       = currentUser.name[0];
-    document.getElementById("display-team").textContent = "SECTEUR · " + currentUser.team.toUpperCase();
-    document.getElementById("team-mine-label").textContent = currentUser.team.toUpperCase();
-
-    // Random quote
-    document.getElementById('motivation-quote').textContent =
-        '"' + QUOTES[Math.floor(Math.random() * QUOTES.length)] + '"';
-
-    // Streak (visual only — uses sessionCount)
-    buildStreakDots(0);
-
+/* ═══════════════════════════════════════
+   BOOT DASHBOARD
+═══════════════════════════════════════ */
+function boot(){
+    document.getElementById('dn').textContent   = user.name.toUpperCase();
+    document.getElementById('upill').textContent= user.name.toUpperCase();
+    document.getElementById('av').textContent   = user.name[0];
+    document.getElementById('dt').textContent   = 'SECTEUR · '+user.team.toUpperCase();
+    document.getElementById('tml').textContent  = user.team.toUpperCase();
+    document.getElementById('qtxt').textContent = '"'+QUOTES[~~(Math.random()*QUOTES.length)]+'"';
+    buildStreak(0);
     refreshAll();
-    refreshInterval = setInterval(refreshAll, 8000);
+    setInterval(refreshAll,8000);
+    setInterval(rotateFomo,8500);
 
-    // FOMO rotation
-    fomoInterval = setInterval(rotateFomo, 7000);
+    // Realtime subscription
+    _sb.channel('r1p-live')
+       .on('postgres_changes',{event:'INSERT',schema:'public',table:'suivi_r1p'},()=>refreshAll())
+       .subscribe();
 }
 
-/* ================================================================
-   STREAK DOTS
-================================================================ */
-function buildStreakDots(count) {
-    const row = document.getElementById('streak-row');
-    row.innerHTML = '';
-    for (let i = 0; i < 7; i++) {
-        const d = document.createElement('div');
-        d.className = 'streak-dot' + (i < count ? ' on' : '');
-        row.appendChild(d);
+/* ═══════════════════════════════════════
+   STREAK
+═══════════════════════════════════════ */
+function buildStreak(n){
+    const r=document.getElementById('srow');
+    r.innerHTML='';
+    for(let i=0;i<7;i++){
+        const d=document.createElement('div');
+        d.className='sd'+(i<n?' on':'');
+        r.appendChild(d);
     }
 }
 
-/* ================================================================
-   ACTIONS
-================================================================ */
-async function takeR1P() {
-    const note = document.getElementById("note").value.trim();
-    const btn  = document.getElementById("btn-r1p");
+/* ═══════════════════════════════════════
+   RANK
+═══════════════════════════════════════ */
+const RANKS=[
+    {n:'C',min:0, max:5, c:'rc', l:'◆ RANG C'},
+    {n:'B',min:5, max:15,c:'rbb',l:'◆ RANG B'},
+    {n:'A',min:15,max:30,c:'ra', l:'◆ RANG A'},
+    {n:'S',min:30,max:50,c:'rs', l:'★ RANG S'},
+];
+function setRank(cnt){
+    let rk=RANKS[0];
+    for(const r of RANKS) if(cnt>=r.min) rk=r;
+    const b=document.getElementById('rbadge');
+    b.className='rb '+rk.c; b.textContent=rk.l;
+    const pct=Math.min(~~(((cnt-rk.min)/(rk.max-rk.min))*100),100);
+    document.getElementById('pfill').style.width=pct+'%';
+    document.getElementById('ppct').textContent=pct+'%';
+    const idx=RANKS.indexOf(rk);
+    document.getElementById('plbl').textContent=idx<RANKS.length-1?'VERS RANG '+RANKS[idx+1].n:'RANG MAX';
+}
 
-    btn.disabled = true;
-    btn.textContent = "ENVOI...";
+/* ═══════════════════════════════════════
+   TAKE R1P
+═══════════════════════════════════════ */
+async function takeR1P(){
+    const note=(document.getElementById('note').value||'').trim();
+    const btn=document.getElementById('br1p');
+    btn.disabled=true; btn.textContent='⏳ ENVOI...';
 
-    try {
-        const { error } = await _sb.from('suivi_r1p').insert({
-            auteur: currentUser.name,
-            equipe: currentUser.team,
-            note:   note || null,
-            semaine: getTodayStr(),
+    try{
+        const{error}=await _sb.from('suivi_r1p').insert({
+            auteur:user.name, equipe:user.team,
+            note:note||null, semaine:today()
         });
-
-        if (error) throw error;
+        if(error) throw error;
 
         await Promise.all([
-            updateCounter("Individuel", currentUser.name),
-            updateCounter("Equipe",     currentUser.team),
+            upsert('Individuel',user.name),
+            upsert('Equipe',    user.team),
         ]);
 
-        mySessionCount++;
-        myWeekCount++;
+        ses++; week++;
+        numAnim('myscore',ses);
+        buildStreak(Math.min(ses,7));
+        setRank(week);
+        document.getElementById('note').value='';
 
-        // Update score display
-        animateNumber('my-score', mySessionCount);
-        animateNumber('stat-week', myWeekCount);
+        // Réactivation immédiate — plusieurs R1P d'affilée autorisés
+        btn.disabled=false;
+        btn.innerHTML='📞 R1P +1';
 
-        // Streak
-        buildStreakDots(Math.min(mySessionCount, 7));
+        playCheer();
 
-        // Progress
-        updateProgress(myWeekCount);
+        const anim=ANIM[~~(Math.random()*ANIM.length)];
+        celebrate(anim);
 
-        // Celebrations
-        epicCelebration();
-        document.getElementById("note").value = "";
+        const tpl=HYPE[~~(Math.random()*HYPE.length)];
+        showToast(
+            tpl.m.replace('{name}',user.name.toUpperCase()),
+            tpl.s,
+            week
+        );
 
-        // Refresh leaderboard
-        await refreshAll();
+        refreshAll(); // sans await — tourne en arrière-plan
 
-    } catch (err) {
-        console.error("R1P insert error:", err);
-        showToast("ERREUR RÉSEAU", "Réessaie dans un instant", true);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<div class="btn-pulse"></div>R1P +1';
+    }catch(e){
+        console.error(e);
+        showToast('ERREUR RÉSEAU','Réessaie dans un instant',0,true);
+        btn.disabled=false;
+        btn.innerHTML='📞 R1P +1';
     }
 }
 
-async function updateCounter(scope, key) {
-    const { data, error } = await _sb.from('r1p_counters')
-        .select('*').eq('scope', scope).eq('key', key).maybeSingle();
-
-    if (!data) {
-        await _sb.from('r1p_counters').insert({ scope, key, count_week: 1, count_session: 1 });
-    } else {
-        await _sb.from('r1p_counters').update({
-            count_week:    data.count_week    + 1,
-            count_session: data.count_session + 1,
-        }).eq('id', data.id);
+async function upsert(scope,key){
+    const{data}=await _sb.from('r1p_counters').select('*').eq('scope',scope).eq('key',key).maybeSingle();
+    if(!data){
+        await _sb.from('r1p_counters').insert({scope,key,count_week:1,count_session:1});
+    }else{
+        await _sb.from('r1p_counters').update({count_week:data.count_week+1,count_session:data.count_session+1}).eq('id',data.id);
     }
 }
 
-/* ================================================================
+/* ═══════════════════════════════════════
    REFRESH
-================================================================ */
-async function refreshAll() {
-    const [indivRes, sessRes, feedRes, teamsRes] = await Promise.allSettled([
-        _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_week', {ascending:false}).limit(12),
-        _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_session', {ascending:false}).limit(8),
-        _sb.from('suivi_r1p').select('*').order('created_at', {ascending:false}).limit(10),
-        _sb.from('r1p_counters').select('*').eq('scope','Equipe').order('count_week', {ascending:false}),
+═══════════════════════════════════════ */
+async function refreshAll(){
+    const[r1,r2,r3,r4]=await Promise.allSettled([
+        _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_week',{ascending:false}).limit(12),
+        _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_session',{ascending:false}).limit(8),
+        _sb.from('suivi_r1p').select('*').order('created_at',{ascending:false}).limit(10),
+        _sb.from('r1p_counters').select('*').eq('scope','Equipe').order('count_week',{ascending:false}),
     ]);
+    const indiv = r1.status==='fulfilled'?(r1.value.data||[]):[];
+    const sess  = r2.status==='fulfilled'?(r2.value.data||[]):[];
+    const feed  = r3.status==='fulfilled'?(r3.value.data||[]):[];
+    const teams = r4.status==='fulfilled'?(r4.value.data||[]):[];
 
-    const indiv = indivRes.status === 'fulfilled' ? (indivRes.value.data || []) : [];
-    const sess  = sessRes.status  === 'fulfilled' ? (sessRes.value.data  || []) : [];
-    const feed  = feedRes.status  === 'fulfilled' ? (feedRes.value.data  || []) : [];
-    const teams = teamsRes.status === 'fulfilled' ? (teamsRes.value.data || []) : [];
-
-    lastLeaderboard = indiv;
-
-    renderLB("lb-week",    indiv, "count_week");
-    renderLB("lb-session", sess,  "count_session");
+    board=indiv;
+    renderLB('lbw',indiv,'count_week');
+    renderLB('lbs',sess,'count_session');
     renderFeed(feed);
     updateStats(indiv);
-    updateTeamBattle(teams);
-    updateFomoChip(indiv);
+    updateBattle(teams);
 
-    // Update my week count from DB
-    const me = indiv.find(x => x.key.toLowerCase() === currentUser.name.toLowerCase());
-    if (me) {
-        myWeekCount = me.count_week;
-        document.getElementById('stat-week').textContent = myWeekCount;
-        updateProgress(myWeekCount);
+    const me=indiv.find(x=>x.key.toLowerCase()===user.name.toLowerCase());
+    if(me){
+        week=me.count_week;
+        document.getElementById('stw').textContent=week;
+        setRank(week);
     }
 }
 
-/* ================================================================
-   LEADERBOARD RENDER
-================================================================ */
-function renderLB(id, items, field) {
-    const maxVal = items.length > 0 ? items[0][field] : 1;
-    document.getElementById(id).innerHTML = items.map((it, idx) => {
-        const isMe = it.key.toLowerCase() === currentUser.name.toLowerCase();
-        const pct  = Math.round((it[field] / maxVal) * 100);
-        const rankClass = idx === 0 ? 'r1' : idx === 1 ? 'r2' : idx === 2 ? 'r3' : 'rn';
-        const rankLabel = idx === 0 ? '👑' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : (idx+1);
-
-        return `
-        <div>
-            <div class="lb-item">
-                <div class="lb-rank ${rankClass}">${rankLabel}</div>
-                <div class="lb-avatar-sm ${isMe ? 'me':''}">${it.key[0].toUpperCase()}</div>
-                <div class="lb-name ${isMe ? 'me':''}">${it.key.toUpperCase()}</div>
-                ${isMe ? '<span style="font-family:var(--font-mono);font-size:0.55rem;color:var(--primary);letter-spacing:1px;">← MOI</span>' : ''}
-                <div class="lb-count">${it[field]}</div>
-            </div>
-            <div class="lb-bar-mini">
-                <div class="lb-bar-mini-fill" style="width:${pct}%"></div>
-            </div>
+/* ═══════════════════════════════════════
+   RENDER LB
+═══════════════════════════════════════ */
+function renderLB(id,items,field){
+    const max=items.length?items[0][field]:1;
+    document.getElementById(id).innerHTML=items.map((it,i)=>{
+        const me=it.key.toLowerCase()===user.name.toLowerCase();
+        const pct=Math.round((it[field]/max)*100);
+        const rc=i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+        const rk=i===0?'👑':i===1?'🥈':i===2?'🥉':i+1;
+        return`<div>
+        <div class="li">
+            <div class="lrk ${rc}">${rk}</div>
+            <div class="lav ${me?'me':''}">${it.key[0].toUpperCase()}</div>
+            <div class="lnm ${me?'me':''}">${it.key.toUpperCase()}${me?' <span style="font-family:var(--fm);font-size:.5rem;color:var(--p);letter-spacing:1px;"> ← MOI</span>':''}</div>
+            <div class="lct">${it[field]}</div>
+        </div>
+        <div class="lbar"><div class="lbf" style="width:${pct}%"></div></div>
         </div>`;
     }).join('');
 }
 
-/* ================================================================
-   FEED RENDER
-================================================================ */
-function renderFeed(items) {
-    document.getElementById("live-feed").innerHTML = items.map(it => {
-        const ts = it.created_at ? timeAgo(new Date(it.created_at)) : '';
-        return `
-        <div class="feed-item">
-            <div class="feed-name">${(it.auteur || '').toUpperCase()}</div>
-            <div class="feed-note">${it.note || '✅ Validation R1P'}</div>
-            <div class="feed-time">${ts}</div>
-        </div>`;
-    }).join('');
+/* ═══════════════════════════════════════
+   RENDER FEED
+═══════════════════════════════════════ */
+function renderFeed(items){
+    document.getElementById('feed').innerHTML=items.map(it=>`
+        <div class="fi">
+            <div class="fn">${(it.auteur||'').toUpperCase()}</div>
+            <div class="fb">${it.note||'✅ R1P validé'}</div>
+            <div class="ft">${it.created_at?ago(new Date(it.created_at)):''}</div>
+        </div>`).join('');
 }
 
-/* ================================================================
-   STATS UPDATE
-================================================================ */
-function updateStats(indiv) {
-    const pos = indiv.findIndex(x => x.key.toLowerCase() === currentUser.name.toLowerCase());
-    const me  = pos >= 0 ? indiv[pos] : null;
-    const leader = indiv[0] || null;
-
-    document.getElementById('stat-pos').textContent = pos >= 0 ? `#${pos+1} / ${indiv.length}` : '—';
-
-    if (me && leader && leader.key !== me.key) {
-        const gap = leader.count_week - me.count_week;
-        document.getElementById('stat-gap').textContent = `−${gap} R1P`;
-        document.getElementById('stat-gap').style.color = gap > 5 ? 'var(--red)' : 'var(--gold)';
-    } else {
-        document.getElementById('stat-gap').textContent = pos === 0 ? '🏆 EN TÊTE !' : '—';
-        document.getElementById('stat-gap').style.color = 'var(--green)';
+/* ═══════════════════════════════════════
+   STATS
+═══════════════════════════════════════ */
+function updateStats(indiv){
+    const pos=indiv.findIndex(x=>x.key.toLowerCase()===user.name.toLowerCase());
+    const me=pos>=0?indiv[pos]:null;
+    const leader=indiv[0]||null;
+    document.getElementById('stp').textContent=pos>=0?`#${pos+1}/${indiv.length}`:'—';
+    if(me&&leader&&leader.key!==me.key){
+        const g=leader.count_week-me.count_week;
+        const el=document.getElementById('stg');
+        el.textContent=`−${g} R1P`;
+        el.className='stv '+(g>5?'rd':'up');
+    }else if(pos===0){
+        document.getElementById('stg').textContent='🏆 EN TÊTE !';
+        document.getElementById('stg').className='stv up';
     }
-
-    // Rate (R1P per hour)
-    const hrs = Math.max((Date.now() - sessionStart) / 3600000, 0.01);
-    const rate = (mySessionCount / hrs).toFixed(1);
-    document.getElementById('stat-rate').textContent = `${rate}/h`;
+    const hrs=Math.max((Date.now()-t0)/3600000,.01);
+    document.getElementById('str2').textContent=(ses/hrs).toFixed(1)+'/h';
+    document.getElementById('stse').textContent=ses+' R1P';
 }
 
-/* ================================================================
-   TEAM BATTLE
-================================================================ */
-function updateTeamBattle(teams) {
-    if (!teams.length) return;
-    const sorted = [...teams].sort((a,b) => b.count_week - a.count_week);
-    const mine   = teams.find(t => t.key.toLowerCase() === currentUser.team.toLowerCase());
-    const rival  = sorted.find(t => t.key.toLowerCase() !== currentUser.team.toLowerCase()) || sorted[0];
-
-    if (!mine || !rival) return;
-
-    document.getElementById('team-mine-label').textContent = mine.key.toUpperCase();
-    document.getElementById('team-best-label').textContent = rival.key.toUpperCase();
-    document.getElementById('team-mine-score').textContent = mine.count_week;
-    document.getElementById('team-best-score').textContent = rival.count_week;
-
-    const total = mine.count_week + rival.count_week || 1;
-    const pct   = Math.round((mine.count_week / total) * 100);
-    document.getElementById('battle-bar-fill').style.width = pct + '%';
+/* ═══════════════════════════════════════
+   BATTLE
+═══════════════════════════════════════ */
+function updateBattle(teams){
+    if(!teams.length)return;
+    const mine=teams.find(t=>t.key.toLowerCase()===user.team.toLowerCase());
+    const rival=teams.find(t=>t.key.toLowerCase()!==user.team.toLowerCase());
+    if(!mine||!rival)return;
+    document.getElementById('tml').textContent=mine.key.toUpperCase();
+    document.getElementById('trl').textContent=rival.key.toUpperCase();
+    document.getElementById('tms').textContent=mine.count_week;
+    document.getElementById('trs').textContent=rival.count_week;
+    const tot=(mine.count_week+rival.count_week)||1;
+    document.getElementById('bbf').style.width=Math.round((mine.count_week/tot)*100)+'%';
 }
 
-/* ================================================================
-   RANK / PROGRESS
-================================================================ */
-const RANKS = [
-    { name: 'C', threshold: 0,  next: 5,  cls: 'c', label: '◆ RANG C' },
-    { name: 'B', threshold: 5,  next: 15, cls: 'b', label: '◆ RANG B' },
-    { name: 'A', threshold: 15, next: 30, cls: 'a', label: '◆ RANG A' },
-    { name: 'S', threshold: 30, next: 50, cls: 's', label: '★ RANG S' },
-];
-
-function updateProgress(count) {
-    let rank = RANKS[0];
-    for (const r of RANKS) { if (count >= r.threshold) rank = r; }
-
-    const badge = document.getElementById('rank-badge');
-    badge.className = `rank-badge ${rank.cls}`;
-    badge.textContent = rank.label;
-
-    const pct = Math.min(Math.round(((count - rank.threshold) / (rank.next - rank.threshold)) * 100), 100);
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('progress-pct').textContent = pct + '%';
-
-    const nextRankIdx = RANKS.indexOf(rank) + 1;
-    if (nextRankIdx < RANKS.length) {
-        document.querySelector('.progress-label span').textContent = `VERS RANG ${RANKS[nextRankIdx].name}`;
-    }
+/* ═══════════════════════════════════════
+   FOMO
+═══════════════════════════════════════ */
+function rotateFomo(){
+    const rivals=board.filter(x=>x.key.toLowerCase()!==user.name.toLowerCase());
+    if(!rivals.length)return;
+    const rival=rivals[~~(Math.random()*Math.min(3,rivals.length))];
+    const me=board.find(x=>x.key.toLowerCase()===user.name.toLowerCase());
+    const gap=me?Math.abs(rival.count_week-me.count_week):'?';
+    const msg=FOMO[~~(Math.random()*FOMO.length)].replace('{rival}',rival.key.toUpperCase()).replace('{gap}',gap);
+    const el=document.getElementById('fomo');
+    gsap.to(el,{opacity:0,duration:.22,onComplete:()=>{el.textContent=msg;gsap.to(el,{opacity:1,duration:.22});}});
 }
 
-/* ================================================================
-   FOMO CHIP
-================================================================ */
-function rotateFomo() {
-    const rivals = lastLeaderboard.filter(x => x.key.toLowerCase() !== currentUser.name.toLowerCase());
-    if (!rivals.length) return;
-
-    const rival   = rivals[Math.floor(Math.random() * Math.min(3, rivals.length))];
-    const me      = lastLeaderboard.find(x => x.key.toLowerCase() === currentUser.name.toLowerCase());
-    const gap     = me ? (rival.count_week - me.count_week) : 0;
-    const template = FOMO_MSGS[Math.floor(Math.random() * FOMO_MSGS.length)];
-    const msg = template
-        .replace('{rival}', rival.key.toUpperCase())
-        .replace('{gap}', Math.abs(gap))
-        .replace('{team}', rival.key);
-
-    const el = document.getElementById('fomo-chip');
-    gsap.to(el, { opacity: 0, duration: 0.3, onComplete: () => {
-        el.textContent = msg;
-        gsap.to(el, { opacity: 1, duration: 0.3 });
-    }});
+/* ═══════════════════════════════════════
+   TOAST PERSONNALISÉ
+═══════════════════════════════════════ */
+function showToast(msg,sub,count,isErr=false){
+    const el=document.getElementById('toast');
+    document.getElementById('tp').textContent=user.name.toUpperCase()+' —';
+    document.getElementById('tm').textContent=msg;
+    document.getElementById('tc').innerHTML=count?`<span>${count}</span> R1P`:'';
+    document.getElementById('ts').textContent=sub||'';
+    document.getElementById('tm').style.color=isErr?'var(--red)':'var(--p)';
+    el.style.display='block';
+    gsap.fromTo(el,{scale:0,opacity:0},{scale:1,opacity:1,duration:.55,ease:'back.out(2.4)'});
+    setTimeout(()=>gsap.to(el,{opacity:0,scale:.85,duration:.4,onComplete:()=>el.style.display='none'}),4200);
 }
 
-function updateFomoChip(indiv) {
-    if (!lastLeaderboard.length) return;
-    const me     = indiv.find(x => x.key.toLowerCase() === currentUser.name.toLowerCase());
-    const leader = indiv[0];
-    if (!me || !leader || leader.key === me.key) return;
-    const gap = leader.count_week - me.count_week;
-    document.getElementById('fomo-chip').textContent = `⚡ TU ES À ${gap} R1P DE ${leader.key.toUpperCase()}`;
-}
+/* ═══════════════════════════════════════
+   CELEBRATIONS — 10 ANIMATIONS DISTINCTES
+═══════════════════════════════════════ */
+function celebrate(type){
+    const C=['#F7931E','#ffffff','#fbbf24','#ff6200','#22c55e'];
+    switch(type){
 
-/* ================================================================
-   CELEBRATIONS
-================================================================ */
-function epicCelebration() {
-    const [title, sub] = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
-    showToast(title, sub);
-    launchConfetti();
+    case 'confetti_rain':
+        confetti({particleCount:120,spread:80,origin:{y:.6},colors:C});
+        setTimeout(()=>confetti({particleCount:80,spread:110,origin:{x:.15,y:.7},colors:C}),300);
+        setTimeout(()=>confetti({particleCount:80,spread:110,origin:{x:.85,y:.7},colors:C}),500);
+        break;
 
-    // Screen shake
-    gsap.fromTo("#main-app",
-        { x: 0 },
-        { keyframes: [
-            { x: -8, duration: 0.05 },
-            { x:  8, duration: 0.05 },
-            { x: -6, duration: 0.05 },
-            { x:  6, duration: 0.05 },
-            { x:  0, duration: 0.05 },
-        ], ease: "none" }
-    );
+    case 'confetti_cannon':
+        // Side cannons
+        [{x:0,y:.5},{x:1,y:.5}].forEach((o,i)=>setTimeout(()=>confetti({
+            particleCount:100,angle:i?120:60,spread:55,origin:o,colors:C,startVelocity:55
+        }),i*200));
+        break;
 
-    // Number pop
-    const el = document.getElementById('my-score');
-    el.classList.remove('num-pop');
-    void el.offsetWidth;
-    el.classList.add('num-pop');
-}
-
-function launchConfetti() {
-    // Multi-burst
-    const colors = ['#F7931E', '#ffffff', '#fbbf24', '#ff6b00'];
-    confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors });
-    setTimeout(() => confetti({ particleCount: 60, spread: 100, origin: { x: 0.1, y: 0.7 }, colors }), 200);
-    setTimeout(() => confetti({ particleCount: 60, spread: 100, origin: { x: 0.9, y: 0.7 }, colors }), 350);
-}
-
-/* ================================================================
-   TOAST
-================================================================ */
-function showToast(title, sub = '', isError = false) {
-    const el    = document.getElementById('toast');
-    const tEl   = document.getElementById('toast-title');
-    const sEl   = document.getElementById('toast-sub');
-
-    tEl.textContent = title;
-    sEl.textContent = sub;
-    tEl.style.color = isError ? 'var(--red)' : 'var(--primary)';
-
-    el.style.display = 'block';
-    gsap.fromTo(el,
-        { scale: 0, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }
-    );
-    setTimeout(() => {
-        gsap.to(el, { opacity: 0, scale: 0.8, duration: 0.4,
-            onComplete: () => { el.style.display = 'none'; }
-        });
-    }, 3500);
-}
-
-/* ================================================================
-   UTILS
-================================================================ */
-function animateNumber(id, val) {
-    const el = document.getElementById(id);
-    const start = parseInt(el.textContent) || 0;
-    const diff  = val - start;
-    if (diff === 0) return;
-    let current = start;
-    const step = () => {
-        current++;
-        el.textContent = current;
-        if (current < val) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-}
-
-function shakeEl(id) {
-    const el = document.getElementById(id);
-    gsap.fromTo(el,
-        { x: 0 },
-        { keyframes: [
-            { x: -8, duration: 0.05 },
-            { x:  8, duration: 0.05 },
-            { x: -5, duration: 0.05 },
-            { x:  5, duration: 0.05 },
-            { x:  0, duration: 0.05 },
-        ]}
-    );
-}
-
-function getTodayStr() {
-    return new Date().toISOString().slice(0, 10);
-}
-
-function timeAgo(date) {
-    const diff = Math.floor((Date.now() - date) / 1000);
-    if (diff < 60)  return `il y a ${diff}s`;
-    if (diff < 3600) return `il y a ${Math.floor(diff/60)}min`;
-    return `il y a ${Math.floor(diff/3600)}h`;
-}
-
-/* ================================================================
-   LIVE PILOT COUNT (login screen — estimé)
-================================================================ */
-async function loadPilotCount() {
-    try {
-        const { data } = await _sb.from('suivi_r1p')
-            .select('auteur')
-            .gte('created_at', new Date(Date.now() - 8*3600*1000).toISOString());
-        if (data) {
-            const unique = new Set(data.map(x => x.auteur)).size;
-            document.getElementById('pilot-count').textContent = Math.max(unique, 1);
+    case 'matrix':
+        const mxo=document.getElementById('mxo');
+        mxo.style.display='block'; mxo.innerHTML='';
+        const ch='01アイウR1POOBビグデ';
+        for(let i=0;i<35;i++){
+            const c=document.createElement('div');
+            c.className='mcol';
+            c.style.cssText=`left:${Math.random()*100}vw;animation-duration:${.7+Math.random()*.9}s;animation-delay:${Math.random()*.4}s;opacity:${.3+Math.random()*.7};font-size:${.55+Math.random()*.4}rem;`;
+            c.textContent=Array.from({length:~~(Math.random()*14+5)},()=>ch[~~(Math.random()*ch.length)]).join('');
+            mxo.appendChild(c);
         }
-    } catch {}
+        setTimeout(()=>{mxo.style.display='none';mxo.innerHTML='';},2200);
+        break;
+
+    case 'lightning':
+        const flo=document.getElementById('flo');
+        flo.style.display='block';
+        gsap.fromTo(flo,{opacity:0},{keyframes:[{opacity:.7,duration:.05},{opacity:0,duration:.05},{opacity:.5,duration:.04},{opacity:0,duration:.06},{opacity:.9,duration:.04},{opacity:0,duration:.1}],
+            onComplete:()=>flo.style.display='none'});
+        gsap.fromTo('#app',{x:0},{keyframes:[{x:-10},{x:10},{x:-7},{x:7},{x:-4},{x:4},{x:0}],duration:.38,ease:'none'});
+        break;
+
+    case 'holo':
+        const holo=document.getElementById('holo');
+        holo.style.display='block'; holo.innerHTML='';
+        [60,130,210,300,400].forEach((r,i)=>{
+            const ring=document.createElement('div');
+            ring.className='hring';
+            ring.style.cssText=`width:${r*2}px;height:${r*2}px;top:${-r}px;left:${-r}px;animation-delay:${i*.07}s;border-color:${i%2===0?'rgba(247,147,30,.28)':'rgba(251,191,36,.14)'};`;
+            holo.appendChild(ring);
+        });
+        setTimeout(()=>{holo.style.display='none';holo.innerHTML='';},1600);
+        break;
+
+    case 'spotlight':
+        // Flash the whole screen and gsap glow
+        gsap.fromTo('#app',{filter:'brightness(1)'},{filter:'brightness(1.4)',duration:.15,yoyo:true,repeat:3,ease:'none',onComplete:()=>document.getElementById('app').style.filter=''});
+        break;
+
+    case 'zoom':
+        gsap.fromTo('#app',{scale:1},{keyframes:[{scale:1.035,duration:.14},{scale:.985,duration:.1},{scale:1,duration:.22}],ease:'power2.out'});
+        confetti({particleCount:60,spread:70,origin:{y:.6},colors:C});
+        break;
+
+    case 'particles':
+        confetti({particleCount:120,startVelocity:35,spread:360,origin:{y:.5,x:.5},gravity:.55,colors:C,shapes:['circle','square']});
+        break;
+
+    case 'color_flash':
+        // OOB Brand flash
+        document.documentElement.style.setProperty('--p','#22c55e');
+        confetti({particleCount:80,spread:80,origin:{y:.6},colors:['#22c55e','#fff','#fbbf24']});
+        setTimeout(()=>document.documentElement.style.setProperty('--p','#F7931E'),700);
+        break;
+
+    case 'star_burst':
+        // Star-shape confetti
+        confetti({particleCount:80,spread:70,origin:{y:.6},colors:C,shapes:['star']});
+        setTimeout(()=>confetti({particleCount:60,angle:60,spread:55,origin:{x:0,y:.5},colors:C,shapes:['star']}),250);
+        setTimeout(()=>confetti({particleCount:60,angle:120,spread:55,origin:{x:1,y:.5},colors:C,shapes:['star']}),450);
+        break;
+
+    default:
+        confetti({particleCount:100,spread:70,origin:{y:.6},colors:C});
+    }
 }
 
-/* ================================================================
-   WEB AUDIO — subtle click sound on R1P
-================================================================ */
-let audioCtx;
-function playClickSound() {
-    try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc  = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.15);
-    } catch {}
+/* ═══════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════ */
+let actx;
+function playCheer(){
+    try{
+        if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+        [[880,0],[1100,.06],[1320,.12],[1760,.18]].forEach(([f,d])=>{
+            const o=actx.createOscillator(), g=actx.createGain();
+            o.connect(g); g.connect(actx.destination);
+            o.frequency.value=f; o.type='sine';
+            const t=actx.currentTime+d;
+            g.gain.setValueAtTime(.22,t);
+            g.gain.exponentialRampToValueAtTime(.001,t+.4);
+            o.start(t); o.stop(t+.4);
+        });
+    }catch{}
 }
 
-document.getElementById('btn-r1p')?.addEventListener('click', playClickSound);
+/* ═══════════════════════════════════════
+   UTILS
+═══════════════════════════════════════ */
+function numAnim(id,val){
+    const el=document.getElementById(id);
+    if(!el)return;
+    let cur=parseInt(el.textContent)||0;
+    const step=()=>{cur++;el.textContent=cur;if(cur<val)requestAnimationFrame(step);};
+    requestAnimationFrame(step);
+    el.style.animation='countUp .4s cubic-bezier(.34,1.56,.64,1)';
+    setTimeout(()=>el.style.animation='',500);
+}
+function shake(id){
+    const el=document.getElementById(id);
+    gsap.fromTo(el,{x:0},{keyframes:[{x:-8},{x:8},{x:-5},{x:5},{x:0}],duration:.3,ease:'none'});
+}
+function today(){return new Date().toISOString().slice(0,10);}
+function ago(d){
+    const s=~~((Date.now()-d)/1000);
+    if(s<60) return`il y a ${s}s`;
+    if(s<3600) return`il y a ${~~(s/60)}min`;
+    return`il y a ${~~(s/3600)}h`;
+}
 
-/* ================================================================
-   KEYBOARD SHORTCUT: Enter = R1P (when app visible)
-================================================================ */
-document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && document.getElementById('main-app').style.display !== 'none') {
-        const note = document.getElementById('note');
-        if (document.activeElement !== note) takeR1P();
+/* ═══════════════════════════════════════
+   PILOT COUNT LOGIN
+═══════════════════════════════════════ */
+async function loadPilotCount(){
+    try{
+        const{data}=await _sb.from('suivi_r1p').select('auteur').gte('created_at',new Date(Date.now()-10*3600000).toISOString());
+        if(data) document.getElementById('pcnt').textContent=Math.max(new Set(data.map(x=>x.auteur)).size,1);
+    }catch{}
+}
+
+/* ═══════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+    const app=document.getElementById('app');
+    if(app.style.display!=='none'&&app.style.opacity!=='0'&&e.key==='Enter'&&document.activeElement?.id!=='note'){
+        takeR1P();
     }
 });
+// Konami Easter Egg — all animations demo
+let ks=[];
+const KK=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+document.addEventListener('keydown',e=>{
+    ks.push(e.key); ks=ks.slice(-10);
+    if(ks.join()===KK.join()) ANIM.forEach((a,i)=>setTimeout(()=>celebrate(a),i*700));
+});
 
-/* ================================================================
+/* ═══════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════ */
+function openPW(){
+    document.getElementById('pwo').style.display='flex';
+    setTimeout(()=>document.getElementById('apw').focus(),100);
+}
+function closePW(){
+    document.getElementById('pwo').style.display='none';
+    document.getElementById('apw').value='';
+    document.getElementById('pwerr').textContent='';
+}
+function checkPW(){
+    if(document.getElementById('apw').value===ADMIN_PW){
+        closePW(); openAdm();
+    }else{
+        document.getElementById('pwerr').textContent='✕ MOT DE PASSE INCORRECT';
+        shake('apw');
+    }
+}
+document.getElementById('apw').addEventListener('keydown',e=>{if(e.key==='Enter')checkPW();});
+
+function openAdm(){
+    const m=document.getElementById('adm');
+    m.style.display='flex';
+    gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3});
+    admStats();
+}
+function closeAdm(){
+    gsap.to('#adm',{opacity:0,duration:.25,onComplete:()=>document.getElementById('adm').style.display='none'});
+}
+
+function alog(msg,ok=true){
+    const el=document.getElementById('alog');
+    const t=new Date().toTimeString().slice(0,8);
+    el.innerHTML+=`<br>[${t}] ${ok?'✓':'✕'} ${msg}`;
+    el.scrollTop=el.scrollHeight;
+}
+
+async function admStats(){
+    try{
+        const[r1,r2]=await Promise.allSettled([
+            _sb.from('r1p_counters').select('count_week').eq('scope','Individuel'),
+            _sb.from('r1p_counters').select('key').eq('scope','Equipe'),
+        ]);
+        const ind=r1.status==='fulfilled'?(r1.value.data||[]):[];
+        const eq=r2.status==='fulfilled'?(r2.value.data||[]):[];
+        document.getElementById('ast').textContent=ind.reduce((s,x)=>s+x.count_week,0);
+        document.getElementById('asp').textContent=ind.length;
+        document.getElementById('aseq').textContent=eq.length;
+    }catch(e){alog('Erreur stats : '+e.message,false);}
+}
+
+async function admDo(action){
+    if(!window.confirm(`⚠ Confirmer : ${action.toUpperCase()} ?`))return;
+    alog(`${action} en cours...`);
+    try{
+        if(action==='reset_session'){
+            const{error}=await _sb.from('r1p_counters').update({count_session:0}).gte('id',0);
+            if(error)throw error;
+            alog('Compteurs session remis à 0');
+        }
+        if(action==='reset_week'){
+            const{error}=await _sb.from('r1p_counters').update({count_week:0,count_session:0}).gte('id',0);
+            if(error)throw error;
+            alog('Compteurs semaine + session remis à 0');
+        }
+        if(action==='reset_all'){
+            await _sb.from('r1p_counters').delete().gte('id',0);
+            await _sb.from('suivi_r1p').delete().gte('id',0);
+            alog('RESET TOTAL — Toutes données supprimées');
+        }
+        if(action==='start') alog('Session démarrée ▶');
+        if(action==='stop')  alog('Session terminée ■');
+        admStats();
+    }catch(e){alog('Erreur : '+(e.message||e),false);}
+}
+
+function admAddPilot(){
+    const name=(document.getElementById('npn').value||'').trim().toLowerCase();
+    const team=(document.getElementById('npt').value||'').trim();
+    if(!name||!team){alog('Prénom ET équipe requis',false);return;}
+    if(TEAM_MAP[name]){alog(`${name} existe déjà → ${TEAM_MAP[name]}`,false);return;}
+    TEAM_MAP[name]=team;
+    document.getElementById('npn').value='';
+    document.getElementById('npt').value='';
+    alog(`Pilote "${name}" ajouté → Équipe "${team}"`);
+}
+
+function admBroadcast(){
+    const msg=(document.getElementById('bmsg').value||'').trim();
+    if(!msg){alog('Message vide',false);return;}
+    document.getElementById('fomo').textContent='📣 '+msg;
+    document.getElementById('qtxt').textContent='"'+msg+'"';
+    // Celebration bonus
+    celebrate('spotlight');
+    document.getElementById('bmsg').value='';
+    alog(`Message diffusé : "${msg}"`);
+}
+
+async function admRefresh(){
+    alog('Refresh forcé...');
+    await refreshAll();
+    alog('Données actualisées');
+}
+
+async function admLoadPilots(){
+    try{
+        const{data}=await _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_week',{ascending:false});
+        document.getElementById('aplist').innerHTML=(data||[]).map(p=>`
+        <div class="li">
+            <div class="lav">${p.key[0].toUpperCase()}</div>
+            <div class="lnm">${p.key.toUpperCase()}</div>
+            <div style="font-family:var(--fm);font-size:.55rem;color:var(--dim);margin-right:8px;">sem:${p.count_week} · sess:${p.count_session}</div>
+            <button style="font-family:var(--fm);font-size:.5rem;padding:3px 8px;border:1px solid rgba(239,68,68,.3);background:transparent;color:var(--red);cursor:pointer;border-radius:3px;" onclick="admDelPilot(${p.id},'${p.key}')">✕</button>
+        </div>`).join('');
+        alog(`${(data||[]).length} pilotes chargés`);
+    }catch(e){alog('Erreur : '+e.message,false);}
+}
+
+async function admDelPilot(id,key){
+    if(!window.confirm(`Supprimer ${key} ?`))return;
+    await _sb.from('r1p_counters').delete().eq('id',id);
+    alog(`Pilote "${key}" supprimé`);
+    admLoadPilots(); admStats();
+}
+
+/* ═══════════════════════════════════════
    BOOT
-================================================================ */
-window.onload = () => {
-    initStars();
-    loadPilotCount();
-};
+═══════════════════════════════════════ */
+window.onload=()=>{initStars();loadPilotCount();};
 </script>
 </body>
 </html>
