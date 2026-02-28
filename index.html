@@ -3,363 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OOBJECTIF R1P • PROTOCOLE ÉLITE</title>
-    
+    <title>OOBJECTIF R1P</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
     <style>
-        :root {
-            --primary: #F7931E;
-            --gold: #fbbf24;
-            --dark: #020408;
-            --accent: #3b82f6;
-        }
-
-        * { margin:0; padding:0; box-sizing:border-box; cursor: crosshair; }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--dark);
+            background: #0a0f1c;
             color: white;
             height: 100vh;
-            overflow: hidden;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        /* FOND ÉTOILÉ POUR LA CONNEXION */
-        #star-canvas {
-            position: fixed; inset: 0; z-index: 1;
-        }
-
-        /* OVERLAY DE CONNEXION STYLE JEU VIDÉO */
-        #login-modal {
-            position: fixed; inset: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle at center, rgba(247, 147, 30, 0.05) 0%, transparent 70%);
-        }
-
-        .login-frame {
-            position: relative;
-            width: 450px;
-            padding: 50px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 4px;
+        .modal {
+            background: rgba(15,23,42,0.98);
+            padding: 40px;
+            border-radius: 20px;
+            width: 380px;
             text-align: center;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
+            border: 1px solid #F7931E;
         }
-
-        /* Décorations cockpit */
-        .login-frame::before, .login-frame::after {
-            content: ''; position: absolute; width: 20px; height: 20px;
-            border: 2px solid var(--primary);
-        }
-        .login-frame::before { top: -5px; left: -5px; border-right: 0; border-bottom: 0; }
-        .login-frame::after { bottom: -5px; right: -5px; border-left: 0; border-top: 0; }
-
-        .status-light {
-            width: 8px; height: 8px; background: var(--primary);
-            border-radius: 50%; display: inline-block; margin-right: 10px;
-            box-shadow: 0 0 10px var(--primary);
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink { 50% { opacity: 0.3; } }
-
-        .title-glitch {
-            font-size: 2.5rem; font-weight: 900; letter-spacing: 5px;
-            text-transform: uppercase; margin-bottom: 30px;
-            text-shadow: 2px 2px 0px var(--primary);
-        }
-
-        .input-group { position: relative; margin-bottom: 30px; }
-
-        input#prenom-input {
+        input {
             width: 100%;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255,255,255,0.1);
             color: white;
             font-size: 1.2rem;
-            letter-spacing: 3px;
             text-align: center;
-            text-transform: uppercase;
-            outline: none;
-            transition: 0.3s;
+            margin: 20px 0;
         }
-
-        input#prenom-input:focus {
-            border-color: var(--primary);
-            background: rgba(247, 147, 30, 0.05);
-            box-shadow: 0 0 20px rgba(247, 147, 30, 0.2);
-        }
-
-        .btn-launch {
-            width: 100%;
-            padding: 20px;
-            background: var(--primary);
+        button {
+            background: #F7931E;
             color: black;
-            font-weight: 900;
             border: none;
-            letter-spacing: 2px;
-            font-size: 1rem;
+            padding: 16px 40px;
+            border-radius: 9999px;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            width: 100%;
         }
-
-        .btn-launch:hover {
-            transform: scale(1.05);
-            background: white;
-            box-shadow: 0 0 30px white;
-        }
-
-        /* DASHBOARD PRINCIPAL (MASQUÉ AU DÉBUT) */
-        #main-app {
-            position: relative; z-index: 10;
-            display: none; opacity: 0;
-            padding: 2rem; height: 100vh;
-            grid-template-rows: auto 1fr; gap: 2rem;
-        }
-
-        .glass-card {
-            background: rgba(10, 15, 25, 0.9);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 15px; padding: 20px;
-        }
-
-        #toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; color: black; padding: 40px 60px; border-radius: 10px;
-            font-weight: 900; font-size: 2rem; z-index: 200; display: none;
-            text-align: center; box-shadow: 0 0 100px var(--primary);
-        }
+        #main-app { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="toast"></div>
-    <canvas id="star-canvas"></canvas>
-
-    <div id="login-modal">
-        <div class="login-box-wrapper">
-            <div class="login-frame">
-                <div style="margin-bottom: 10px; font-size: 0.7rem; opacity: 0.5; letter-spacing: 2px;">
-                    <span class="status-light"></span> SYSTÈME OPÉRATIONNEL V.2.6
-                </div>
-                <h1 class="title-glitch">OBJECTIF<br><span style="color:var(--primary)">R1P</span></h1>
-                
-                <div class="input-group">
-                    <input id="prenom-input" type="text" placeholder="IDENTIFIANT PILOTE" autocomplete="off">
-                </div>
-
-                <button class="btn-launch" onclick="initiateLaunch()">LANCER LA SÉQUENCE</button>
-                <p id="login-error" style="color: #ff4444; font-size: 0.8rem; margin-top: 20px; height: 10px;"></p>
-                
-                <div style="margin-top: 40px; font-size: 0.6rem; opacity: 0.3; line-height: 1.5;">
-                    ACCÈS RÉSERVÉ AUX MEMBRES DE L'ÉLITE<br>
-                    PROTOCOLE DE PROSPECTION HAUTE PERFORMANCE
-                </div>
-            </div>
-        </div>
+    <!-- MODAL LOGIN -->
+    <div id="login-modal" class="modal">
+        <h2>Bienvenue dans OOBJECTIF R1P</h2>
+        <p>Entre ton prénom exactement comme dans l’équipe :</p>
+        <input id="prenom-input" type="text" placeholder="Sofia, Kevin, Merwan..." />
+        <button onclick="validatePrenom()">COMMENCER L’AVENTURE</button>
+        <p id="login-error" style="color:#ff6666; margin-top:15px;"></p>
     </div>
 
+    <!-- APP PRINCIPALE -->
     <div id="main-app">
-        <header style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="letter-spacing: 5px; font-weight: 900;">DASHBOARD <span style="color:var(--primary)">R1P</span></h2>
-            <div id="user-display" style="background: var(--primary); color: black; padding: 5px 20px; font-weight: 800; border-radius: 50px;"></div>
-        </header>
-
-        <div style="display: grid; grid-template-columns: 350px 1fr 350px; gap: 20px;">
-            <div class="glass-card" style="text-align: center;">
-                <div id="avatar" style="width:100px; height:100px; background:var(--primary); color:black; font-size:3rem; font-weight:900; border-radius:50%; margin: 0 auto 20px; display:flex; align-items:center; justify-content:center;">?</div>
-                <h3 id="display-name" style="font-size: 1.5rem; margin-bottom: 5px;">---</h3>
-                <p id="display-team" style="opacity: 0.5; margin-bottom: 30px;">---</p>
-                
-                <textarea id="note" placeholder="COMMENTAIRE DE MISSION..." style="width:100%; height:100px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:white; padding:15px; margin-bottom:20px; resize:none;"></textarea>
-                
-                <button onclick="takeR1P()" style="width:100%; padding:25px; background:var(--primary); color:black; border:none; border-radius:10px; font-weight:900; font-size:1.5rem; cursor:pointer; box-shadow: 0 10px 30px rgba(247,147,30,0.3);">R1P +1</button>
-            </div>
-
-            <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 20px;">
-                <div class="glass-card">
-                    <h4 style="color:var(--gold); margin-bottom: 15px;">🥇 TOP PERFORMANCE SEMAINE</h4>
-                    <div id="lb-week"></div>
-                </div>
-                <div class="glass-card">
-                    <h4 style="color:var(--primary); margin-bottom: 15px;">⚡ LIVE SESSION</h4>
-                    <div id="lb-session"></div>
-                </div>
-            </div>
-
-            <div class="glass-card">
-                <h4 style="margin-bottom: 15px;">🔥 DERNIÈRES ACTIONS</h4>
-                <div id="live-feed" style="font-size: 0.8rem;"></div>
-            </div>
-        </div>
+        <h1 style="text-align:center; font-size:3rem;">Bienvenue <span id="user-name"></span> !</h1>
+        <p style="text-align:center; font-size:1.4rem;">Équipe : <strong id="user-team"></strong></p>
+        <button onclick="takeR1P()" style="margin:30px auto; display:block; padding:20px 50px; font-size:1.5rem;">R1P +1</button>
     </div>
 
     <script>
-        // CONFIG SUPABASE
         const SUPABASE_URL = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_zVqdL4T9-J9srWE88bAskQ_Pjqb75Fz";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const TEAM_MAP = {"sofia":"Caen","david":"Caen","kevin":"Caen","durmus":"Evreux","merwan":"Courbevoie","diassivi":"Courbevoie","sertag":"Courbevoie","roxanne":"Rouen"};
-        const COMPLIMENTS = ["MAGISTRAL {name} !","GOD MODE ACTIVÉ : {name}","INARRÊTABLE {name} !","DOMINATION TOTALE {name}"];
-        
-        let currentUser = { name: "", team: "" };
+        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // THREE.JS STARFIELD ENGINE
-        let starScene, starCam, starRenderer, starGeo, stars;
-        function initStars() {
-            starScene = new THREE.Scene();
-            starCam = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-            starCam.position.z = 1; starCam.rotation.x = Math.PI/2;
-            starRenderer = new THREE.WebGLRenderer({canvas: document.getElementById('star-canvas'), antialias: true});
-            starRenderer.setSize(window.innerWidth, window.innerHeight);
+        const TEAM_MAP = {
+            "sofia":"Caen", "david":"Caen", "kevin":"Caen",
+            "durmus":"Evreux", "merwan":"Courbevoie",
+            "diassivi":"Courbevoie", "sertag":"Courbevoie", "roxanne":"Rouen"
+        };
 
-            starGeo = new THREE.Geometry();
-            for(let i=0; i<6000; i++) {
-                let star = new THREE.Vector3(Math.random()*600-300, Math.random()*600-300, Math.random()*600-300);
-                star.velocity = 0; star.acceleration = 0.01;
-                starGeo.vertices.push(star);
-            }
-            let sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/circle.png');
-            let starMaterial = new THREE.PointsMaterial({color: 0xaaaaaa, size: 0.5, map: sprite, transparent: true});
-            stars = new THREE.Points(starGeo, starMaterial);
-            starScene.add(stars);
-            animateStars();
-        }
-
-        function animateStars() {
-            starGeo.vertices.forEach(p => {
-                p.velocity += p.acceleration; p.y -= p.velocity;
-                if (p.y < -200) { p.y = 200; p.velocity = 0; }
-            });
-            starGeo.verticesNeedUpdate = true;
-            stars.rotation.y += 0.001;
-            starRenderer.render(starScene, starCam);
-            requestAnimationFrame(animateStars);
-        }
-
-        // SEQUENCE DE LANCEMENT TYPE JEU VIDEO
-        function initiateLaunch() {
-            let p = document.getElementById("prenom-input").value.trim().toLowerCase();
-            if(!TEAM_MAP[p]) { document.getElementById("login-error").textContent = "ACCÈS REFUSÉ : PILOTE INCONNU"; return; }
-
-            currentUser.name = p.charAt(0).toUpperCase() + p.slice(1);
-            currentUser.team = TEAM_MAP[p];
-
-            // 1. Acceleration des étoiles (Hyperdrive)
-            starGeo.vertices.forEach(p => {
-                gsap.to(p, { acceleration: 0.8, duration: 2.5, ease: "power4.in" });
-            });
-            gsap.to(stars.material, { size: 3, duration: 2 });
-
-            // 2. Disparition du login avec effet de flash
-            gsap.to("#login-modal", { opacity: 0, duration: 1, delay: 2 });
+        function validatePrenom(){
+            let prenom = document.getElementById("prenom-input").value.trim().toLowerCase();
             
-            setTimeout(() => {
-                document.getElementById("login-modal").style.display = "none";
-                document.getElementById("main-app").style.display = "grid";
-                gsap.to("#main-app", { opacity: 1, duration: 1 });
-                
-                // Reset étoiles
-                starGeo.vertices.forEach(p => { p.acceleration = 0.01; p.velocity = 0; });
-                gsap.to(stars.material, { size: 0.5, duration: 2 });
-                
-                setupDashboard();
-            }, 2500);
-        }
-
-        function setupDashboard() {
-            document.getElementById("display-name").textContent = currentUser.name;
-            document.getElementById("user-display").textContent = currentUser.name;
-            document.getElementById("avatar").textContent = currentUser.name[0];
-            document.getElementById("display-team").textContent = "SECTEUR : " + currentUser.team;
-            refreshAll();
-            setInterval(refreshAll, 10000);
-        }
-
-        // ACTIONS R1P
-        async function takeR1P() {
-            const note = document.getElementById("note").value.trim();
-            const { error } = await _supabase.from('suivi_r1p').insert({
-                auteur: currentUser.name, equipe: currentUser.team, note: note,
-                semaine: new Date().toISOString().slice(0,10)
-            });
-
-            if(!error) {
-                await updateCounter("Individuel", currentUser.name);
-                await updateCounter("Equipe", currentUser.team);
-                
-                // EFFET DOPAMINE
-                launchEpicConfetti();
-                gsap.fromTo("#main-app", { x: -10 }, { x: 10, duration: 0.05, repeat: 10, yoyo: true });
-                
-                let msg = COMPLIMENTS[Math.floor(Math.random()*COMPLIMENTS.length)].replace("{name}", currentUser.name);
-                showToast(msg);
-                
-                document.getElementById("note").value = "";
-                refreshAll();
+            if (!TEAM_MAP[prenom]) {
+                document.getElementById("login-error").textContent = "Prénom non reconnu.";
+                return;
             }
+
+            const name = prenom.charAt(0).toUpperCase() + prenom.slice(1);
+            document.getElementById("user-name").textContent = name;
+            document.getElementById("user-team").textContent = TEAM_MAP[prenom];
+
+            // Masquer le modal et afficher l'app
+            document.getElementById("login-modal").style.display = "none";
+            document.getElementById("main-app").style.display = "block";
+
+            console.log("✅ Connexion réussie avec", name);
         }
 
-        async function updateCounter(scope, key) {
-            let { data } = await _supabase.from('r1p_counters').select('*').eq('scope', scope).eq('key', key).single();
-            if(!data) {
-                await _supabase.from('r1p_counters').insert({ scope, key, count_week: 1, count_session: 1 });
-            } else {
-                await _supabase.from('r1p_counters').update({ 
-                    count_week: data.count_week + 1, count_session: data.count_session + 1
-                }).eq('id', data.id);
-            }
+        function takeR1P(){
+            alert("R1P +1 validé pour " + document.getElementById("user-name").textContent + " !");
+            // Ici tu pourras ajouter le vrai code Supabase plus tard
         }
 
-        async function refreshAll() {
-            const { data: indiv } = await _supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_week', {ascending: false});
-            const { data: sess } = await _supabase.from('r1p_counters').select('*').eq('scope', 'Individuel').order('count_session', {ascending: false});
-            const { data: feed } = await _supabase.from('suivi_r1p').select('*').order('created_at', {ascending: false}).limit(8);
-
-            renderLB("lb-week", indiv || [], "count_week");
-            renderLB("lb-session", sess || [], "count_session");
-            renderFeed(feed || []);
-        }
-
-        function renderLB(id, items, field) {
-            document.getElementById(id).innerHTML = items.map((it, idx) => `
-                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <span>${idx+1}. ${it.key}</span>
-                    <span style="color:var(--gold); font-weight:900;">${it[field]}</span>
-                </div>
-            `).join('');
-        }
-
-        function renderFeed(items) {
-            document.getElementById("live-feed").innerHTML = items.map(it => `
-                <div style="margin-bottom:10px; padding:10px; background:rgba(255,255,255,0.03); border-radius:5px;">
-                    <div style="color:var(--primary); font-weight:bold;">${it.auteur}</div>
-                    <div style="opacity:0.6;">${it.note || "Validation R1P"}</div>
-                </div>
-            `).join('');
-        }
-
-        function showToast(txt) {
-            const t = document.getElementById("toast");
-            t.textContent = txt; t.style.display = "block";
-            gsap.fromTo(t, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out" });
-            setTimeout(() => { gsap.to(t, { opacity: 0, scale: 0.5, duration: 0.5, onComplete: () => t.style.display="none" }); }, 3000);
-        }
-
-        function launchEpicConfetti() {
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#F7931E', '#ffffff', '#fbbf24'] });
-        }
-
-        window.onload = initStars;
+        // Focus automatique sur l'input
+        window.onload = () => document.getElementById("prenom-input").focus();
     </script>
 </body>
 </html>
