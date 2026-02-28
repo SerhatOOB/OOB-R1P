@@ -626,7 +626,7 @@ function doLogin(){
     const err=document.getElementById('lerr');
     err.textContent='';
     if(!raw){err.textContent='⚠ ENTREZ VOTRE IDENTIFIANT';return;}
-    if(!TEAM_MAP[raw]){err.textContent='✕ PILOTE NON RECONNU — CONTACTEZ ADMIN';shake('pi');return;}
+    if(!TEAM_MAP[raw]){err.textContent='✕ PILOTE NON RECONNU — CONTACTEZ SERHAT';shake('pi');return;}
 
     user.name=raw.charAt(0).toUpperCase()+raw.slice(1);
     user.team=TEAM_MAP[raw];
@@ -1391,6 +1391,7 @@ window.onload=()=>{initStars();loadPilotCount();};
 </script>
 </body>
 </html>
+
 
 
 
