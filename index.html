@@ -972,7 +972,7 @@ function boot(){
   },1000);
   refreshAll();
   setInterval(refreshAll,8000);
-  const _twh=_store.get('oob_teams_wh');
+  const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ';
   if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; }
   setInterval(rotateFomo,8500);
   setInterval(rotateQuote,30000);
@@ -1017,14 +1017,14 @@ function clearTeamsWH(){
   alog('Webhook effacé');
 }
 async function testTeamsWH(){
-  const url=(_store.get('oob_teams_wh')||'').trim();
-  if(!url){ alog('Aucun webhook configuré — enregistrez d'abord l'URL',false); return; }
+  const url=(_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ').trim();
+  if(!url){ alog("Aucun webhook configuré — enregistrez d'abord l'URL",false); return; }
   alog('Test envoi Teams...');
   const ok=await sendTeamsNotif({name:'TEST',team:'Direction',count:99,note:'Ceci est un test de connexion 🧪'});
-  alog(ok?'Teams ✓ Message envoyé !':'Teams ✕ Vérifiez l'URL et le flux Power Automate',ok);
+  alog(ok?'Teams ✓ Message envoyé !':"Teams ✕ Vérifiez l'URL et le flux Power Automate",ok);
 }
 async function sendTeamsNotif({name,team,count,note}){
-  const url=(_store.get('oob_teams_wh')||'').trim();
+  const url=(_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ').trim();
   if(!url) return false;
   try{
     /* Rang actuel */
@@ -1386,7 +1386,7 @@ function openPW(){ document.getElementById('pwo').style.display='flex'; setTimeo
 function closePW(){ document.getElementById('pwo').style.display='none'; document.getElementById('apw').value=''; document.getElementById('pwerr').textContent=''; }
 function checkPW(){ if(document.getElementById('apw').value===ADMIN_PW){ closePW(); openAdm(); } else{ document.getElementById('pwerr').textContent='✕ MOT DE PASSE INCORRECT'; shake('apw'); } }
 document.getElementById('apw').addEventListener('keydown',e=>{ if(e.key==='Enter') checkPW(); });
-function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _twh=_store.get('oob_teams_wh'); if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
+function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
 function closeAdm(){ gsap.to('#adm',{opacity:0,duration:.25,onComplete:()=>document.getElementById('adm').style.display='none'}); }
 function alog(msg,ok=true){ const el=document.getElementById('alog'); const t=new Date().toTimeString().slice(0,8); el.innerHTML+=`<br>[${t}] ${ok?'✓':'✕'} ${msg}`; el.scrollTop=el.scrollHeight; }
 async function admStats(){
