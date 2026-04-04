@@ -1035,20 +1035,20 @@ async function sendTeamsNotif({name,team,count,note}){
     const hypes=['EN ÉTAT DE GRÂCE ⚡','MACHINE DE GUERRE 🔥','GOD MODE ACTIVÉ 🎯','INARRÊTABLE 👊','INSTINCT DE CHASSEUR 📞'];
     const hype=hypes[~~(Math.random()*hypes.length)];
     const ts=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const comment=note?('\n💬 '+note):'';
-    const msg=[
-      '📞 R1P VALIDÉ — '+name.toUpperCase(),
-      '──────────────────────',
-      '👤 Pilote       '+name.toUpperCase(),
-      '🏢 Équipe       '+team.toUpperCase(),
-      '📊 Semaine      '+count+' R1P',
-      '⚡ Session      '+ses+' R1P',
-      '🎖 Rang         '+rang,
-      comment,
-      '──────────────────────',
-      '🔥 '+hype,
-      '\nNMD ✶ IDF · OOBjectif R1P · '+ts
-    ].filter(Boolean).join('\n');
+    const commentLine=note?('<br>💬 &nbsp;<em>'+note+'</em>'):'';
+    const msg=''
+      +'<strong style="font-size:15px">📞 R1P VALIDÉ &nbsp;—&nbsp; '+name.toUpperCase()+'</strong><br>'
+      +'<br>'
+      +'<table cellpadding="4" cellspacing="0">'
+      +'<tr><td>👤</td><td><strong>'+name.toUpperCase()+'</strong></td><td>&nbsp;&nbsp;🏢</td><td><strong>'+team.toUpperCase()+'</strong></td></tr>'
+      +'<tr><td>📊</td><td>Semaine &nbsp;<strong>'+count+' R1P</strong></td><td>&nbsp;&nbsp;⚡</td><td>Session &nbsp;<strong>'+ses+' R1P</strong></td></tr>'
+      +'<tr><td>🎖</td><td colspan="3"><strong>'+rang+'</strong></td></tr>'
+      +'</table>'
+      +commentLine
+      +'<br><br>'
+      +'🔥 &nbsp;<strong>'+hype+'</strong>'
+      +'<br><br>'
+      +'<span style="color:gray;font-size:11px"><em>NMD ✶ IDF &nbsp;·&nbsp; OOBjectif R1P &nbsp;·&nbsp; '+ts+'</em></span>';
 
     const body={
       pilote:name.toUpperCase(),
