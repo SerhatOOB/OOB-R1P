@@ -1024,38 +1024,68 @@ async function testTeamsWH(){
   alog(ok?'Teams ✓ Message envoyé !':"Teams ✕ Vérifiez l'URL et le flux Power Automate",ok);
 }
 async function sendTeamsNotif({name,team,count,note}){
-  const url=(_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ').trim();
+  const PA_URL='https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ';
+  const url=(_store.get('oob_teams_wh')||PA_URL).trim();
   if(!url) return false;
   try{
-    /* Rang actuel */
     let rang='RANG C';
     if(count>=30) rang='RANG S ★';
     else if(count>=15) rang='RANG A';
     else if(count>=5)  rang='RANG B';
-
-    /* Message hype aléatoire */
     const hypes=['EN ÉTAT DE GRÂCE ⚡','MACHINE DE GUERRE 🔥','GOD MODE ACTIVÉ 🎯','INARRÊTABLE 👊','INSTINCT DE CHASSEUR 📞'];
     const hype=hypes[~~(Math.random()*hypes.length)];
+    const ts=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const comment=note?('\n💬 '+note):'';
+    const msg=[
+      '📞 R1P VALIDÉ — '+name.toUpperCase(),
+      '──────────────────────',
+      '👤 Pilote       '+name.toUpperCase(),
+      '🏢 Équipe       '+team.toUpperCase(),
+      '📊 Semaine      '+count+' R1P',
+      '⚡ Session      '+ses+' R1P',
+      '🎖 Rang         '+rang,
+      comment,
+      '──────────────────────',
+      '🔥 '+hype,
+      '\nNMD ✶ IDF · OOBjectif R1P · '+ts
+    ].filter(Boolean).join('\n');
 
     const body={
-      pilote:      name.toUpperCase(),
-      equipe:      team.toUpperCase(),
-      count_semaine: count,
-      count_session: ses,
-      rang:        rang,
-      commentaire: note||'',
-      hype:        hype,
-      timestamp:   new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})
+      pilote:name.toUpperCase(),
+      equipe:team.toUpperCase(),
+      count_semaine:count,
+      count_session:ses,
+      rang:rang,
+      commentaire:note||'',
+      hype:hype,
+      timestamp:ts,
+      message_teams:msg
     };
 
-    const res=await fetch(url,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
+    /* Tentative 1 : fetch standard (fonctionne depuis https://) */
+    try{
+      const res=await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+      if(res.ok||res.status===202) return true;
+    }catch(corsErr){
+      /* Depuis file:// le navigateur bloque le fetch standard — fallback no-cors */
+      console.warn('Teams fetch standard bloqué, fallback no-cors:',corsErr.message);
+    }
+
+    /* Tentative 2 : no-cors via XMLHttpRequest (contourne CORS file://) */
+    return new Promise(resolve=>{
+      const xhr=new XMLHttpRequest();
+      xhr.open('POST',url,true);
+      xhr.setRequestHeader('Content-Type','application/json');
+      xhr.onload=()=>resolve(xhr.status<400||xhr.status===0);
+      xhr.onerror=()=>resolve(false);
+      xhr.ontimeout=()=>resolve(false);
+      xhr.timeout=8000;
+      xhr.send(JSON.stringify(body));
     });
-    /* no-cors renvoie toujours "opaque" — on considère OK si pas d'exception */
-    return true;
   }catch(e){
     console.warn('Teams:',e.message);
     return false;
