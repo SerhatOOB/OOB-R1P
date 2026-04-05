@@ -990,6 +990,7 @@ let user={name:"",team:""};
 let ses=0,week=0,month=0,t0=Date.now(),_bootLoaded=false,_r1lbl='R1P';
 let boardWeek=[],boardMonth=[],boardSess=[];
 let prevLeader=null,lastFeedIds=new Set(),currentTab='week',autoResetDone=false;
+let _snapWeek='',_snapMonth='',_snapSess='',_snapFeed='',_snapTMK='';
 
 /* ════ CURSOR ════ */
 const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
@@ -1287,8 +1288,9 @@ function setRank(cnt){
 }
 
 /* ════ TABS ════ */
-function switchTab(tab,btn){ currentTab=tab; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderCurrentTab(); }
-function renderCurrentTab(){ if(currentTab==='week') renderLB('lb-main',boardWeek,'count_week'); else if(currentTab==='month') renderLB('lb-main',boardMonth,'count_month'); else renderLB('lb-main',boardSess,'count_session'); }
+function switchTab(tab,btn){ currentTab=tab; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderCurrentTab(true); }
+function renderCurrentTab(force=false){ if(currentTab==='week') renderLB('lb-main',boardWeek,'count_week',force); else if(currentTab==='month') renderLB('lb-main',boardMonth,'count_month',force); else renderLB('lb-main',boardSess,'count_session',force); }
+function _snap(items,field){ return items.map(x=>x.key+':'+(x[field]||0)).join('|'); }
 
 /* ════ TEAMS WEBHOOK ════ */
 function saveTeamsWH(){
@@ -1567,18 +1569,17 @@ async function refreshAll(){
     if(!_bootLoaded){ ses=me.count_session||0; document.getElementById('myscore').textContent=ses; document.getElementById('stse').textContent=ses+' '+_r1lbl; _bootLoaded=true; } }
 }
 
-function renderLB(id,items,field){
-  /* Exclure Direction et TMK du classement */
-  const filtered=items.filter(it=>{
-    const team=TEAM_MAP[it.key.toLowerCase()];
-    return team!=='Direction'&&team!=='TMK';
-  });
-  if(!filtered.length){document.getElementById(id).innerHTML='<div style="font-family:var(--fm);font-size:.6rem;color:var(--dim);letter-spacing:2px;text-align:center;padding:20px 0;">AUCUNE DONNÉE</div>';return;}
+function renderLB(id,items,field,force=false){
+  const filtered=items.filter(it=>{ const t=TEAM_MAP[it.key.toLowerCase()]; return t!=='Direction'&&t!=='TMK'; });
+  const snapKey='_snap'+(field==='count_week'?'Week':field==='count_month'?'Month':'Sess');
+  const newSnap=_snap(filtered,field);
+  if(!force&&newSnap===window[snapKey]) return;
+  window[snapKey]=newSnap;
+  const container=document.getElementById(id);
+  if(!filtered.length){ container.innerHTML='<div style="font-family:var(--fm);font-size:.6rem;color:var(--dim);letter-spacing:2px;text-align:center;padding:20px 0;">AUCUNE DONNÉE</div>'; return; }
   const max=filtered[0][field]||1;
   const top3=filtered.slice(0,3);
   const rest=filtered.slice(3);
-
-  /* ── Podium TOP 3 ── */
   let html='<div class="podium-stage">';
   top3.forEach((it,i)=>{
     if(!it)return;
@@ -1591,28 +1592,12 @@ function renderLB(id,items,field){
     const pct=Math.round((score/max)*100);
     const lvl=score>=30?'RANG S':score>=15?'RANG A':score>=5?'RANG B':'RANG C';
     const lnum=Math.max(1,Math.floor(score/2)+1);
-    /* étincelles pour #1 */
     let sparks='';
-    if(i===0){
-      const spos=[[12,18],[88,22],[30,45],[70,38],[50,12],[20,60],[80,55]];
-      sparks=spos.map((p,si)=>`<div class="p-spark" style="left:${p[0]}%;top:${p[1]}%;--dur:${1.5+si*.4}s;--del:${si*.28}s;"></div>`).join('');
-    }
+    if(i===0){ const spos=[[12,18],[88,22],[30,45],[70,38],[50,12],[20,60],[80,55]]; sparks=spos.map((p,si)=>`<div class="p-spark" style="left:${p[0]}%;top:${p[1]}%;--dur:${1.5+si*.4}s;--del:${si*.28}s;"></div>`).join(''); }
     const ped=i===0?'<div class="p-pedestal"><div class="p-fire"></div></div>':'<div class="p-pedestal"></div>';
-    html+='<div class="p-card '+cls+(me?' me-pod':'')+'">'+
-      sparks+
-      icon+
-      '<div class="p-av">'+av+'</div>'+
-      '<div class="p-name'+(me?' me':'')+'">'+it.key.toUpperCase()+(me?'&nbsp;◀':'')+'</div>'+
-      '<div class="p-score">'+score+'</div>'+
-      '<div class="p-unit">R1P</div>'+
-      '<div class="p-base"><div class="p-basefill" style="width:'+pct+'%"></div></div>'+
-      '<div class="p-lvlnum">LVL '+lnum+' · '+lvl+'</div>'+
-      ped+
-    '</div>';
+    html+='<div class="p-card '+cls+(me?' me-pod':'')+'">'+sparks+icon+'<div class="p-av">'+av+'</div><div class="p-name'+(me?' me':'')+'">'+it.key.toUpperCase()+(me?'&nbsp;◀':'')+'</div><div class="p-score">'+score+'</div><div class="p-unit">R1P</div><div class="p-base"><div class="p-basefill" style="width:'+pct+'%"></div></div><div class="p-lvlnum">LVL '+lnum+' · '+lvl+'</div>'+ped+'</div>';
   });
   html+='</div>';
-
-  /* ── Liste 4ème et + ── */
   if(rest.length){
     html+='<div class="p-rest">';
     rest.forEach((it,i)=>{
@@ -1622,26 +1607,25 @@ function renderLB(id,items,field){
       const score=it[field]||0;
       const pct=Math.round((score/max)*100);
       const lnum=Math.max(1,Math.floor(score/2)+1);
-      html+='<div>'+
-        '<div class="p-ri">'+
-          '<div class="p-ri-rk">'+(i+4)+'</div>'+
-          '<div class="p-ri-av'+(me?' me':'')+'">'+av+'</div>'+
-          '<div class="p-ri-nm'+(me?' me':'')+'">'+it.key.toUpperCase()+(me?'&nbsp;◀':'')+'</div>'+
-          '<span style="font-family:var(--fm);font-size:.38rem;color:rgba(255,255,255,.22);letter-spacing:1px;margin-right:4px;">lv'+lnum+'</span>'+
-          '<div class="p-ri-sc">'+score+'</div>'+
-        '</div>'+
-        '<div class="p-ri-bar"><div class="p-ri-barf" style="width:'+pct+'%"></div></div>'+
-      '</div>';
+      html+='<div><div class="p-ri"><div class="p-ri-rk">'+(i+4)+'</div><div class="p-ri-av'+(me?' me':'')+'">'+av+'</div><div class="p-ri-nm'+(me?' me':'')+'">'+it.key.toUpperCase()+(me?'&nbsp;◀':'')+'</div><span style="font-family:var(--fm);font-size:.38rem;color:rgba(255,255,255,.22);letter-spacing:1px;margin-right:4px;">lv'+lnum+'</span><div class="p-ri-sc">'+score+'</div></div><div class="p-ri-bar"><div class="p-ri-barf" style="width:'+pct+'%"></div></div></div>';
     });
     html+='</div>';
   }
-  document.getElementById(id).innerHTML=html;
+  /* Fade doux uniquement quand les données changent vraiment */
+  container.style.transition='opacity .15s ease';
+  container.style.opacity='0';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    container.innerHTML=html;
+    container.style.opacity='1';
+  }));
 }
 
 function renderTMK(indiv){
   const zone=document.getElementById('tmk-pilots-list');
   if(!zone)return;
   const tmk=indiv.filter(it=>TEAM_MAP[it.key.toLowerCase()]==='TMK');
+  const newSnap=tmk.map(x=>x.key+':'+(x.count_week||0)+':'+(x.count_session||0)).join('|');
+  if(newSnap===window._snapTMK) return; window._snapTMK=newSnap;
   if(!tmk.length){zone.innerHTML='<span class="tmk-empty">Aucun pilote TMK actif</span>';return;}
   zone.innerHTML=tmk.map(it=>{
     const ph=PHOTOS[it.key.toLowerCase()];
@@ -1663,6 +1647,9 @@ function renderTMK(indiv){
 }
 
 function renderFeed(items){
+  const newSnap=items.map(x=>(x.id||x.auteur)+':'+(x.created_at||'')).join('|');
+  if(newSnap===window._snapFeed) return;
+  window._snapFeed=newSnap;
   const icons=['📞','⚡','🎯','🔥','💥','📡','🚀'];
   document.getElementById('feed').innerHTML=items.map((it,idx)=>{
     const dt=it.created_at?new Date(it.created_at):null;
