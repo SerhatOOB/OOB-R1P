@@ -741,7 +741,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
         <div id="boss-section">
           <div class="boss-header">
             <span class="boss-label">⚔️ OBJECTIF COLLECTIF SEMAINE</span>
-            <span class="boss-target-lbl" id="boss-target-lbl">0 / 50 R1P</span>
+            <span class="boss-target-lbl" id="boss-target-lbl">0 / 80 R1P</span>
           </div>
           <div class="boss-outer">
             <div class="boss-fill" id="boss-fill" style="width:0%"></div>
@@ -840,7 +840,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
     <div class="asect">
       <div class="asect-t">🎯 OBJECTIF COLLECTIF SEMAINE</div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <input class="ainp" id="boss-target-inp" type="number" placeholder="Objectif R1P semaine (défaut: 50)" min="1" max="999" style="flex:1;">
+        <input class="ainp" id="boss-target-inp" type="number" placeholder="Objectif R1P semaine (défaut: 80)" min="1" max="999" style="flex:1;">
         <button class="abtn2 g" onclick="saveBossTarget()">💾 ENREGISTRER</button>
       </div>
       <div style="font-family:var(--fm);font-size:.5rem;color:var(--dim);letter-spacing:1px;margin-top:6px;">Objectif actuel : <span id="boss-cur-target" style="color:var(--p);">—</span> R1P</div>
@@ -1544,7 +1544,7 @@ async function upsert(scope,key){
 function updateBossBar(indiv){
   const filtered=indiv.filter(x=>TEAM_MAP[x.key.toLowerCase()]!=='Direction'&&TEAM_MAP[x.key.toLowerCase()]!=='TMK');
   const total=filtered.reduce((s,x)=>s+(x.count_week||0),0);
-  const target=parseInt(localStorage.getItem('oob_boss_target')||'50');
+  const target=parseInt(localStorage.getItem('oob_boss_target')||'80');
   const pct=Math.min(Math.round((total/target)*100),100);
   const fill=document.getElementById('boss-fill');
   const lbl=document.getElementById('boss-target-lbl');
@@ -1890,11 +1890,11 @@ function openPW(){ document.getElementById('pwo').style.display='flex'; setTimeo
 function closePW(){ document.getElementById('pwo').style.display='none'; document.getElementById('apw').value=''; document.getElementById('pwerr').textContent=''; }
 function checkPW(){ if(document.getElementById('apw').value===ADMIN_PW){ closePW(); openAdm(); } else{ document.getElementById('pwerr').textContent='✕ MOT DE PASSE INCORRECT'; shake('apw'); } }
 document.getElementById('apw').addEventListener('keydown',e=>{ if(e.key==='Enter') checkPW(); });
-function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _bc=document.getElementById('boss-cur-target'); if(_bc) _bc.textContent=localStorage.getItem('oob_boss_target')||'50'; const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
+function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _bc=document.getElementById('boss-cur-target'); if(_bc) _bc.textContent=localStorage.getItem('oob_boss_target')||'80'; const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
 function closeAdm(){ gsap.to('#adm',{opacity:0,duration:.25,onComplete:()=>document.getElementById('adm').style.display='none'}); }
 function alog(msg,ok=true){ const el=document.getElementById('alog'); const t=new Date().toTimeString().slice(0,8); el.innerHTML+=`<br>[${t}] ${ok?'✓':'✕'} ${msg}`; el.scrollTop=el.scrollHeight; }
 async function saveBossTarget(){
-  const val=parseInt(document.getElementById('boss-target-inp').value)||50;
+  const val=parseInt(document.getElementById('boss-target-inp').value)||80;
   localStorage.setItem('oob_boss_target',val);
   document.getElementById('boss-cur-target').textContent=val;
   document.getElementById('boss-target-inp').value='';
