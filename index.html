@@ -618,6 +618,266 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 .teams-note{font-family:var(--fm);font-size:.5rem;color:rgba(255,255,255,.22);letter-spacing:1px;line-height:1.9;margin-top:6px;}
 
 
+
+/* ════ TEAMS AI MODULE ════ */
+.ta-module{position:relative;overflow:visible;}
+.ta-card{
+  background:linear-gradient(135deg,rgba(15,25,50,.85) 0%,rgba(5,12,30,.92) 100%);
+  border:1px solid rgba(96,165,250,.2);
+  border-radius:14px;
+  padding:0;overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:box-shadow .3s;
+}
+.ta-card:hover{box-shadow:0 12px 60px rgba(96,165,250,.12),0 4px 20px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);}
+
+
+.ta-header{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px;
+  border-bottom:1px solid rgba(96,165,250,.12);
+  background:linear-gradient(90deg,rgba(96,165,250,.06),transparent);
+}
+.ta-header-icon{font-size:1.4rem;}
+.ta-header-title{font-family:var(--fh);font-size:.75rem;letter-spacing:3px;color:var(--rb);text-shadow:0 0 20px rgba(96,165,250,.4);}
+.ta-header-badge{
+  margin-left:auto;
+  font-family:var(--fm);font-size:.45rem;letter-spacing:2px;
+  color:var(--grn);padding:3px 8px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:20px;
+}
+
+.ta-body{padding:18px 20px;display:flex;flex-direction:column;gap:16px;}
+
+/* API key input */
+.ta-apikey-wrap{display:flex;gap:8px;align-items:center;}
+.ta-apikey{
+  flex:1;font-family:var(--fm);font-size:.55rem;
+  background:rgba(96,165,250,.04);border:1px solid rgba(96,165,250,.18);
+  border-radius:8px;padding:9px 12px;color:rgba(255,255,255,.8);
+  letter-spacing:1px;outline:none;transition:.25s;
+}
+.ta-apikey:focus{border-color:rgba(96,165,250,.5);box-shadow:0 0 20px rgba(96,165,250,.1);}
+.ta-apikey::placeholder{color:rgba(255,255,255,.2);}
+
+
+/* Message type grid */
+.ta-types{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.ta-type-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 6px;border-radius:10px;cursor:pointer;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  transition:.2s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.ta-type-btn::before{
+  content:'';position:absolute;inset:0;
+  background:var(--tb-color,rgba(96,165,250,.15));
+  opacity:0;transition:.2s;border-radius:10px;
+}
+.ta-type-btn:hover::before,.ta-type-btn.active::before{opacity:1;}
+.ta-type-btn.active{border-color:var(--tb-color,rgba(96,165,250,.5));box-shadow:0 0 15px rgba(96,165,250,.15);}
+.ta-type-btn .tb-icon{font-size:1.1rem;position:relative;}
+.ta-type-btn .tb-label{font-family:var(--fm);font-size:.38rem;letter-spacing:.5px;color:var(--dim);text-align:center;position:relative;line-height:1.3;}
+.ta-type-btn.active .tb-label{color:rgba(255,255,255,.9);}
+
+
+
+
+
+/* Message output */
+.ta-output-wrap{position:relative;}
+.ta-output-label{font-family:var(--fm);font-size:.44rem;letter-spacing:2px;color:var(--dim);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.ta-output{
+  width:100%;min-height:120px;max-height:200px;overflow-y:auto;
+  background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.07);
+  border-radius:10px;padding:12px 14px;
+  font-family:var(--fu);font-size:.72rem;line-height:1.7;color:rgba(255,255,255,.85);
+  outline:none;resize:none;
+  transition:.25s;
+  scrollbar-width:thin;scrollbar-color:rgba(247,147,30,.3) transparent;
+}
+.ta-output:focus{border-color:rgba(247,147,30,.3);box-shadow:0 0 20px rgba(247,147,30,.06);}
+
+
+/* Status bar */
+.ta-status{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--fm);font-size:.44rem;letter-spacing:1px;
+  color:var(--dim);min-height:18px;
+}
+.ta-status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,.2);flex-shrink:0;
+  transition:.3s;
+}
+.ta-status-dot.loading{background:var(--gold);animation:blink .6s infinite;}
+.ta-status-dot.success{background:var(--grn);box-shadow:0 0 10px rgba(34,197,94,.5);}
+.ta-status-dot.error{background:var(--red);}
+
+/* Action buttons row */
+.ta-actions{display:flex;gap:8px;}
+.ta-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:11px 14px;border-radius:10px;cursor:pointer;font-family:var(--fh);
+  font-size:.56rem;letter-spacing:2px;font-weight:600;
+  border:none;outline:none;transition:.25s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.ta-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
+  opacity:0;transition:.2s;
+}
+.ta-btn:hover::after{opacity:1;}
+.ta-btn:active{transform:scale(.97);}
+.ta-btn-gen{
+  background:linear-gradient(135deg,rgba(247,147,30,.25),rgba(255,98,0,.18));
+  border:1px solid rgba(247,147,30,.35);color:var(--p);
+}
+.ta-btn-gen:hover{background:linear-gradient(135deg,rgba(247,147,30,.35),rgba(255,98,0,.28));border-color:rgba(247,147,30,.6);box-shadow:0 4px 25px rgba(247,147,30,.25);}
+.ta-btn-send{
+  background:linear-gradient(135deg,rgba(96,165,250,.25),rgba(52,103,172,.18));
+  border:1px solid rgba(96,165,250,.35);color:var(--rb);
+}
+.ta-btn-send:hover{background:linear-gradient(135deg,rgba(96,165,250,.35),rgba(52,103,172,.28));border-color:rgba(96,165,250,.6);box-shadow:0 4px 25px rgba(96,165,250,.25);}
+.ta-btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;}
+
+/* Schedule pills */
+.ta-schedule{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;}
+.ta-pill{
+  font-family:var(--fm);font-size:.4rem;letter-spacing:1px;
+  padding:3px 8px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
+  color:var(--dim);
+}
+
+
+/* Webhook row */
+.ta-wh-row{display:flex;gap:7px;align-items:center;}
+#ta-webhook{
+  flex:1;font-family:var(--fm);font-size:.5rem;
+  background:rgba(96,165,250,.04);border:1px solid rgba(96,165,250,.18);
+  border-radius:8px;padding:8px 12px;color:rgba(255,255,255,.6);
+  letter-spacing:1px;outline:none;transition:.25s;
+}
+#ta-webhook:focus{border-color:rgba(96,165,250,.4);}
+
+
+/* 3D float animation for the card */
+@keyframes taFloat{0%,100%{transform:translateY(0) rotateX(0deg);}50%{transform:translateY(-3px) rotateX(.4deg);}}
+.ta-module .ta-card{transform-style:preserve-3d;animation:taFloat 8s ease-in-out infinite;}
+@keyframes taGlow{0%,100%{box-shadow:0 8px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);}50%{box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 40px rgba(96,165,250,.06),inset 0 1px 0 rgba(255,255,255,.08);}}
+
+/* History log */
+.ta-log-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:.55rem;font-family:var(--fu);
+}
+.ta-log-item:last-child{border-bottom:none;}
+.ta-log-time{font-family:var(--fm);font-size:.42rem;color:var(--dim);white-space:nowrap;flex-shrink:0;}
+.ta-log-status{font-size:.7rem;flex-shrink:0;}
+.ta-log-text{color:rgba(255,255,255,.6);line-height:1.4;}
+
+#ta-log-list{max-height:110px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(247,147,30,.2) transparent;}
+
+/* ════ SCHEDULER ════ */
+.sched-module{margin-bottom:0;}
+.sched-card{
+  background:linear-gradient(135deg,rgba(10,20,40,.9),rgba(5,12,28,.95));
+  border:1px solid rgba(247,147,30,.15);border-radius:14px;overflow:hidden;
+  box-shadow:0 6px 30px rgba(0,0,0,.5);
+}
+.sched-header{
+  display:flex;align-items:center;gap:10px;padding:14px 18px;
+  border-bottom:1px solid rgba(247,147,30,.1);
+  background:linear-gradient(90deg,rgba(247,147,30,.06),transparent);
+}
+.sched-header-title{font-family:var(--fh);font-size:.72rem;letter-spacing:3px;color:var(--p);}
+.sched-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+
+/* Toggle ON/OFF */
+.sched-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.sched-toggle-label{font-family:var(--fm);font-size:.52rem;letter-spacing:2px;color:var(--dim);}
+.sched-toggle-wrap{display:flex;align-items:center;gap:10px;}
+.sched-toggle{
+  position:relative;width:48px;height:26px;cursor:pointer;
+}
+.sched-toggle input{opacity:0;width:0;height:0;position:absolute;}
+.sched-slider{
+  position:absolute;inset:0;border-radius:13px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  transition:.3s;
+}
+.sched-slider::before{
+  content:'';position:absolute;width:18px;height:18px;border-radius:50%;
+  left:3px;top:3px;background:rgba(255,255,255,.3);
+  transition:.3s cubic-bezier(.34,1.56,.64,1);
+}
+.sched-toggle input:checked + .sched-slider{
+  background:rgba(247,147,30,.25);border-color:rgba(247,147,30,.5);
+  box-shadow:0 0 16px rgba(247,147,30,.2);
+}
+.sched-toggle input:checked + .sched-slider::before{
+  transform:translateX(22px);background:var(--p);
+  box-shadow:0 0 10px rgba(247,147,30,.6);
+}
+.sched-state{font-family:var(--fh);font-size:.58rem;letter-spacing:2px;transition:.3s;}
+.sched-state.on{color:var(--grn);}
+.sched-state.off{color:var(--dim);}
+
+/* Status bar */
+.sched-status{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);border-radius:8px;
+}
+.sched-pulse{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  background:rgba(255,255,255,.15);transition:.3s;
+}
+.sched-pulse.active{
+  background:var(--grn);box-shadow:0 0 10px rgba(34,197,94,.5);
+  animation:blink .9s infinite;
+}
+.sched-pulse.sending{background:var(--gold);animation:blink .3s infinite;}
+.sched-status-txt{font-family:var(--fm);font-size:.48rem;letter-spacing:1px;color:var(--dim);}
+.sched-next{margin-left:auto;font-family:var(--fh);font-size:.5rem;letter-spacing:1px;color:var(--p);}
+
+/* Planning du jour */
+.sched-day-title{font-family:var(--fm);font-size:.44rem;letter-spacing:2px;color:var(--dim);margin-bottom:7px;}
+.sched-slots{display:flex;flex-direction:column;gap:4px;}
+.sched-slot{
+  display:flex;align-items:center;gap:10px;padding:7px 10px;
+  border-radius:7px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+  transition:.2s;
+}
+.sched-slot.next-up{
+  background:rgba(247,147,30,.07);border-color:rgba(247,147,30,.2);
+}
+.sched-slot.done{opacity:.4;}
+.sched-slot-time{font-family:var(--fh);font-size:.55rem;letter-spacing:1px;color:var(--p);width:38px;flex-shrink:0;}
+.sched-slot.done .sched-slot-time{color:var(--grn);}
+.sched-slot-label{font-family:var(--fu);font-size:.62rem;color:rgba(255,255,255,.7);flex:1;}
+.sched-slot-icon{font-size:.8rem;width:18px;text-align:center;}
+.sched-slot-check{font-size:.7rem;margin-left:auto;}
+.sched-noday{font-family:var(--fm);font-size:.5rem;letter-spacing:1px;color:var(--dim);text-align:center;padding:10px 0;}
+
+/* Countdown */
+.sched-countdown{
+  text-align:center;padding:10px;
+  font-family:var(--fh);font-size:1rem;letter-spacing:4px;
+  color:var(--p);text-shadow:0 0 20px rgba(247,147,30,.3);
+  background:rgba(247,147,30,.04);border-radius:8px;
+  border:1px solid rgba(247,147,30,.1);
+}
+.sched-countdown-label{font-size:.4rem;letter-spacing:3px;color:var(--dim);display:block;margin-top:3px;}
+
+
+
+
 /* ════════════════════════════════════════════
    BOUTONS HEXAGONAUX PLASMA — v17
    Forme hexagonale, battement cardiaque,
@@ -1247,6 +1507,119 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
       <button class="abtn2" onclick="admLoadPilots()">📥 CHARGER LES DONNÉES</button>
       <div class="si" style="max-height:190px;margin-top:9px;" id="aplist"></div>
     </div>
+
+    <!-- TEAMS AI AUTOMATION -->
+    <div class="asect ta-module">
+      <div class="asect-t">🤖 MESSAGES TEAMS — IA</div>
+      <div class="ta-card">
+        <div class="ta-header">
+          <span class="ta-header-icon">⚡</span>
+          <span class="ta-header-title">OOB COMMAND CENTER</span>
+          <span class="ta-header-badge">CLAUDE SONNET</span>
+        </div>
+        <div class="ta-body">
+          <div>
+            <div class="ta-output-label">🔑 CLÉ API ANTHROPIC</div>
+            <div class="ta-apikey-wrap">
+              <input type="password" class="ta-apikey" id="ta-apikey" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+              <button class="abtn2" style="padding:7px 12px;font-size:.55rem;white-space:nowrap;" onclick="taSaveKey()" title="Sauvegarder">💾</button>
+            </div>
+          </div>
+          <div>
+            <div class="ta-output-label">📋 TYPE DE MESSAGE</div>
+            <div class="ta-types" id="ta-types">
+              <div class="ta-type-btn active" data-type="debut_session" style="--tb-color:rgba(24,95,165,.2)" onclick="taSelectType(this)"><span class="tb-icon">⚡</span><span class="tb-label">Lancement<br>session</span></div>
+              <div class="ta-type-btn" data-type="point_15h" style="--tb-color:rgba(186,117,23,.2)" onclick="taSelectType(this)"><span class="tb-icon">🎯</span><span class="tb-label">Point 15h</span></div>
+              <div class="ta-type-btn" data-type="point_16h" style="--tb-color:rgba(216,90,48,.2)" onclick="taSelectType(this)"><span class="tb-icon">📊</span><span class="tb-label">Point 16h</span></div>
+              <div class="ta-type-btn" data-type="point_17h" style="--tb-color:rgba(153,53,86,.2)" onclick="taSelectType(this)"><span class="tb-icon">🔥</span><span class="tb-label">Point 17h</span></div>
+              <div class="ta-type-btn" data-type="bilan_session" style="--tb-color:rgba(59,109,17,.2)" onclick="taSelectType(this)"><span class="tb-icon">🏁</span><span class="tb-label">Bilan session</span></div>
+              <div class="ta-type-btn" data-type="debut_semaine" style="--tb-color:rgba(15,110,86,.2)" onclick="taSelectType(this)"><span class="tb-icon">🚀</span><span class="tb-label">Lancement<br>semaine</span></div>
+              <div class="ta-type-btn" data-type="bilan_semaine" style="--tb-color:rgba(83,74,183,.2)" onclick="taSelectType(this)"><span class="tb-icon">🏆</span><span class="tb-label">Bilan semaine</span></div>
+              <div class="ta-type-btn" data-type="debut_mois" style="--tb-color:rgba(127,119,221,.2)" onclick="taSelectType(this)"><span class="tb-icon">📅</span><span class="tb-label">Lancement<br>mois</span></div>
+              <div class="ta-type-btn" data-type="bilan_mois" style="--tb-color:rgba(24,95,165,.2)" onclick="taSelectType(this)"><span class="tb-icon">🌟</span><span class="tb-label">Bilan mois</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="ta-output-label">🔗 WEBHOOK POWER AUTOMATE</div>
+            <div class="ta-wh-row">
+              <input type="text" id="ta-webhook" placeholder="URL Power Automate..." spellcheck="false">
+              <button class="abtn2" style="padding:7px 10px;font-size:.55rem;white-space:nowrap;" onclick="taSaveWebhook()" title="Sauvegarder">💾</button>
+            </div>
+          </div>
+          <div class="ta-output-wrap">
+            <div id="ta-data-source" style="font-family:var(--fm);font-size:.42rem;letter-spacing:1px;color:var(--dim);margin-bottom:8px;padding:5px 9px;background:rgba(0,0,0,.2);border-radius:6px;border:1px solid rgba(255,255,255,.05);min-height:18px;">En attente de génération</div>
+            <div class="ta-output-label">
+              <span>💬 MESSAGE GÉNÉRÉ</span>
+              <span id="ta-word-count" style="color:var(--dim);font-size:.4rem;">—</span>
+            </div>
+            <textarea class="ta-output" id="ta-output" placeholder="Le message apparaîtra ici après génération..." oninput="taCountWords(this)"></textarea>
+          </div>
+          <div class="ta-status">
+            <div class="ta-status-dot" id="ta-dot"></div>
+            <span id="ta-status-text">En attente</span>
+          </div>
+          <div class="ta-actions">
+            <button class="ta-btn ta-btn-gen" id="ta-btn-gen" onclick="taGenerate()">✦ GÉNÉRER</button>
+            <button class="ta-btn ta-btn-send" id="ta-btn-send" onclick="taSend()" disabled>➤ ENVOYER TEAMS</button>
+          </div>
+          <div>
+            <div class="ta-output-label" style="margin-bottom:8px;">📜 HISTORIQUE ENVOIS</div>
+            <div id="ta-log-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END TEAMS AI -->
+    <!-- SCHEDULER AUTO -->
+    <div class="asect sched-module">
+      <div class="asect-t">⏱ SCHEDULER — ENVOI AUTOMATIQUE</div>
+      <div class="sched-card">
+        <div class="sched-header">
+          <span style="font-size:1.2rem;">🕐</span>
+          <span class="sched-header-title">PLANIFICATION</span>
+        </div>
+        <div class="sched-body">
+
+          <!-- Toggle ON/OFF -->
+          <div class="sched-toggle-row">
+            <span class="sched-toggle-label">SCHEDULER</span>
+            <div class="sched-toggle-wrap">
+              <label class="sched-toggle">
+                <input type="checkbox" id="sched-switch" onchange="schedToggle(this.checked)">
+                <span class="sched-slider"></span>
+              </label>
+              <span class="sched-state off" id="sched-state">OFF</span>
+            </div>
+          </div>
+
+          <!-- Statut live -->
+          <div class="sched-status">
+            <div class="sched-pulse" id="sched-pulse"></div>
+            <span class="sched-status-txt" id="sched-status-txt">Scheduler inactif — active pour démarrer</span>
+            <span class="sched-next" id="sched-next"></span>
+          </div>
+
+          <!-- Countdown prochain message -->
+          <div class="sched-countdown" id="sched-countdown" style="display:none;">
+            <span id="sched-countdown-time">--:--:--</span>
+            <span class="sched-countdown-label" id="sched-countdown-label">PROCHAIN MESSAGE</span>
+          </div>
+
+          <!-- Planning du jour -->
+          <div>
+            <div class="sched-day-title" id="sched-day-title">AUJOURD'HUI</div>
+            <div class="sched-slots" id="sched-slots">
+              <div class="sched-noday">Chargement...</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- END SCHEDULER -->
+
+
+
   </div>
 </div>
 
@@ -1832,6 +2205,7 @@ async function takeR1P(){
     const _bl=document.getElementById('br1p-lbl');
     if(_bl) _bl.textContent=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
     burstR1P(btn);
+    flyJet();
     /* Teams async — ne bloque pas le flow */
     sendTeamsNotif({name:user.name,team:user.team,count:week,note,r1type:document.getElementById('br1p').getAttribute('data-r1tmk')?'R1TMK':'R1P'}).then(ok=>{
       const area=document.getElementById('teams-badge-area');
@@ -1902,6 +2276,81 @@ function burstR1P(btn){
   gsap.fromTo('#app',{x:0,y:0},{
     keyframes:[{x:-5,y:-3},{x:4,y:3},{x:-3,y:2},{x:2,y:-2},{x:0,y:0}],
     duration:.32,ease:'none'
+  });
+}
+
+/* ════ JET FLYBY ════ */
+function flyJet(){
+  const W=innerWidth,H=innerHeight;
+  const wrap=document.createElement('div');
+  wrap.style.cssText='position:fixed;inset:0;z-index:8800;pointer-events:none;overflow:hidden;';
+  document.body.appendChild(wrap);
+
+  /* ── Canvas contrail ── */
+  const cv=document.createElement('canvas');
+  cv.width=W; cv.height=H;
+  cv.style.cssText='position:absolute;inset:0;';
+  wrap.appendChild(cv);
+  const ctx=cv.getContext('2d');
+
+  /* ── Jet SVG ── */
+  const jet=document.createElement('div');
+  jet.style.cssText='position:absolute;width:88px;height:34px;';
+  jet.innerHTML=`<svg viewBox="0 0 88 34" width="88" height="34" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 0 10px #F7931E)drop-shadow(0 0 4px #fff);">
+    <polygon points="86,17 0,4 11,17 0,30" fill="#F7931E"/>
+    <polygon points="29,17 54,1 59,17 54,25" fill="#fbbf24"/>
+    <polygon points="29,17 48,30 53,17" fill="#ff6200"/>
+    <ellipse cx="8" cy="17" rx="10" ry="5.5" fill="#fbbf24" opacity=".85"/>
+    <ellipse cx="3" cy="17" rx="5" ry="3" fill="white" opacity=".75"/>
+  </svg>`;
+  wrap.appendChild(jet);
+
+  /* ── Trajectoire ── */
+  const sx=-110, sy=H*0.72;
+  const ex=W+130,  ey=H*0.1;
+  const ang=Math.atan2(ey-sy, ex-sx)*180/Math.PI;
+  const dur=1.08;
+
+  gsap.set(jet,{x:sx, y:sy-17, rotation:ang});
+
+  /* ── Points du contrail ── */
+  const pts=[];
+  let elapsed=0;
+
+  const ticker=gsap.ticker.add(()=>{
+    elapsed+=gsap.ticker.deltaRatio()*0.016;
+    const prog=Math.min(elapsed/dur,1);
+    const cx=sx+(ex-sx)*prog;
+    const cy=sy+(ey-sy)*prog;
+    pts.push({x:cx+44, y:cy+17, a:1});
+
+    /* Vieillissement */
+    pts.forEach(p=>{ p.a=Math.max(0,p.a-0.022); });
+    /* Trim */
+    while(pts.length>80) pts.shift();
+
+    ctx.clearRect(0,0,W,H);
+    for(let i=1;i<pts.length;i++){
+      const p=pts[i], pp=pts[i-1];
+      ctx.beginPath();
+      ctx.moveTo(pp.x,pp.y);
+      ctx.lineTo(p.x,p.y);
+      ctx.strokeStyle=`rgba(247,147,30,${p.a*0.7})`;
+      ctx.lineWidth=Math.max(1,3-i*0.04);
+      ctx.stroke();
+    }
+    if(prog>=1) gsap.ticker.remove(ticker);
+  });
+
+  /* ── Animation jet ── */
+  gsap.to(jet,{
+    x:ex, y:ey-17,
+    duration:dur,
+    ease:'power1.in',
+    onComplete:()=>{
+      gsap.ticker.remove(ticker);
+      gsap.to(wrap,{opacity:0,duration:.5,onComplete:()=>wrap.remove()});
+    }
   });
 }
 
@@ -2962,8 +3411,521 @@ function launchCinematic(onDone){
 }
 
 
+
+
+/* ════════════════════════════════════════════
+   SCHEDULER — ENVOI AUTO
+════════════════════════════════════════════ */
+const SCHED_SLOTS = [
+  { id:'debut_mois',    label:'Lancement de mois',   icon:'📅', day:'first',   h:8,  m:0  },
+  { id:'debut_semaine', label:'Lancement semaine',   icon:'🚀', day:[1],       h:8,  m:30 },
+  { id:'debut_session', label:'Lancement session',   icon:'⚡', day:[1,4],     h:13, m:55 },
+  { id:'point_15h',     label:'Point 15h',           icon:'🎯', day:[1,4],     h:15, m:0  },
+  { id:'point_16h',     label:'Point 16h',           icon:'📊', day:[1,4],     h:16, m:0  },
+  { id:'point_17h',     label:'Point 17h',           icon:'🔥', day:[1,4],     h:17, m:0  },
+  { id:'bilan_session', label:'Bilan session',       icon:'🏁', day:[1,4],     h:18, m:0  },
+  { id:'bilan_semaine', label:'Bilan semaine',       icon:'🏆', day:[1],       h:18, m:5  },
+  { id:'bilan_mois',    label:'Bilan de mois',       icon:'🌟', day:'lastfri', h:18, m:0  },
+];
+
+let schedActive = false;
+let schedInterval = null;
+let schedLastSent = {};
+
+function schedToggle(on){
+  schedActive = on;
+  _store.set('oob_sched_active', on?'1':'0');
+  const state=document.getElementById('sched-state');
+  const pulse=document.getElementById('sched-pulse');
+  const countdown=document.getElementById('sched-countdown');
+  if(state){state.textContent=on?'ON':'OFF';state.className='sched-state '+(on?'on':'off');}
+  if(pulse){pulse.className='sched-pulse'+(on?' active':'');}
+  if(countdown){countdown.style.display=on?'block':'none';}
+  if(on){
+    schedTick();
+    if(!schedInterval) schedInterval=setInterval(schedTick,30000);
+    schedSetStatus('Actif — vérification toutes les 30s');
+  }else{
+    if(schedInterval){clearInterval(schedInterval);schedInterval=null;}
+    schedSetStatus('Scheduler inactif — active pour démarrer');
+    const n=document.getElementById('sched-next');if(n)n.textContent='';
+    const ct=document.getElementById('sched-countdown-time');if(ct)ct.textContent='--:--:--';
+  }
+  schedRenderSlots();
+}
+
+async function schedTick(){
+  if(!schedActive) return;
+  const now=new Date();
+  const todaySlots=schedGetTodaySlots(now);
+  for(const slot of todaySlots){
+    const slotDate=new Date(now);
+    slotDate.setHours(slot.h,slot.m,0,0);
+    const diffMs=now-slotDate;
+    const key=schedKey(now,slot);
+    if(diffMs>=0 && diffMs<120000 && !schedLastSent[key]){
+      schedLastSent[key]=true;
+      schedSaveLog();
+      await schedAutoSend(slot,now);
+    }
+  }
+  schedUpdateCountdown(now,todaySlots);
+  schedRenderSlots();
+}
+
+async function schedAutoSend(slot,now){
+  const pulse=document.getElementById('sched-pulse');
+  if(pulse) pulse.className='sched-pulse sending';
+  schedSetStatus('Envoi en cours : '+slot.icon+' '+slot.label+'...');
+  try{
+    let pilots=await taGetPilots();
+    if(!pilots||!pilots.length){
+      pilots=[
+        {name:'Kevin',team:'Normandie',count_session:6,count_week:18,count_month:52},
+        {name:'Sofia',team:'IDF',count_session:4,count_week:14,count_month:41},
+        {name:'Merwan',team:'Normandie',count_session:3,count_week:10,count_month:30},
+        {name:'David',team:'Caen',count_session:7,count_week:21,count_month:64},
+        {name:'Roxanne',team:'IDF',count_session:5,count_week:16,count_month:47},
+      ];
+    }
+    const {system,user}=taBuildPrompt(slot.id,pilots,now);
+    const msg=await taCallClaude(system,user);
+    if(!msg) throw new Error('Réponse vide');
+    const webhookUrl=document.getElementById('ta-webhook').value.trim()||_store.get('oob_ta_webhook')||_store.get('oob_teams_wh')||'';
+    if(!webhookUrl) throw new Error('Webhook manquant');
+    const typeInfo=TA_MSG_TYPES[slot.id]||{label:slot.label,icon:slot.icon};
+    const ts=now.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const body={
+      type_message:typeInfo.label,
+      message_teams:'<strong>'+slot.icon+' '+typeInfo.label.toUpperCase()+' — OOB NORMANDIE & IDF</strong><br><br>'+msg.split('\n').join('<br>')+'<br><br><span style="color:gray;font-size:11px"><em>OOBjectif R1P · '+ts+' · Claude AI · Auto</em></span>',
+      timestamp:ts,
+      message_texte:msg,
+      source:'Scheduler OOBjectif R1P',
+    };
+    const res=await fetch(webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok&&res.status!==202) throw new Error('HTTP '+res.status);
+    schedSetStatus('✅ Envoyé : '+slot.icon+' '+slot.label);
+    taAddLog('success',slot.icon+' '+slot.label+' (auto)',ts);
+    if(pulse) pulse.className='sched-pulse active';
+  }catch(e){
+    schedSetStatus('❌ Échec : '+e.message);
+    if(pulse) pulse.className='sched-pulse active';
+    console.error('[Scheduler]',e);
+  }
+}
+
+function schedUpdateCountdown(now,todaySlots){
+  const next=schedGetNextSlot(now,todaySlots);
+  const el=document.getElementById('sched-countdown-time');
+  const lbl=document.getElementById('sched-countdown-label');
+  const nxt=document.getElementById('sched-next');
+  if(!next){
+    if(el) el.textContent='--:--:--';
+    if(lbl) lbl.textContent="PAS DE MESSAGE AUJOURD'HUI";
+    if(nxt) nxt.textContent='';
+    return;
+  }
+  const target=new Date(now);target.setHours(next.h,next.m,0,0);
+  const diff=target-now;
+  if(diff<0){if(el) el.textContent='--:--:--';return;}
+  const hh=Math.floor(diff/3600000);
+  const mm=Math.floor((diff%3600000)/60000);
+  const ss=Math.floor((diff%60000)/1000);
+  if(el) el.textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+  if(lbl) lbl.textContent=next.icon+' '+next.label.toUpperCase();
+  if(nxt) nxt.textContent='→ '+next.h+'h'+String(next.m).padStart(2,'0');
+}
+
+function schedRenderSlots(){
+  const el=document.getElementById('sched-slots');
+  const title=document.getElementById('sched-day-title');
+  if(!el) return;
+  const now=new Date();
+  const todaySlots=schedGetTodaySlots(now);
+  const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  if(title) title.textContent=dayNames[now.getDay()].toUpperCase()+' — PLANNING';
+  if(!todaySlots.length){el.innerHTML='<div class="sched-noday">Pas de messages prévus aujourd\'hui</div>';return;}
+  const next=schedGetNextSlot(now,todaySlots);
+  el.innerHTML=todaySlots.map(slot=>{
+    const slotDate=new Date(now);slotDate.setHours(slot.h,slot.m,0,0);
+    const passed=now>slotDate;
+    const isNext=next&&next.id===slot.id&&next.h===slot.h;
+    const sent=!!schedLastSent[schedKey(now,slot)];
+    return '<div class="sched-slot'+(isNext?' next-up':'')+(passed&&!isNext?' done':'')+'">'+
+      '<span class="sched-slot-time">'+slot.h+'h'+String(slot.m).padStart(2,'0')+'</span>'+
+      '<span class="sched-slot-icon">'+slot.icon+'</span>'+
+      '<span class="sched-slot-label">'+slot.label+'</span>'+
+      '<span class="sched-slot-check">'+(sent?'✅':passed&&!isNext?'⏸':'⏳')+'</span>'+
+      '</div>';
+  }).join('');
+}
+
+function schedGetTodaySlots(now){
+  const day=now.getDay();
+  const dom=now.getDate();
+  const isLastFri=day===5&&new Date(now.getFullYear(),now.getMonth(),dom+7).getMonth()!==now.getMonth();
+  const isFirstDay=dom===1;
+  return SCHED_SLOTS.filter(s=>{
+    if(s.day==='first') return isFirstDay;
+    if(s.day==='lastfri') return isLastFri;
+    return s.day.includes(day);
+  });
+}
+
+function schedGetNextSlot(now,slots){
+  const nowMins=now.getHours()*60+now.getMinutes();
+  const future=slots.filter(s=>s.h*60+s.m>nowMins);
+  return future.length?future[0]:null;
+}
+
+function schedKey(now,slot){
+  return now.toISOString().slice(0,10)+'_'+slot.h+'h'+slot.m+'_'+slot.id;
+}
+
+function schedSetStatus(txt){
+  const el=document.getElementById('sched-status-txt');
+  if(el) el.textContent=txt;
+}
+
+function schedSaveLog(){
+  _store.set('oob_sched_sent',JSON.stringify(schedLastSent));
+}
+
+function schedInit(){
+  const today=new Date().toISOString().slice(0,10);
+  const saved=JSON.parse(_store.get('oob_sched_sent')||'{}');
+  for(const[k,v]of Object.entries(saved)){if(k.startsWith(today)) schedLastSent[k]=v;}
+  const wasActive=_store.get('oob_sched_active')==='1';
+  const sw=document.getElementById('sched-switch');
+  if(sw&&wasActive){sw.checked=true;schedToggle(true);}
+  else schedRenderSlots();
+  setInterval(()=>{
+    if(!schedActive) return;
+    const now=new Date();
+    schedUpdateCountdown(now,schedGetTodaySlots(now));
+  },1000);
+}
+
+
+
+/* ════════════════════════════════════════════
+   TEAMS AI AUTOMATION — CORE
+════════════════════════════════════════════ */
+const TA_WEEK_TARGET = 80;
+
+const TA_MSG_TYPES = {
+  debut_mois:   {label:'Lancement de mois',   icon:'📅'},
+  debut_semaine:{label:'Lancement de semaine', icon:'🚀'},
+  debut_session:{label:'Lancement de session', icon:'⚡'},
+  point_15h:    {label:'Point 15h',            icon:'🎯'},
+  point_16h:    {label:'Point 16h',            icon:'📊'},
+  point_17h:    {label:'Point 17h',            icon:'🔥'},
+  bilan_session:{label:'Bilan de session',     icon:'🏁'},
+  bilan_semaine:{label:'Bilan de semaine',     icon:'🏆'},
+  bilan_mois:   {label:'Bilan de mois',        icon:'🌟'},
+};
+
+let taSelectedType = 'debut_session';
+let taLastMsg = '';
+
+/* ── Sélection du type de message ── */
+function taSelectType(el){
+  document.querySelectorAll('.ta-type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  taSelectedType = el.dataset.type;
+  const out = document.getElementById('ta-output');
+  if(out) out.value='';
+  taSetStatus('idle','En attente');
+  document.getElementById('ta-btn-send').disabled=true;
+  taCountWords({value:''});
+}
+
+/* ── Compteur de mots ── */
+function taCountWords(el){
+  const v=typeof el==='string'?el:(el.value||'');
+  const n=v.trim()?v.trim().split(/\s+/).length:0;
+  const wc=document.getElementById('ta-word-count');
+  if(wc) wc.textContent=n>0?n+' mots':'—';
+}
+
+/* ── Status bar ── */
+function taSetStatus(state,msg){
+  const dot=document.getElementById('ta-dot');
+  const txt=document.getElementById('ta-status-text');
+  if(!dot||!txt) return;
+  dot.className='ta-status-dot'+(state==='loading'?' loading':state==='success'?' success':state==='error'?' error':'');
+  txt.textContent=msg;
+}
+
+/* ── Sauvegarde clé API ── */
+function taSaveKey(){
+  const v=document.getElementById('ta-apikey').value.trim();
+  if(!v){taSetStatus('error','Clé vide');return;}
+  _store.set('oob_ta_apikey',v);
+  taSetStatus('success','Clé sauvegardée ✓');
+  setTimeout(()=>taSetStatus('idle','En attente'),2000);
+}
+
+/* ── Sauvegarde webhook ── */
+function taSaveWebhook(){
+  const v=document.getElementById('ta-webhook').value.trim();
+  _store.set('oob_ta_webhook',v);
+  taSetStatus('success','Webhook sauvegardé ✓');
+  setTimeout(()=>taSetStatus('idle','En attente'),2000);
+}
+
+/* ── Init: charger les valeurs sauvegardées ── */
+function taInit(){
+  /* Pré-chargement clé API */
+  const defaultKey='';
+  if(!_store.get('oob_ta_apikey')) _store.set('oob_ta_apikey',defaultKey);
+  const k=_store.get('oob_ta_apikey');
+  if(k) document.getElementById('ta-apikey').value=k;
+  const w=_store.get('oob_ta_webhook')||_store.get('oob_teams_wh')||'';
+  if(w) document.getElementById('ta-webhook').value=w;
+  taLoadLog();
+}
+
+/* ── Récupération des pilotes depuis Supabase ── */
+async function taGetPilots(){
+  /* Indicateur source données */
+  const srcEl=document.getElementById('ta-data-source');
+
+  if(!_sb){
+    if(srcEl) srcEl.textContent='⚠️ Supabase non initialisé — données démo';
+    return null;
+  }
+  try{
+    /* Champ réel = key, filtre scope=Individuel comme le reste du dashboard */
+    const {data,error}=await _sb.from('r1p_counters')
+      .select('key,count_session,count_week,count_month')
+      .eq('scope','Individuel')
+      .order('count_week',{ascending:false});
+
+    if(error) throw new Error(error.message);
+
+    if(data&&data.length>0){
+      if(srcEl) srcEl.textContent='✅ Données Supabase réelles ('+data.length+' pilotes)';
+      return data.map(p=>({
+        name: p.key||'?',
+        team: 'OOB',
+        count_session: p.count_session||0,
+        count_week: p.count_week||0,
+        count_month: p.count_month||0,
+      }));
+    }
+    if(srcEl) srcEl.textContent='⚠️ Table vide — données démo';
+  }catch(e){
+    console.warn('[TA] Supabase pilots:',e);
+    if(srcEl) srcEl.textContent='❌ Erreur Supabase : '+e.message+' — données démo';
+  }
+  return null;
+}
+
+/* ── Construction du prompt ── */
+function taBuildPrompt(type,pilots,now){
+  const topSession=[...pilots].sort((a,b)=>b.count_session-a.count_session);
+  const topWeek=[...pilots].sort((a,b)=>b.count_week-a.count_week);
+  const topMonth=[...pilots].sort((a,b)=>b.count_month-a.count_month);
+  const totalWeek=pilots.reduce((s,p)=>s+p.count_week,0);
+  const totalSession=pilots.reduce((s,p)=>s+p.count_session,0);
+  const totalMonth=pilots.reduce((s,p)=>s+p.count_month,0);
+  const pct=Math.round((totalWeek/TA_WEEK_TARGET)*100);
+  const monthName=now.toLocaleString('fr-FR',{month:'long'});
+  const leaderSess=topSession[0];
+  const leaderWeek=topWeek[0];
+
+  const pilotsSessionStr=topSession.map((p,i)=>`${i+1}. ${p.name} (${p.team}) : ${p.count_session} R1P session, ${p.count_week} semaine`).join('\n');
+  const pilotsWeekStr=topWeek.map((p,i)=>`${i+1}. ${p.name} (${p.team}) : ${p.count_week} R1P semaine, ${p.count_month} ce mois`).join('\n');
+  const pilotsMonthStr=topMonth.map((p,i)=>`${i+1}. ${p.name} (${p.team}) : ${p.count_month} R1P ce mois`).join('\n');
+
+  const systemPrompt=`Tu es le système de communication interne OOB Command Center. Tu rédiges des messages Teams courts, percutants et humains pour l'équipe commerciale OOB (Normandie & IDF), spécialisée en prospection téléphonique R1P (rendez-vous de premier contact). Règles impératives : 1) Jamais de bullet points ni de tirets. 2) Utilise des emojis avec parcimonie (1 à 3 maximum). 3) Toujours signer "— OOB Command Center". 4) Ton direct, chaleureux, motivant — jamais corporate ni générique. 5) Maximum 7 lignes. 6) Chaque message doit être UNIQUE et personnalisé selon les données réelles.`;
+
+  const contexts={
+    debut_mois:`Écris un message Teams de lancement pour le début du mois de ${monthName}. L'équipe a terminé le mois précédent sur une dynamique positive. Le message doit fixer l'ambiance du mois, donner envie d'attaquer fort dès le départ, avec une citation ou accroche percutante. Crée de l'émulation. Termine par un cri de ralliement fort.`,
+
+    debut_semaine:`Écris un message Teams de lancement pour ce lundi matin. Contexte : mois de ${monthName} en cours, l'équipe a déjà ${totalMonth} R1P ce mois. Le meilleur pilote de la semaine précédente était ${leaderWeek?.name||'?'} avec ${leaderWeek?.count_week||0} R1P. Message motivant, bref, qui donne envie d'attaquer les sessions de la semaine.`,
+
+    debut_session:`Écris un message Teams pour lancer la session de prospection 14h-18h. Contexte : objectif collectif ${TA_WEEK_TARGET} R1P cette semaine, on est actuellement à ${totalWeek} R1P (${pct}%). Crée l'énergie pour les 4 prochaines heures. Rappelle l'objectif avec urgence positive.`,
+
+    point_15h:`Écris un message Teams de point de situation à 15h (1h de session écoulée). Résultats en direct :\n${pilotsSessionStr}\nTotal session : ${totalSession} R1P | Semaine : ${totalWeek}/${TA_WEEK_TARGET} (${pct}%). Donne un mot personnalisé pour le leader de session et encourage ceux en retrait. Dynamique, direct.`,
+
+    point_16h:`Écris un message Teams de point à 16h (2h de session). Résultats :\n${pilotsSessionStr}\nTotal session : ${totalSession} R1P | Semaine : ${totalWeek}/${TA_WEEK_TARGET} (${pct}%). Il reste 2h. Parle selon la position : leader = maintenir, mid = accélérer, bas = sprint. Nomme les pilotes.`,
+
+    point_17h:`Écris un message Teams de DERNIÈRE HEURE (17h). Résultats :\n${pilotsSessionStr}\nTotal session : ${totalSession} R1P | Semaine : ${totalWeek}/${TA_WEEK_TARGET} (${pct}%). URGENCE. Crée l'envie de tout donner dans la dernière heure. Nomme les pilotes par leur prénom. Électrise l'équipe.`,
+
+    bilan_session:`Écris le bilan Teams de la session 14h-18h. Résultats finaux :\n${pilotsSessionStr}\nTotal session : ${totalSession} R1P | MVP session : ${leaderSess?.name||'?'} avec ${leaderSess?.count_session||0} R1P. Félicite le MVP, remercie toute l'équipe, donne rendez-vous à la prochaine session. Humain et sincère.`,
+
+    bilan_semaine:`Écris le bilan Teams de la semaine. Résultats :\n${pilotsWeekStr}\nTotal semaine : ${totalWeek}/${TA_WEEK_TARGET} R1P (${pct}%) | MVP semaine : ${leaderWeek?.name||'?'} avec ${leaderWeek?.count_week||0} R1P. Félicite le top 3 nommément, encourage tout le monde pour la semaine prochaine. Chaleureux mais pro.`,
+
+    bilan_mois:`Écris le bilan Teams de fin de mois ${monthName}. Résultats :\n${pilotsMonthStr}\nTotal mois : ${totalMonth} R1P | MVP mois : ${topMonth[0]?.name||'?'} avec ${topMonth[0]?.count_month||0} R1P. Message de clôture fort : célèbre les victoires, honore le MVP, prépare l'élan pour le mois suivant.`,
+  };
+
+  return {system:systemPrompt, user:contexts[type]||'Écris un message motivant pour l\'équipe commerciale OOB.'};
+}
+
+/* ── Appel API Claude (Anthropic) ── */
+async function taCallClaude(systemPrompt, userPrompt){
+  const apiKey=_store.get('oob_ta_apikey')||document.getElementById('ta-apikey').value.trim();
+  if(!apiKey) throw new Error('Clé API manquante');
+
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':apiKey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-5',
+      max_tokens:600,
+      system:systemPrompt,
+      messages:[{role:'user',content:userPrompt}],
+    }),
+  });
+
+  if(!res.ok){
+    const err=await res.json().catch(()=>({}));
+    throw new Error(err?.error?.message||`HTTP ${res.status}`);
+  }
+  const data=await res.json();
+  return data.content?.[0]?.text||'';
+}
+
+/* ── Génération du message ── */
+async function taGenerate(){
+  const btnGen=document.getElementById('ta-btn-gen');
+  const btnSend=document.getElementById('ta-btn-send');
+  const output=document.getElementById('ta-output');
+  if(!btnGen||!output) return;
+
+  btnGen.disabled=true;
+  btnSend.disabled=true;
+  output.value='';
+  taSetStatus('loading','Récupération des données Supabase...');
+  taCountWords({value:''});
+
+  try{
+    // 1. Récupère les pilotes (Supabase ou fallback démo)
+    let pilots=await taGetPilots();
+    if(!pilots||pilots.length===0){
+      pilots=[
+        {name:'Kevin',team:'Normandie',count_session:6,count_week:18,count_month:52},
+        {name:'Sofia',team:'IDF',count_session:4,count_week:14,count_month:41},
+        {name:'Merwan',team:'Normandie',count_session:3,count_week:10,count_month:30},
+        {name:'David',team:'Caen',count_session:7,count_week:21,count_month:64},
+        {name:'Roxanne',team:'IDF',count_session:5,count_week:16,count_month:47},
+      ];
+      taSetStatus('loading','Données démo actives — génération IA...');
+    const srcEl2=document.getElementById('ta-data-source');
+    if(srcEl2) srcEl2.textContent='⚠️ DONNÉES DÉMO — Supabase inaccessible. Les chiffres ne sont pas réels.';
+    if(srcEl2) srcEl2.style.color='#f59e0b';
+    }else{
+      taSetStatus('loading','Génération IA en cours...');
+    }
+
+    // 2. Construit le prompt
+    const {system,user}=taBuildPrompt(taSelectedType,pilots,new Date());
+
+    // 3. Appel Claude
+    const msg=await taCallClaude(system,user);
+    if(!msg) throw new Error('Réponse vide');
+
+    taLastMsg=msg;
+    output.value=msg;
+    taCountWords({value:msg});
+    btnSend.disabled=false;
+    taSetStatus('success','Message généré ✓ — prêt à envoyer');
+
+  }catch(e){
+    taSetStatus('error','Erreur : '+e.message);
+    console.error('[TA] Generate error:',e);
+  }finally{
+    btnGen.disabled=false;
+  }
+}
+
+/* ── Envoi vers Teams via Power Automate ── */
+async function taSend(){
+  const btnSend=document.getElementById('ta-btn-send');
+  const msg=document.getElementById('ta-output').value.trim();
+  if(!msg){taSetStatus('error','Message vide');return;}
+
+  const webhookUrl=document.getElementById('ta-webhook').value.trim()||_store.get('oob_ta_webhook')||_store.get('oob_teams_wh')||'';
+  if(!webhookUrl){taSetStatus('error','URL Webhook manquante');return;}
+
+  btnSend.disabled=true;
+  taSetStatus('loading','Envoi vers Teams...');
+
+  try{
+    const typeInfo=TA_MSG_TYPES[taSelectedType]||{label:taSelectedType,icon:'📢'};
+    const now=new Date();
+    const ts=now.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+    const body={
+      type_message: typeInfo.label,
+      message_teams: `<strong>${typeInfo.icon} ${typeInfo.label.toUpperCase()} — OOB NORMANDIE & IDF</strong><br><br>${msg.split('\n').join('<br>')}<br><br><span style="color:gray;font-size:11px"><em>OOBjectif R1P · ${ts} · Généré par Claude AI</em></span>`,
+      timestamp: ts,
+      message_texte: msg,
+      source: 'OOBjectif R1P v24 — Teams AI',
+    };
+
+    const res=await fetch(webhookUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+    });
+
+    if(res.ok||res.status===202){
+      taSetStatus('success','Envoyé sur Teams ✓');
+      taAddLog('success',typeInfo.icon+' '+typeInfo.label,ts);
+    }else{
+      throw new Error('HTTP '+res.status);
+    }
+  }catch(e){
+    taSetStatus('error','Échec envoi : '+e.message);
+    const typeInfo=TA_MSG_TYPES[taSelectedType]||{label:taSelectedType,icon:'📢'};
+    const ts=new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    taAddLog('error',typeInfo.icon+' '+typeInfo.label,ts);
+    console.error('[TA] Send error:',e);
+  }finally{
+    btnSend.disabled=false;
+  }
+}
+
+/* ── Historique des envois ── */
+function taAddLog(status,label,time){
+  const logs=JSON.parse(_store.get('oob_ta_logs')||'[]');
+  logs.unshift({status,label,time});
+  if(logs.length>20) logs.pop();
+  _store.set('oob_ta_logs',JSON.stringify(logs));
+  taRenderLog(logs);
+}
+
+function taLoadLog(){
+  const logs=JSON.parse(_store.get('oob_ta_logs')||'[]');
+  taRenderLog(logs);
+}
+
+function taRenderLog(logs){
+  const el=document.getElementById('ta-log-list');
+  if(!el) return;
+  if(!logs.length){
+    el.innerHTML='<div style="font-family:var(--fm);font-size:.44rem;color:var(--dim);letter-spacing:1px;">Aucun envoi pour l\'instant</div>';
+    return;
+  }
+  el.innerHTML=logs.slice(0,8).map(l=>`
+    <div class="ta-log-item">
+      <span class="ta-log-time">${l.time}</span>
+      <span class="ta-log-status">${l.status==='success'?'✅':'❌'}</span>
+      <span class="ta-log-text">${l.label}</span>
+    </div>`).join('');
+}
+
+
 /* ════ INIT ════ */
-window.onload=()=>{ initStars(); loadPilotCount(); };
+window.onload=()=>{ initStars(); loadPilotCount(); taInit(); schedInit(); };
 </script>
 </body>
 </html>
