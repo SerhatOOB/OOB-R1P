@@ -29,7 +29,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 #cur{position:fixed;width:14px;height:14px;border:1.5px solid var(--p);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .15s,height .15s;}
 #cur::after{content:'';position:absolute;top:50%;left:50%;width:3px;height:3px;background:var(--p);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--p);}
 #cur.big{width:30px;height:30px;opacity:.38;}
-#cur2{position:fixed;width:38px;height:38px;border:1px solid rgba(247,147,30,.16);border-radius:50%;pointer-events:none;z-index:9997;top:0;left:0;will-change:transform;transition:transform .1s ease;}
+#cur2{position:fixed;width:38px;height:38px;border:1px solid rgba(247,147,30,.16);border-radius:50%;pointer-events:none;z-index:9997;transform:translate(-50%,-50%);transition:left .1s ease,top .1s ease;}
 
 .sstar{position:fixed;height:1.5px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),rgba(247,147,30,.6),transparent);border-radius:2px;pointer-events:none;z-index:1;animation:shoot var(--d,3s) var(--dl,0s) linear infinite;opacity:0;}
 
@@ -129,7 +129,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 .lr::before{content:'';position:absolute;top:-5px;left:50%;width:10px;height:10px;background:var(--p);border-radius:50%;box-shadow:0 0 22px var(--p),0 0 50px rgba(247,147,30,.5),0 0 80px rgba(247,147,30,.2);transform:translateX(-50%);}
 .lr2{position:absolute;inset:-24px;border:1px dashed rgba(247,147,30,.09);border-radius:50%;animation:spinR 11s linear infinite;}
 .lf{position:relative;width:490px;padding:52px 50px 44px;
-  background:linear-gradient(160deg,rgba(3,7,20,.98) 0%,rgba(1,4,14,.99) 100%);
+  background:linear-gradient(160deg,rgba(3,7,20,.72) 0%,rgba(1,4,14,.78) 100%);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);
   border:1px solid rgba(247,147,30,.22);
   backdrop-filter:blur(44px) saturate(2);text-align:center;
   box-shadow:0 0 0 1px rgba(255,255,255,.025),0 50px 130px rgba(0,0,0,.99),
@@ -195,7 +195,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 #cp{display:flex;flex-direction:column;gap:10px;overflow:hidden;}
 
 /* ════ GLASS CARDS ════ */
-.gc{background:linear-gradient(152deg,rgba(5,13,28,.97) 0%,rgba(2,7,16,.99) 100%);
+.gc{background:linear-gradient(152deg,rgba(5,13,28,.42) 0%,rgba(2,7,16,.48) 100%);backdrop-filter:blur(12px) saturate(1.4);-webkit-backdrop-filter:blur(12px) saturate(1.4);
   border:1px solid rgba(255,255,255,.065);border-radius:12px;padding:14px;
   overflow:hidden;position:relative;
   transition:box-shadow .32s,border-color .32s,transform .22s;
@@ -236,7 +236,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 .tab-btn:hover:not(.active){border-color:rgba(247,147,30,.22);color:rgba(255,255,255,.55);}
 
 /* ════ PROFILE ════ */
-.pgc{text-align:center;padding:20px 14px 16px;}
+.pgc{text-align:center;padding:20px 14px 16px;background:linear-gradient(152deg,rgba(4,10,24,.38) 0%,rgba(1,5,14,.44) 100%);}
 #av{width:70px;height:70px;background:linear-gradient(135deg,#ffa040,var(--p2));color:#000;font-family:var(--fh);font-size:1.95rem;font-weight:900;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
   box-shadow:0 0 0 3px rgba(247,147,30,.2),0 0 38px rgba(247,147,30,.5),0 0 90px rgba(247,147,30,.18);
   position:relative;transition:transform .4s var(--eb),box-shadow .4s;}
@@ -463,6 +463,27 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 .tp-divider{width:1px;height:22px;background:rgba(96,165,250,.15);}
 .tmk-empty{font-family:var(--fm);font-size:.55rem;color:rgba(96,165,250,.4);letter-spacing:2px;font-style:italic;}
 
+/* ── TMK : barres d'objectif individuelles ── */
+.tp-obj-block{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.tp-obj-row{display:flex;align-items:center;gap:5px;}
+.tp-obj-lbl{font-family:var(--fm);font-size:.4rem;letter-spacing:2px;color:var(--dim);flex-shrink:0;width:26px;}
+.tp-obj-val{font-family:var(--fh);font-size:.52rem;font-weight:700;flex-shrink:0;width:38px;text-align:right;}
+.tp-obj-bar{flex:1;height:4px;background:rgba(96,165,250,.1);border-radius:3px;overflow:hidden;border:1px solid rgba(96,165,250,.07);}
+.tp-obj-fill{height:100%;border-radius:3px;transition:width 1.4s cubic-bezier(.34,1.56,.64,1);}
+.tp-obj-pct{font-family:var(--fh);font-size:.42rem;color:var(--dim);flex-shrink:0;width:26px;text-align:right;}
+
+/* ── TMK : barre globale du pôle ── */
+#tmk-global-bar{display:none;align-items:center;gap:12px;flex:1;}
+.tmk-global-inner{flex:1;min-width:0;}
+.tmk-global-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.tmk-global-lbl{font-family:var(--fm);font-size:.48rem;letter-spacing:2px;color:rgba(96,165,250,.6);text-transform:uppercase;}
+.tmk-global-val{font-family:var(--fh);font-size:.65rem;font-weight:700;color:var(--rb);}
+.tmk-global-track{height:5px;background:rgba(96,165,250,.1);border-radius:4px;overflow:hidden;border:1px solid rgba(96,165,250,.08);}
+.tmk-global-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,rgba(37,99,235,.8),rgba(96,165,250,.9),rgba(147,210,255,.8));transition:width 1.4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 8px rgba(96,165,250,.4);}
+.tmk-global-meta{display:flex;justify-content:space-between;margin-top:2px;}
+.tmk-global-pct{font-family:var(--fh);font-size:.5rem;font-weight:700;}
+.tmk-global-status{font-family:var(--fm);font-size:.42rem;letter-spacing:1px;color:var(--dim);}
+
 /* ════ GAMIFICATION LAYER ════ */
 @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1.2);}100%{opacity:0;transform:translateY(-90px) scale(.7);}}
 @keyframes comboIn{0%{opacity:0;transform:scale(.4) rotate(-10deg);}60%{transform:scale(1.18) rotate(2deg);}100%{opacity:1;transform:scale(1) rotate(0);}}
@@ -596,10 +617,281 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 .teams-cfg input:focus{border-color:var(--rb);box-shadow:0 0 18px rgba(96,165,250,.1);}
 .teams-note{font-family:var(--fm);font-size:.5rem;color:rgba(255,255,255,.22);letter-spacing:1px;line-height:1.9;margin-top:6px;}
 
+
+/* ════════════════════════════════════════════
+   BOUTONS HEXAGONAUX PLASMA — v17
+   Forme hexagonale, battement cardiaque,
+   profondeur 3D, ligne ECG, scan line.
+   Toutes animations: transform+opacity (GPU).
+════════════════════════════════════════════ */
+@keyframes hb{
+  0%,100%{transform:translateZ(0) scale(1);}
+  10%    {transform:translateZ(0) scale(1.09);}
+  22%    {transform:translateZ(0) scale(1.02);}
+  32%    {transform:translateZ(0) scale(1.07);}
+  50%    {transform:translateZ(0) scale(1);}
+}
+@keyframes hbFast{
+  0%,100%{transform:translateZ(0) scale(1);}
+  10%    {transform:translateZ(0) scale(1.12);}
+  22%    {transform:translateZ(0) scale(1.03);}
+  32%    {transform:translateZ(0) scale(1.10);}
+  50%    {transform:translateZ(0) scale(1);}
+}
+@keyframes hbPress{
+  0%  {transform:translateZ(0) scale(1);}
+  28% {transform:translateZ(0) scale(.90);}
+  58% {transform:translateZ(0) scale(1.04);}
+  100%{transform:translateZ(0) scale(1);}
+}
+@keyframes sonarHex{
+  0%  {transform:translate(-50%,-50%) scale(.82);opacity:.72;}
+  100%{transform:translate(-50%,-50%) scale(2.1);opacity:0;}
+}
+@keyframes scanLineDown{
+  0%  {transform:translateY(-120%);}
+  100%{transform:translateY(500%);}
+}
+@keyframes ecgRoll{to{transform:translateX(-50%);}}
+@keyframes hexRingRot{to{transform:translate(-50%,-50%) rotate(360deg);}}
+@keyframes hexCornerPulse{0%,100%{opacity:.45;}50%{opacity:1;}}
+@keyframes plasmaShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes hexHaloBreathe{
+  0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1) translateZ(0);}
+  50%    {opacity:.85;transform:translate(-50%,-50%) scale(1.07) translateZ(0);}
+}
+@keyframes hexFlare{0%{opacity:.75;}100%{opacity:0;}}
+
+/* ─ Wrapper commun ─ */
+.btn-hex-wrap{
+  position:relative;width:100%;
+  display:flex;justify-content:center;
+  padding:18px 0;
+}
+.btn-hex-wrap::before{
+  content:'';position:absolute;top:50%;left:50%;
+  width:82%;height:60%;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(ellipse,rgba(247,147,30,.14) 0%,transparent 72%);
+  animation:hexHaloBreathe 1.55s ease-in-out infinite;pointer-events:none;
+}
+.btn-hex-wrap::after{
+  content:'';position:absolute;bottom:3px;left:18%;right:18%;
+  height:11px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(247,147,30,.32) 0%,transparent 70%);
+  filter:blur(4px);pointer-events:none;
+  animation:hexHaloBreathe 1.55s ease-in-out .78s infinite;
+}
+/* Anneaux sonar hexagonaux */
+.btn-s1,.btn-s2,.btn-s3{
+  position:absolute;top:50%;left:50%;
+  width:92%;height:calc(100% - 36px);
+  clip-path:polygon(16px 0%,calc(100% - 16px) 0%,100% 50%,calc(100% - 16px) 100%,16px 100%,0% 50%);
+  border:1px solid rgba(247,147,30,.68);
+  pointer-events:none;
+  animation:sonarHex 2.2s ease-out infinite;
+}
+.btn-s2{animation-delay:.73s;border-color:rgba(251,191,36,.5);}
+.btn-s3{animation-delay:1.46s;border-color:rgba(255,120,0,.32);}
+/* Anneau rotatif déco */
+.btn-rot{
+  position:absolute;top:50%;left:50%;
+  width:calc(100% + 8px);height:calc(100% - 24px);
+  clip-path:polygon(16px 0%,calc(100% - 16px) 0%,100% 50%,calc(100% - 16px) 100%,16px 100%,0% 50%);
+  border:1px dashed rgba(247,147,30,.14);
+  animation:hexRingRot 11s linear infinite;pointer-events:none;
+}
+.btn-rot::before{
+  content:'';position:absolute;top:-3px;left:28%;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);box-shadow:0 0 8px var(--gold),0 0 18px rgba(251,191,36,.6);
+}
+
+/* ─ BOUTON R1P (hexagone large) ─ */
+.br1p-wrap{margin:8px 0 10px;}
+#br1p{
+  position:relative;z-index:2;width:100%;
+  height:74px;padding:0;
+  border:none;outline:none;cursor:pointer;
+  will-change:transform;transform:translateZ(0);
+  transition:box-shadow .14s ease;
+  clip-path:polygon(20px 0%,calc(100% - 20px) 0%,100% 50%,calc(100% - 20px) 100%,20px 100%,0% 50%);
+  background:
+    radial-gradient(ellipse 55% 50% at 48% 18%,rgba(255,210,90,.22) 0%,transparent 65%),
+    linear-gradient(145deg,#1a0500 0%,#4a1000 18%,#a03500 42%,#f7931e 62%,#ffb850 78%,#ff5500 100%);
+  background-size:100% 100%,200% 200%;
+  animation:hb 1.55s ease-in-out infinite,plasmaShift 7s ease-in-out infinite;
+  box-shadow:
+    0 0 0 1px rgba(255,145,30,.58),
+    inset 0 2px 0 rgba(255,255,255,.26),
+    inset 0 -3px 0 rgba(0,0,0,.38),
+    5px 9px 0 rgba(70,12,0,.72),
+    7px 13px 20px rgba(0,0,0,.58),
+    0 16px 44px rgba(247,147,30,.5),
+    0 30px 72px rgba(190,45,0,.24);
+  color:#000;font-family:var(--fh);font-weight:900;font-size:1.22rem;letter-spacing:6px;
+  text-shadow:0 1px 0 rgba(0,0,0,.45),0 0 16px rgba(255,220,80,.25);
+  overflow:hidden;
+}
+/* Scan line interne */
+#br1p .b-scan{
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),rgba(255,210,0,.8),rgba(255,255,255,.55),transparent);
+  animation:scanLineDown 3.1s ease-in-out infinite;pointer-events:none;
+}
+/* Reflet sphérique */
+#br1p::before{
+  content:'';position:absolute;top:4px;left:22%;right:22%;height:36%;
+  border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,transparent 100%);
+  pointer-events:none;
+}
+/* ECG défilant */
+#br1p::after{
+  content:'';position:absolute;bottom:4px;left:0;width:200%;height:9px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10'%3E%3Cpolyline points='0,5 20,5 24,3 28,8 32,1 36,9 40,5 70,5 74,3 78,8 82,1 86,9 90,5 120,5 124,3 128,8 132,1 136,9 140,5 170,5 174,3 178,8 182,1 186,9 190,5 200,5' fill='none' stroke='rgba(0,0,0,0.2)' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-size:50% 100%;animation:ecgRoll 1.55s linear infinite;pointer-events:none;
+}
+/* Coins ornementaux */
+#br1p .b-corners::before,#br1p .b-corners::after{
+  content:'◈';position:absolute;font-size:.52rem;
+  color:rgba(255,180,0,.65);animation:hexCornerPulse 1.55s ease-in-out infinite;
+}
+#br1p .b-corners::before{top:5px;left:25px;}
+#br1p .b-corners::after{bottom:5px;right:25px;animation-delay:.78s;}
+/* Contenu centré */
+#br1p .b-inner{
+  position:relative;z-index:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;height:100%;gap:2px;pointer-events:none;
+}
+#br1p .b-sub{
+  display:block;font-family:var(--fm);font-size:.37rem;
+  letter-spacing:4px;color:rgba(0,0,0,.38);font-weight:400;
+}
+/* Hover */
+#br1p:hover{
+  animation:hbFast 1s ease-in-out infinite,plasmaShift 2.5s ease-in-out infinite;
+  box-shadow:
+    0 0 0 2px rgba(255,175,45,.85),
+    inset 0 2px 0 rgba(255,255,255,.34),
+    inset 0 -3px 0 rgba(0,0,0,.44),
+    5px 10px 0 rgba(70,12,0,.78),
+    8px 15px 24px rgba(0,0,0,.64),
+    0 22px 58px rgba(247,147,30,.68),
+    0 40px 88px rgba(190,45,0,.32);
+  transform:translateZ(0) translateY(-5px);
+}
+/* Clic */
+#br1p:active{
+  animation:hbPress .26s var(--eb) forwards;
+  box-shadow:
+    0 0 0 1px rgba(255,120,20,.7),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    2px 4px 0 rgba(70,12,0,.55),
+    0 7px 20px rgba(247,147,30,.38);
+  transform:translateZ(0) translateY(4px);transition:none;
+}
+#br1p:disabled{animation:none!important;opacity:.35;cursor:not-allowed;transform:translateZ(0)!important;box-shadow:none!important;}
+
+/* ─ BOUTON LOGIN (hexagone) ─ */
+.blg-wrap{margin:0 0 6px;}
+.blbtn{
+  position:relative;z-index:2;width:100%;
+  height:66px;padding:0;
+  border:none;outline:none;cursor:pointer;
+  will-change:transform;transform:translateZ(0);
+  transition:box-shadow .14s ease;
+  clip-path:polygon(20px 0%,calc(100% - 20px) 0%,100% 50%,calc(100% - 20px) 100%,20px 100%,0% 50%);
+  background:
+    radial-gradient(ellipse 55% 50% at 48% 18%,rgba(255,210,90,.22) 0%,transparent 65%),
+    linear-gradient(145deg,#1a0500 0%,#4a1000 18%,#a03500 42%,#f7931e 62%,#ffb850 78%,#ff5500 100%);
+  background-size:100% 100%,200% 200%;
+  animation:hb 1.55s ease-in-out infinite,plasmaShift 7s ease-in-out infinite;
+  box-shadow:
+    0 0 0 1px rgba(255,145,30,.58),
+    inset 0 2px 0 rgba(255,255,255,.26),
+    inset 0 -3px 0 rgba(0,0,0,.38),
+    5px 9px 0 rgba(70,12,0,.72),
+    7px 13px 20px rgba(0,0,0,.58),
+    0 14px 38px rgba(247,147,30,.46),
+    0 26px 62px rgba(190,45,0,.2);
+  color:#000;font-family:var(--fh);font-weight:900;font-size:.95rem;letter-spacing:4px;
+  text-shadow:0 1px 0 rgba(0,0,0,.45);overflow:hidden;
+}
+.blbtn .b-scan{
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),rgba(255,210,0,.8),rgba(255,255,255,.55),transparent);
+  animation:scanLineDown 3.1s ease-in-out infinite;pointer-events:none;
+}
+.blbtn::before{
+  content:'';position:absolute;top:4px;left:24%;right:24%;height:34%;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.26) 0%,transparent 100%);pointer-events:none;
+}
+.blbtn::after{
+  content:'';position:absolute;bottom:4px;left:0;width:200%;height:8px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10'%3E%3Cpolyline points='0,5 20,5 24,3 28,8 32,1 36,9 40,5 70,5 74,3 78,8 82,1 86,9 90,5 120,5 124,3 128,8 132,1 136,9 140,5 170,5 174,3 178,8 182,1 186,9 190,5 200,5' fill='none' stroke='rgba(0,0,0,0.18)' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-size:50% 100%;animation:ecgRoll 1.55s linear infinite;pointer-events:none;
+}
+.blbtn .b-corners::before,.blbtn .b-corners::after{
+  content:'◈';position:absolute;font-size:.5rem;
+  color:rgba(255,180,0,.6);animation:hexCornerPulse 1.55s ease-in-out infinite;
+}
+.blbtn .b-corners::before{top:4px;left:24px;}
+.blbtn .b-corners::after{bottom:4px;right:24px;animation-delay:.78s;}
+.blbtn .b-inner{
+  position:relative;z-index:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;height:100%;gap:2px;pointer-events:none;
+}
+.blbtn .b-sub{display:block;font-family:var(--fm);font-size:.35rem;letter-spacing:4px;color:rgba(0,0,0,.36);}
+.blbtn:hover{
+  animation:hbFast 1s ease-in-out infinite,plasmaShift 2.5s ease-in-out infinite;
+  box-shadow:
+    0 0 0 2px rgba(255,175,45,.85),
+    inset 0 2px 0 rgba(255,255,255,.32),
+    5px 10px 0 rgba(70,12,0,.75),
+    0 20px 52px rgba(247,147,30,.62),0 38px 80px rgba(190,45,0,.28);
+  transform:translateZ(0) translateY(-4px);
+}
+.blbtn:active{
+  animation:hbPress .26s var(--eb) forwards;
+  box-shadow:0 0 0 1px rgba(255,120,20,.7),2px 4px 0 rgba(70,12,0,.55),0 6px 16px rgba(247,147,30,.36);
+  transform:translateZ(0) translateY(4px);transition:none;
+}
+.blbtn:disabled{animation:none!important;opacity:.4;cursor:not-allowed;transform:translateZ(0)!important;box-shadow:none!important;}
+.blbtn.launching{animation:hbFast .55s ease-in-out infinite,plasmaShift 1.2s ease-in-out infinite!important;}
+
+/* Impact flare */
+.btn-flare{position:fixed;inset:0;z-index:790;pointer-events:none;
+  background:radial-gradient(ellipse at var(--fx,50%) var(--fy,50%),rgba(255,180,50,.15) 0%,transparent 55%);
+  animation:hexFlare .3s ease-out forwards;}
+
+/* Séquence décollage */
+.b-jet-seq{font-family:var(--fm);font-size:.58rem;letter-spacing:3px;color:rgba(0,0,0,.65);display:block;}
+.b-jet-bar{display:block;height:3px;background:rgba(0,0,0,.18);border-radius:4px;margin-top:5px;overflow:hidden;}
+.b-jet-fill{height:100%;background:rgba(0,0,0,.5);border-radius:4px;width:0%;transition:width .08s linear;}
+
 </style>
 </head>
 <body>
 
+
+<!-- CINEMATIC OVERLAY -->
+<div id="cin-ov" style="display:none;position:fixed;inset:0;z-index:9990;background:#000;">
+  <div id="cin-top" style="position:absolute;top:0;left:0;right:0;height:0;background:#000;transition:height .38s cubic-bezier(.4,0,.2,1);z-index:2;"></div>
+  <div id="cin-bot" style="position:absolute;bottom:0;left:0;right:0;height:0;background:#000;transition:height .38s cubic-bezier(.4,0,.2,1);z-index:2;"></div>
+  <canvas id="cin-cv" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+  <div id="cin-hud" style="position:absolute;bottom:13vh;left:0;right:0;display:flex;justify-content:space-between;padding:0 40px;z-index:3;opacity:0;transition:opacity .5s ease;">
+    <div>
+      <div style="font-family:var(--fm);font-size:.48rem;letter-spacing:4px;color:rgba(247,147,30,.5);margin-bottom:4px;">OOB NORMANDIE · IDF</div>
+      <div id="cin-status" style="font-family:var(--fh);font-size:.82rem;font-weight:700;letter-spacing:4px;color:var(--p);text-shadow:0 0 16px rgba(247,147,30,.65);">SYSTÈMES EN LIGNE</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-family:var(--fm);font-size:.48rem;letter-spacing:4px;color:rgba(247,147,30,.5);margin-bottom:4px;">SECTEUR ORION</div>
+      <div id="cin-spd" style="font-family:var(--fh);font-size:.82rem;font-weight:700;letter-spacing:4px;color:var(--gold);text-shadow:0 0 16px rgba(251,191,36,.55);">MACH 0</div>
+    </div>
+  </div>
+  <div id="cin-fl" style="position:absolute;inset:0;z-index:4;background:#fff;opacity:0;pointer-events:none;"></div>
+</div>
 <div id="cur"></div>
 <div id="cur2"></div>
 <canvas id="sc"></canvas>
@@ -659,14 +951,25 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
       <div class="cbl"></div>
       <div class="scan"></div>
       <div class="sysline"><span class="dg"></span>SYSTÈME OPÉRATIONNEL — v8.0</div>
-      <div class="oob-badge">OOB GROUPE</div>
+      <div class="oob-badge"></div>
       <div class="biglogo"><em class="oob">OOB</em>JECTIF<br><em>R1P</em></div>
       <div class="tagline">CASQUE en place ? SOFTPHONIE activée ? Allumage des moteurs !</div>
       <div class="iw">
         <span class="ilbl">IDENTIFIANT PILOTE</span>
         <input id="pi" type="text" placeholder="ENTREZ VOTRE PRENOM" autocomplete="off">
       </div>
-      <button class="blbtn" id="blbtn" onclick="doLogin()">PLEIN GAZ VERS ORION</button>
+      <div class="btn-hex-wrap blg-wrap">
+          <div class="btn-s1"></div><div class="btn-s2"></div>
+          <div class="btn-rot"></div>
+          <button class="blbtn" id="blbtn" onclick="doLogin()">
+            <div class="b-scan"></div>
+            <div class="b-corners"></div>
+            <div class="b-inner" id="blbtn-inner">
+              <span>▶▶&nbsp;IGNITION&nbsp;◀◀</span>
+              <span class="b-sub">ALLUMAGE DES RÉACTEURS</span>
+            </div>
+          </button>
+        </div>
       <p id="lerr"></p>
       <div class="lfoot">ACCÈS RÉSERVÉ — OOB NORMANDIE & ÎLE-DE-FRANCE</div>
       <div class="lpilots"><span class="ld"></span><span id="pcnt">—</span>&nbsp;PILOTES ACTIFS AUJOURD'HUI</div>
@@ -717,7 +1020,18 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
         <div id="combo-badge">🔥 ×1 COMBO</div>
         <div id="hot-badge">🔥🔥 MACHINE DE GUERRE</div>
         <textarea id="note" placeholder="Commentaire du R1P..."></textarea>
-        <button id="br1p" onclick="takeR1P()">📞 R1P +1</button>
+        <div class="btn-hex-wrap br1p-wrap">
+          <div class="btn-s1"></div><div class="btn-s2"></div><div class="btn-s3"></div>
+          <div class="btn-rot"></div>
+          <button id="br1p" onclick="takeR1P()">
+            <div class="b-scan"></div>
+            <div class="b-corners"></div>
+            <div class="b-inner">
+              <span id="br1p-lbl">📞&nbsp;R1P&nbsp;+1</span>
+              <span class="b-sub">APPUYER · ENTRÉE</span>
+            </div>
+          </button>
+        </div>
         <div id="teams-badge-area"></div>
         <div class="fomo" id="fomo">⚡ CHAQUE APPEL EST UNE CHANCE</div>
       </div>
@@ -741,7 +1055,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
         <div id="boss-section">
           <div class="boss-header">
             <span class="boss-label">⚔️ OBJECTIF COLLECTIF SEMAINE</span>
-            <span class="boss-target-lbl" id="boss-target-lbl">0 / 80 R1P</span>
+            <span class="boss-target-lbl" id="boss-target-lbl">0 / 50 R1P</span>
           </div>
           <div class="boss-outer">
             <div class="boss-fill" id="boss-fill" style="width:0%"></div>
@@ -750,6 +1064,24 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
             <span class="boss-pct" id="boss-pct">0%</span>
             <span class="boss-status" id="boss-status">EN COURS…</span>
           </div>
+        </div>
+      </div>
+      <!-- Boss Bar — Objectif 80 R1P -->
+      <div class="gc" style="padding:12px 14px;">
+        <div class="hs"></div>
+        <div class="ct" style="margin-bottom:8px;"><span>⚔️</span>OBJECTIF COLLECTIF SEMAINE</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <span style="font-family:var(--fm);font-size:.5rem;letter-spacing:2px;color:var(--dim);">TEAM NMD · IDF</span>
+          <span id="boss-lbl" style="font-family:var(--fh);font-size:.7rem;font-weight:700;color:var(--p);">0 / 80 R1P</span>
+        </div>
+        <div style="height:8px;background:rgba(255,255,255,.05);border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.04);">
+          <div id="boss-fill" style="height:100%;background:linear-gradient(90deg,#c03000,var(--p2),var(--p),var(--gold));border-radius:8px;width:0%;transition:width 1.4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 12px rgba(247,147,30,.4);position:relative;overflow:hidden;">
+            <div style="position:absolute;top:0;right:0;bottom:0;width:20px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6));animation:shimmer 2.5s infinite;"></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px;">
+          <span id="boss-pct" style="font-family:var(--fh);font-size:.58rem;font-weight:700;color:var(--gold);">0%</span>
+          <span id="boss-status" style="font-family:var(--fm);font-size:.47rem;letter-spacing:1.5px;color:var(--dim);">EN COURS…</span>
         </div>
       </div>
       <div class="gc" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
@@ -806,6 +1138,38 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
       <div class="tmk-pilots" id="tmk-pilots-list">
         <span class="tmk-empty">Chargement...</span>
       </div>
+      <div id="tmk-global-bar" style="display:none;align-items:center;gap:12px;flex-shrink:0;min-width:220px;">
+        <div style="width:1px;height:30px;background:rgba(96,165,250,.18);flex-shrink:0;"></div>
+        <div class="tmk-global-inner">
+          <div class="tmk-global-header">
+            <span class="tmk-global-lbl">🎯 OBJECTIF PÔLE hebdomadaire <span style="font-size:.48rem;color:rgba(96,165,250,.65);letter-spacing:2px;"></span></span>
+            <span class="tmk-global-val" id="tmk-global-val">— / — R1TMK</span>
+          </div>
+          <div style="font-family:var(--fm);font-size:.44rem;color:rgba(255,255,255,.28);letter-spacing:2px;margin-bottom:2px;"></div>
+          <div style="font-family:var(--fm);font-size:.46rem;color:rgba(255,255,255,.5);letter-spacing:2px;margin-bottom:3px;display:flex;justify-content:space-between;">
+            <span>📅 SEMAINE (reset lundi)</span>
+            <span id="tmk-global-val-wk" style="color:var(--rb);">0 / 0</span>
+          </div>
+          <div class="tmk-global-track" style="margin-bottom:6px;">
+            <div class="tmk-global-fill" id="tmk-global-fill" style="width:0%"></div>
+          </div>
+          <div class="tmk-global-meta" style="margin-bottom:6px;">
+            <span class="tmk-global-pct" id="tmk-global-pct" style="color:var(--rb);">0%</span>
+            <span class="tmk-global-status" id="tmk-global-status">EN COURS…</span>
+          </div>
+          <div style="font-family:var(--fm);font-size:.46rem;color:rgba(96,165,250,.5);letter-spacing:2px;margin-bottom:3px;display:flex;justify-content:space-between;">
+            <span>🗓 MOIS (conservé)</span>
+            <span id="tmk-global-val-mo" style="color:rgba(96,165,250,.7);">0 / 0</span>
+          </div>
+          <div class="tmk-global-track" style="height:4px;">
+            <div class="tmk-global-fill" id="tmk-global-fill-mo" style="width:0%;background:rgba(96,165,250,.7);"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:2px;">
+            <span id="tmk-global-pct-mo" style="font-family:var(--fm);font-size:.44rem;color:rgba(96,165,250,.6);">0%</span>
+            <span id="tmk-global-status-mo" style="font-family:var(--fm);font-size:.44rem;color:rgba(255,255,255,.3);"></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -840,7 +1204,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
     <div class="asect">
       <div class="asect-t">🎯 OBJECTIF COLLECTIF SEMAINE</div>
       <div style="display:flex;gap:8px;align-items:center;">
-        <input class="ainp" id="boss-target-inp" type="number" placeholder="Objectif R1P semaine (défaut: 80)" min="1" max="999" style="flex:1;">
+        <input class="ainp" id="boss-target-inp" type="number" placeholder="Objectif R1P semaine (défaut: 50)" min="1" max="999" style="flex:1;">
         <button class="abtn2 g" onclick="saveBossTarget()">💾 ENREGISTRER</button>
       </div>
       <div style="font-family:var(--fm);font-size:.5rem;color:var(--dim);letter-spacing:1px;margin-top:6px;">Objectif actuel : <span id="boss-cur-target" style="color:var(--p);">—</span> R1P</div>
@@ -899,6 +1263,18 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;}
 </div>
 
 <script>
+/* OOB — Global error handler */
+window.addEventListener('error',function(e){
+  const m=e.message||'';
+  if(m==='Script error.'||m.includes('Script error'))
+    console.warn('[OOB] Script error cross-origin — CDN ou réseau requis');
+  else console.error('[OOB] Error:',m,'L'+e.lineno,e.error||'');
+  return false;
+});
+window.addEventListener('unhandledrejection',function(e){
+  console.warn('[OOB] Promise rejection:',e.reason);
+});
+
 /* ════════════════════════════════════════════
    STORAGE SÉCURISÉ (fallback mémoire si bloqué)
 ════════════════════════════════════════════ */
@@ -915,7 +1291,11 @@ const _store = (()=>{
 ════════════════════════════════════════════ */
 const SB_URL   = "https://ydcfjlogsbkmzzzkxvgo.supabase.co";
 const SB_KEY   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkY2ZqbG9nc2JrbXp6emt4dmdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyMDQ0MDksImV4cCI6MjA4Nzc4MDQwOX0.nF-ZZWucb6BMQvGxZ1iK1SjYyrZ-0dW0fAaYw9cPzls";
-const _sb      = supabase.createClient(SB_URL, SB_KEY);
+let _sb = null;
+try{
+  if(typeof supabase !== 'undefined') _sb = supabase.createClient(SB_URL, SB_KEY);
+  else console.warn('[OOB] Supabase non chargé — vérifier connexion réseau');
+}catch(e){ console.warn('[OOB] Supabase init:', e.message); }
 const ADMIN_PW = "oob2026";
 
 const PHOTOS = {
@@ -996,36 +1376,26 @@ let _snapWeek='',_snapMonth='',_snapSess='',_snapFeed='',_snapTMK='';
 const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
 let cx2=innerWidth/2,cy2=innerHeight/2;
 let _rafPending=false, _mx=0, _my=0;
-
-/* Cache .gc — getBoundingClientRect calculé une seule fois, pas à chaque mousemove */
-let _gcCache=[];
-function _buildGcCache(){
-  _gcCache=Array.from(document.querySelectorAll('.gc')).map(gc=>({
-    hs:gc.querySelector('.hs'),r:gc.getBoundingClientRect()
-  })).filter(x=>x.hs);
-}
-let _gcResizeTimer=null;
-window.addEventListener('resize',()=>{ clearTimeout(_gcResizeTimer); _gcResizeTimer=setTimeout(_buildGcCache,120); });
-setTimeout(_buildGcCache,600);
-
 document.addEventListener('mousemove',e=>{
   _mx=e.clientX; _my=e.clientY;
   cur.style.left=_mx+'px'; cur.style.top=_my+'px';
   if(!_rafPending){
     _rafPending=true;
     requestAnimationFrame(()=>{
-      cur2.style.transform=`translate(${_mx-19}px,${_my-19}px)`;
+      cur2.style.left=_mx+'px'; cur2.style.top=_my+'px';
       /* trail particules */
       const _nt=Date.now();
       if(_nt-_trailT>55&&document.getElementById('app')?.style?.display!=='none'){
         _trailT=_nt; spawnTrail(_mx,_my);
       }
-      /* highlight cartes — cache, zero reflow */
-      for(let i=0;i<_gcCache.length;i++){
-        const{hs,r}=_gcCache[i];
-        hs.style.setProperty('--mx',((_mx-r.left)/r.width*100).toFixed(0)+'%');
-        hs.style.setProperty('--my',((_my-r.top)/r.height*100).toFixed(0)+'%');
-      }
+      document.querySelectorAll('.gc').forEach(gc=>{
+        const r=gc.getBoundingClientRect();
+        const hs=gc.querySelector('.hs');
+        if(hs){
+          hs.style.setProperty('--mx',(((_mx-r.left)/r.width)*100).toFixed(0)+'%');
+          hs.style.setProperty('--my',(((_my-r.top)/r.height)*100).toFixed(0)+'%');
+        }
+      });
       _rafPending=false;
     });
   }
@@ -1034,43 +1404,41 @@ document.querySelectorAll('button,input,textarea').forEach(el=>{
   el.addEventListener('mouseenter',()=>cur.classList.add('big'));
   el.addEventListener('mouseleave',()=>cur.classList.remove('big'));
 });
+/* ─ Hover texte R1P ─ */
+(function(){
+  const btn=document.getElementById('br1p');
+  if(!btn) return;
+  const labels=['📞 R1P +1','⚡ VALIDER','🎯 DÉCROCHEZ','🔥 ALLEZ-Y'];
+  let _li=0;
+  btn.addEventListener('mouseenter',()=>{
+    _li=(_li+1)%labels.length;
+    const l=document.getElementById('br1p-lbl');
+    if(l) l.textContent=labels[_li];
+  });
+  btn.addEventListener('mouseleave',()=>{
+    const l=document.getElementById('br1p-lbl');
+    if(l) l.textContent=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
+  });
+})();
 
 function initTilt(){}
 
-/* ════ CURSOR TRAIL — pool de particules pré-créées (zéro DOM create/destroy) ════ */
+/* ════ CURSOR TRAIL ════ */
 let _trailT=0;
-const _TRAIL_POOL_SIZE=12;
-const _TRAIL_COLORS=['rgba(247,147,30,.6)','rgba(251,191,36,.5)','rgba(255,255,255,.3)','rgba(96,165,250,.3)'];
-const _trailPool=(()=>{
-  const pool=[];
-  for(let i=0;i<_TRAIL_POOL_SIZE;i++){
-    const p=document.createElement('div');
-    p.style.cssText='position:fixed;border-radius:50%;pointer-events:none;z-index:9996;opacity:0;will-change:transform,opacity;transition:transform .52s ease-out,opacity .52s ease-out;';
-    document.body.appendChild(p);
-    pool.push({el:p,free:true});
-  }
-  return pool;
-})();
 function spawnTrail(x,y){
-  const slot=_trailPool.find(s=>s.free);
-  if(!slot) return;
-  slot.free=false;
-  const p=slot.el;
-  const s=(1.5+Math.random()*2.5).toFixed(1);
+  const p=document.createElement('div');
+  const s=1.5+Math.random()*2.5;
+  const C=['rgba(247,147,30,.6)','rgba(251,191,36,.5)','rgba(255,255,255,.3)','rgba(96,165,250,.3)'];
   const dx=(Math.random()-.5)*7, dy=-(5+Math.random()*9);
-  const col=_TRAIL_COLORS[~~(Math.random()*_TRAIL_COLORS.length)];
-  /* Repositionnement sans transition (reset instantané) */
-  p.style.transition='none';
-  p.style.transform=`translate(${x-s/2}px,${y-s/2}px)`;
-  p.style.width=s+'px'; p.style.height=s+'px';
-  p.style.background=col; p.style.opacity='1';
-  /* Animation de dispersion au prochain frame */
+  p.style.cssText=`position:fixed;left:${x}px;top:${y}px;width:${s}px;height:${s}px;border-radius:50%;
+    background:${C[~~(Math.random()*C.length)]};pointer-events:none;z-index:9996;
+    transform:translate(-50%,-50%);transition:transform .52s ease-out,opacity .52s ease-out;`;
+  document.body.appendChild(p);
   requestAnimationFrame(()=>{
-    p.style.transition='transform .52s ease-out,opacity .52s ease-out';
-    p.style.transform=`translate(${x-s/2+dx}px,${y-s/2+dy}px) scale(0)`;
+    p.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(0)`;
     p.style.opacity='0';
   });
-  setTimeout(()=>{ slot.free=true; },560);
+  setTimeout(()=>p.remove(),560);
 }
 
 /* ════ THREE.JS SCÈNE ════ */
@@ -1183,6 +1551,7 @@ function showWarpLines(){
 
 /* ════ AUTO-RESET ════ */
 async function getConfig(){
+  if(!_sb) return {};
   try{ const{data}=await _sb.from('oob_config').select('*'); const c={}; (data||[]).forEach(r=>c[r.key]=r.value); return c; }catch{ return{}; }
 }
 async function setConfig(k,v){
@@ -1239,19 +1608,31 @@ function doLogin(){
   user.name=raw.charAt(0).toUpperCase()+raw.slice(1);
   user.team=TEAM_MAP[raw];
   const btn=document.getElementById('blbtn');
-  btn.disabled=true; btn.textContent='DÉCOLLAGE EN COURS...';
+  btn.disabled=true; btn.classList.add('launching');
+  const _seq=[
+    {t:0,   html:'<span class="b-jet-seq">◈ INITIALISATION SYSTÈME</span><div class="b-jet-bar"><div class="b-jet-fill"></div></div>'},
+    {t:350, html:'<span class="b-jet-seq">⚡ INJECTION CARBURANT</span><div class="b-jet-bar"><div class="b-jet-fill" style="width:28%"></div></div>'},
+    {t:720, html:'<span class="b-jet-seq">🔥 POSTCOMBUSTION ACTIVE</span><div class="b-jet-bar"><div class="b-jet-fill" style="width:58%"></div></div>'},
+    {t:1080,html:'<span class="b-jet-seq">▶▶ POUSSÉE MAXIMALE ◀◀</span><div class="b-jet-bar"><div class="b-jet-fill" style="width:82%"></div></div>'},
+    {t:1440,html:'<span class="b-jet-seq">🚀 DÉCOLLAGE IMMINENT</span><div class="b-jet-bar"><div class="b-jet-fill" style="width:100%"></div></div>'},
+  ];
+  const _bci=document.getElementById('blbtn-inner');
+  _seq.forEach(s=>setTimeout(()=>{ if(_bci) _bci.innerHTML=s.html; },s.t));
   hyper(true);
-  gsap.to('#lm',{opacity:0,duration:1,delay:1.9});
+  /* Séquence moteur (1.5s) → fade login → transition cinématique */
   setTimeout(()=>{
-    document.getElementById('lm').style.display='none';
-    const ap=document.getElementById('app');
-    ap.style.display='grid';
-    gsap.fromTo(ap,{opacity:0},{opacity:1,duration:.8});
-    setTimeout(()=>hyper(false),700);
-    boot(); startClock(); initTilt(); checkAutoReset();
-    /* Rebuild du cache .gc maintenant que l'app est visible */
-    setTimeout(_buildGcCache,900);
-  },2700);
+    gsap.to('#lm',{opacity:0,duration:.55});
+    setTimeout(()=>{
+      document.getElementById('lm').style.display='none';
+      hyper(false);
+      launchCinematic(()=>{
+        const ap=document.getElementById('app');
+        ap.style.display='grid';
+        gsap.fromTo(ap,{opacity:0},{opacity:1,duration:.65});
+        boot(); startClock(); initTilt(); checkAutoReset();
+      });
+    },580);
+  },1650);
 }
 document.getElementById('pi').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 
@@ -1285,7 +1666,11 @@ function boot(){
   _r1lbl = _isR1TMK ? 'R1TMK' : 'R1P';
   if(_isR1TMK){
     const btnR1P=document.getElementById('br1p');
-    if(btnR1P){ btnR1P.innerHTML='📞 R1TMK +1'; btnR1P.setAttribute('data-r1tmk','1'); }
+    if(btnR1P){
+      const _bl2=document.getElementById('br1p-lbl');
+      if(_bl2) _bl2.textContent='📞 R1TMK +1';
+      btnR1P.setAttribute('data-r1tmk','1');
+    }
     ['hdr-r1p','sl2-lbl','strate-lbl'].forEach((id,i)=>{
       const el=document.getElementById(id);
       if(el) el.textContent=[_r1lbl,_r1lbl+' PRIS CETTE SESSION',_r1lbl+' / HEURE'][i];
@@ -1410,6 +1795,7 @@ async function sendTeamsNotif({name,team,count,note,r1type}){
 
 /* ════ TAKE R1P ════ */
 async function takeR1P(){
+  if(!_sb){ showToast('CONNEXION','Mode hors-ligne — Supabase indisponible',0,true); return; }
   const note=(document.getElementById('note').value||'').trim();
   const btn=document.getElementById('br1p');
   btn.disabled=true; btn.textContent='⏳ ENVOI...';
@@ -1452,7 +1838,9 @@ async function takeR1P(){
     document.getElementById('stm').textContent=month;
     const pb=parseInt(_store.get('oob_pb_'+user.name))||0;
     if(week>pb){ _store.set('oob_pb_'+user.name,week); document.getElementById('stbest').textContent=week+' R1P'; if(week>pb) showNotif('🏆 NOUVEAU RECORD PERSONNEL — '+week+' R1P !'); }
-    btn.disabled=false; btn.innerHTML=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
+    btn.disabled=false;
+    const _bl=document.getElementById('br1p-lbl');
+    if(_bl) _bl.textContent=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
     burstR1P(btn);
     /* Teams async — ne bloque pas le flow */
     sendTeamsNotif({name:user.name,team:user.team,count:week,note,r1type:document.getElementById('br1p').getAttribute('data-r1tmk')?'R1TMK':'R1P'}).then(ok=>{
@@ -1479,7 +1867,9 @@ async function takeR1P(){
     refreshAll();
   }catch(e){
     showToast('ERREUR',(e?.message||'Erreur inconnue').slice(0,60),0,true);
-    btn.disabled=false; btn.innerHTML=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
+    btn.disabled=false;
+    const _bl=document.getElementById('br1p-lbl');
+    if(_bl) _bl.textContent=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
   }
 }
 
@@ -1526,6 +1916,7 @@ function burstR1P(btn){
 }
 
 async function upsert(scope,key){
+  if(!_sb) return;
   try{
     const{data}=await _sb.from('r1p_counters').select('*').eq('scope',scope).eq('key',key).maybeSingle();
     if(!data){
@@ -1581,6 +1972,7 @@ function countUp(el,to,dur=600){
   requestAnimationFrame(tick);
 }
 async function refreshAll(){
+  if(!_sb) return;
   const[r1,r2,r3]=await Promise.allSettled([
     _sb.from('r1p_counters').select('*').eq('scope','Individuel').order('count_week',{ascending:false}).limit(15),
     _sb.from('suivi_r1p').select('*').order('created_at',{ascending:false}).limit(10),
@@ -1592,7 +1984,7 @@ async function refreshAll(){
   boardWeek=[...indiv].sort((a,b)=>b.count_week-a.count_week);
   boardMonth=[...indiv].sort((a,b)=>(b.count_month||0)-(a.count_month||0));
   boardSess=[...indiv].sort((a,b)=>b.count_session-a.count_session);
-  renderCurrentTab(); renderFeed(feed); updateStats(indiv); updateBattle(teams); renderTMK(indiv); updateBossBar(indiv);
+  renderCurrentTab(); renderFeed(feed); updateStats(indiv); updateBattle(teams); updateBossBar(indiv); renderTMK(indiv); updateBossBar(indiv);
   window._lastIndiv=indiv;
   const me=indiv.find(x=>x.key.toLowerCase()===user.name.toLowerCase());
   if(me){ week=me.count_week; month=me.count_month||0; document.getElementById('stw').textContent=week; document.getElementById('stm').textContent=month; setRank(week);
@@ -1650,30 +2042,101 @@ function renderLB(id,items,field,force=false){
   }));
 }
 
+/* ════ CONSTANTES OBJECTIF TMK ════ */
+const TMK_OBJ_WEEK=20;   /* 20 R1TMK / semaine / personne */
+const TMK_OBJ_MONTH=80;  /* 80 R1TMK / mois   / personne */
+const TMK_OBJ_DAY=4;     /* 4  R1TMK / jour   / personne */
+
 function renderTMK(indiv){
   const zone=document.getElementById('tmk-pilots-list');
   if(!zone)return;
   const tmk=indiv.filter(it=>TEAM_MAP[it.key.toLowerCase()]==='TMK');
-  const newSnap=tmk.map(x=>x.key+':'+(x.count_week||0)+':'+(x.count_session||0)).join('|');
+  const newSnap=tmk.map(x=>x.key+':'+(x.count_week||0)+':'+(x.count_session||0)+':'+(x.count_month||0)).join('|');
   if(newSnap===window._snapTMK) return; window._snapTMK=newSnap;
-  if(!tmk.length){zone.innerHTML='<span class="tmk-empty">Aucun pilote TMK actif</span>';return;}
+
+  if(!tmk.length){
+    zone.innerHTML='<span class="tmk-empty">Aucun pilote TMK actif</span>';
+    const gb=document.getElementById('tmk-global-bar');
+    if(gb) gb.style.display='none';
+    return;
+  }
+
+  /* ── Cartes pilotes avec barres d'objectif ── */
   zone.innerHTML=tmk.map(it=>{
     const ph=PHOTOS[it.key.toLowerCase()];
     const av=ph?'<img src="'+ph+'" alt="'+it.key+'">':(it.key[0]||'?').toUpperCase();
     const me=it.key.toLowerCase()===user.name.toLowerCase();
-    return'<div class="tmk-pilot-card'+(me?' me-pod':'')+'">'+
-      '<div class="tp-av">'+av+'</div>'+
-      '<div class="tp-name">'+it.key.toUpperCase()+'</div>'+
-      '<div class="tp-divider"></div>'+
-      '<div class="tp-stats">'+
-        '<div class="tp-stat"><span class="tp-val">'+(it.count_week||0)+'</span><span class="tp-lbl">SEM.</span></div>'+
-        '<div class="tp-divider"></div>'+
-        '<div class="tp-stat"><span class="tp-val">'+(it.count_session||0)+'</span><span class="tp-lbl">SESSION</span></div>'+
-        '<div class="tp-divider"></div>'+
-        '<div class="tp-stat"><span class="tp-val">'+(it.count_month||0)+'</span><span class="tp-lbl">MOIS</span></div>'+
-      '</div>'+
-    '</div>';
+    const wk=it.count_week||0, mo=it.count_month||0, se=it.count_session||0;
+    const wkPct=Math.min(Math.round((wk/TMK_OBJ_WEEK)*100),100);
+    const moPct=Math.min(Math.round((mo/TMK_OBJ_MONTH)*100),100);
+    /* couleur semaine selon atteinte */
+    const wkCol=wkPct>=100?'var(--grn)':wkPct>=70?'var(--gold)':'var(--rb)';
+    return(
+      '<div class="tmk-pilot-card'+(me?' me-pod':'')+'" style="gap:9px;align-items:flex-start;padding:6px 10px;">'+
+        '<div class="tp-av" style="margin-top:2px;">'+av+'</div>'+
+        '<div class="tp-obj-block">'+
+          '<div class="tp-name" style="margin-bottom:4px;">'+it.key.toUpperCase()+(me?' ◀':'')+'</div>'+
+          /* Semaine */
+          '<div class="tp-obj-row">'+
+            '<span class="tp-obj-lbl" title="Objectif : '+TMK_OBJ_WEEK+' par semaine">SEM.⟳</span>'+
+            '<span class="tp-obj-val" style="color:'+wkCol+'">'+wk+'/'+TMK_OBJ_WEEK+'</span>'+
+            '<div class="tp-obj-bar"><div class="tp-obj-fill" style="width:'+wkPct+'%;background:'+wkCol+';box-shadow:0 0 6px currentColor;"></div></div>'+
+            '<span class="tp-obj-pct" style="color:'+wkCol+'">'+wkPct+'%</span>'+
+          '</div>'+
+          /* Mois */
+          '<div class="tp-obj-row">'+
+            '<span class="tp-obj-lbl">MOIS</span>'+
+            '<span class="tp-obj-val" style="color:rgba(96,165,250,.65)">'+mo+'/'+TMK_OBJ_MONTH+'</span>'+
+            '<div class="tp-obj-bar"><div class="tp-obj-fill" style="width:'+moPct+'%;background:rgba(96,165,250,.7);"></div></div>'+
+            '<span class="tp-obj-pct">'+moPct+'%</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="tp-divider" style="align-self:stretch;"></div>'+
+        '<div class="tp-stat" style="flex-shrink:0;text-align:center;min-width:32px;">'+
+          '<span class="tp-val">'+se+'</span>'+
+          '<span class="tp-lbl">SESSION</span>'+
+        '</div>'+
+      '</div>'
+    );
   }).join('');
+
+  /* ── Barre globale pôle TMK ── */
+  const nbPilots=tmk.length;
+  const totalWk=tmk.reduce((s,x)=>s+(x.count_week||0),0);
+  const totalMo=tmk.reduce((s,x)=>s+(x.count_month||0),0);
+  const targetWk=nbPilots*TMK_OBJ_WEEK;
+  const targetMo=nbPilots*TMK_OBJ_MONTH;
+  const gPct=Math.min(Math.round((totalWk/targetWk)*100),100);
+  const gCol=gPct>=100?'var(--grn)':gPct>=70?'var(--gold)':'var(--rb)';
+
+  const gb=document.getElementById('tmk-global-bar');
+  const gv=document.getElementById('tmk-global-val');
+  const gvWk=document.getElementById('tmk-global-val-wk');
+  const gf=document.getElementById('tmk-global-fill');
+  const gp=document.getElementById('tmk-global-pct');
+  const gs=document.getElementById('tmk-global-status');
+  const gvMo=document.getElementById('tmk-global-val-mo');
+  const gfMo=document.getElementById('tmk-global-fill-mo');
+  const gpMo=document.getElementById('tmk-global-pct-mo');
+  const gsMo=document.getElementById('tmk-global-status-mo');
+  if(gb){ gb.style.display='flex'; }
+  if(gv) gv.textContent=totalWk+' / '+targetWk+' R1TMK';
+  if(gvWk) gvWk.textContent=totalWk+' / '+targetWk;
+  if(gf){ gf.style.width=gPct+'%'; gf.style.background=gCol; }
+  if(gp){ gp.textContent=gPct+'%'; gp.style.color=gCol; }
+  if(gs){
+    if(gPct>=100){ gs.textContent='🏆 OBJECTIF ATTEINT !'; gs.style.color='var(--grn)'; }
+    else{ gs.textContent=(targetWk-totalWk)+' R1TMK RESTANTS'; gs.style.color=''; }
+  }
+  /* Barre mois */
+  const gMoPct=Math.min(Math.round((totalMo/targetMo)*100),100);
+  if(gvMo) gvMo.textContent=totalMo+' / '+targetMo;
+  if(gfMo){ gfMo.style.width=gMoPct+'%'; }
+  if(gpMo){ gpMo.textContent=gMoPct+'%'; }
+  if(gsMo){
+    if(gMoPct>=100){ gsMo.textContent='🏆 OBJECTIF ATTEINT !'; gsMo.style.color='var(--grn)'; }
+    else{ gsMo.textContent=(targetMo-totalMo)+' restants'; gsMo.style.color=''; }
+  }
 }
 
 function renderFeed(items){
@@ -1882,19 +2345,21 @@ function doLogout(){
   document.getElementById('lm').style.opacity='1';
   document.getElementById('pi').value='';
   document.getElementById('lerr').textContent='';
-  document.getElementById('blbtn').disabled=false;
-  document.getElementById('blbtn').textContent='PLEIN GAZ VERS ORION';
+  const _blb=document.getElementById('blbtn');
+  if(_blb){ _blb.disabled=false; _blb.classList.remove('launching'); }
+  const _bci2=document.getElementById('blbtn-inner');
+  if(_bci2) _bci2.innerHTML='<span>▶▶ IGNITION ◀◀</span><span class="b-sub">ALLUMAGE DES RÉACTEURS</span>';
   initStars(); loadPilotCount();
 }
 function openPW(){ document.getElementById('pwo').style.display='flex'; setTimeout(()=>document.getElementById('apw').focus(),100); }
 function closePW(){ document.getElementById('pwo').style.display='none'; document.getElementById('apw').value=''; document.getElementById('pwerr').textContent=''; }
 function checkPW(){ if(document.getElementById('apw').value===ADMIN_PW){ closePW(); openAdm(); } else{ document.getElementById('pwerr').textContent='✕ MOT DE PASSE INCORRECT'; shake('apw'); } }
 document.getElementById('apw').addEventListener('keydown',e=>{ if(e.key==='Enter') checkPW(); });
-function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _bc=document.getElementById('boss-cur-target'); if(_bc) _bc.textContent=localStorage.getItem('oob_boss_target')||'80'; const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
+function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _bc=document.getElementById('boss-cur-target'); if(_bc) _bc.textContent=localStorage.getItem('oob_boss_target')||'50'; const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
 function closeAdm(){ gsap.to('#adm',{opacity:0,duration:.25,onComplete:()=>document.getElementById('adm').style.display='none'}); }
 function alog(msg,ok=true){ const el=document.getElementById('alog'); const t=new Date().toTimeString().slice(0,8); el.innerHTML+=`<br>[${t}] ${ok?'✓':'✕'} ${msg}`; el.scrollTop=el.scrollHeight; }
 async function saveBossTarget(){
-  const val=parseInt(document.getElementById('boss-target-inp').value)||80;
+  const val=parseInt(document.getElementById('boss-target-inp').value)||50;
   localStorage.setItem('oob_boss_target',val);
   document.getElementById('boss-cur-target').textContent=val;
   document.getElementById('boss-target-inp').value='';
@@ -2018,6 +2483,330 @@ async function admExportFeed(){
     XLSX.writeFile(wb,`OOB_Historique_${today()}.xlsx`);
     alog('Historique exporté ✓ — '+data.length+' entrées');
   }catch(e){ alog('Erreur : '+e.message,false); }
+}
+
+
+/* ════ TRANSITION CINÉMATIQUE — VAISSEAU DE GUERRE ════ */
+function launchCinematic(onDone){
+  const ov=document.getElementById('cin-ov');
+  const cv=document.getElementById('cin-cv');
+  const fl=document.getElementById('cin-fl');
+  const st=document.getElementById('cin-status');
+  const sp=document.getElementById('cin-spd');
+  const hud=document.getElementById('cin-hud');
+  const top=document.getElementById('cin-top');
+  const bot=document.getElementById('cin-bot');
+  if(!ov||!cv||typeof THREE==='undefined'){onDone();return;}
+  ov.style.display='block';
+  setTimeout(()=>{ top.style.height='11vh'; bot.style.height='11vh'; hud.style.opacity='1'; },40);
+  const W=innerWidth,H=innerHeight;
+  let renderer,raf_id;
+  try{
+    renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:false});
+    renderer.setSize(W,H);
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+    renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  }catch(e){ ov.style.display='none'; onDone(); return; }
+
+  const scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x00000a);
+  scene.fog=new THREE.FogExp2(0x000010,.00018);
+
+  const cam=new THREE.PerspectiveCamera(55,W/H,.5,4000);
+  cam.position.set(0,6,220);
+
+  /* ── ÉTOILES ── */
+  const sg=new THREE.BufferGeometry();
+  const starPos=new Float32Array(8000*3);
+  const starCol=new Float32Array(8000*3);
+  for(let i=0;i<8000;i++){
+    starPos[i*3]=(Math.random()-.5)*3000;
+    starPos[i*3+1]=(Math.random()-.5)*2000;
+    starPos[i*3+2]=(Math.random()-.5)*2000;
+    const r=Math.random();
+    if(r<.6){starCol[i*3]=.7;starCol[i*3+1]=.75;starCol[i*3+2]=1;}
+    else if(r<.85){starCol[i*3]=1;starCol[i*3+1]=.85;starCol[i*3+2]=.6;}
+    else{starCol[i*3]=.6;starCol[i*3+1]=.7;starCol[i*3+2]=1;}
+  }
+  sg.setAttribute('position',new THREE.BufferAttribute(starPos,3));
+  sg.setAttribute('color',new THREE.BufferAttribute(starCol,3));
+  const stars=new THREE.Points(sg,new THREE.PointsMaterial({size:.9,vertexColors:true,transparent:true,opacity:.92}));
+  scene.add(stars);
+
+  /* ── NÉBULEUSE ── */
+  const nebGeo=new THREE.BufferGeometry();
+  const nebPos=new Float32Array(600*3),nebCol=new Float32Array(600*3);
+  for(let i=0;i<600;i++){
+    nebPos[i*3]=(Math.random()-.5)*2000; nebPos[i*3+1]=(Math.random()-.5)*1200; nebPos[i*3+2]=(Math.random()-.5)*1000;
+    const r=Math.random();
+    if(r<.4){nebCol[i*3]=.98;nebCol[i*3+1]=.38;nebCol[i*3+2]=.1;}
+    else if(r<.7){nebCol[i*3]=.18;nebCol[i*3+1]=.38;nebCol[i*3+2]=.98;}
+    else{nebCol[i*3]=.5;nebCol[i*3+1]=.2;nebCol[i*3+2]=.9;}
+  }
+  nebGeo.setAttribute('position',new THREE.BufferAttribute(nebPos,3));
+  nebGeo.setAttribute('color',new THREE.BufferAttribute(nebCol,3));
+  const nebula=new THREE.Points(nebGeo,new THREE.PointsMaterial({size:4,vertexColors:true,transparent:true,opacity:.12}));
+  scene.add(nebula);
+
+  /* ── MATÉRIAUX ── */
+  const matHull=new THREE.MeshPhongMaterial({color:0x1e2a44,specular:0x4466cc,shininess:220,flatShading:false});
+  const matDark=new THREE.MeshPhongMaterial({color:0x0d1220,specular:0x223366,shininess:80});
+  const matAccent=new THREE.MeshPhongMaterial({color:0xF7931E,specular:0xffcc44,shininess:320,emissive:new THREE.Color(0x1a0800)});
+  const matGlass=new THREE.MeshPhongMaterial({color:0x002244,specular:0x88ccff,shininess:500,transparent:true,opacity:.88,emissive:new THREE.Color(0x001133)});
+  const matEngine=new THREE.MeshPhongMaterial({color:0x0a0d18,specular:0x3355aa,shininess:60});
+  const matPanel=new THREE.MeshPhongMaterial({color:0x263050,specular:0x5577cc,shininess:180});
+  const matOrange=new THREE.MeshBasicMaterial({color:0xff6600,transparent:true,opacity:.95});
+  const matBlue=new THREE.MeshBasicMaterial({color:0x4499ff,transparent:true,opacity:.9});
+
+  /* ── VAISSEAU ── */
+  const ship=new THREE.Group();
+
+  /* Corps principal — coque longue et massive */
+  const hull=new THREE.Mesh(new THREE.BoxGeometry(14,4,52),matHull);
+  ship.add(hull);
+
+  /* Quille inférieure */
+  const keel=new THREE.Mesh(new THREE.BoxGeometry(6,2.5,46),matDark);
+  keel.position.set(0,-3.2,1);
+  ship.add(keel);
+
+  /* Pont supérieur */
+  const deck=new THREE.Mesh(new THREE.BoxGeometry(13,1,48),matPanel);
+  deck.position.set(0,2.4,0);
+  ship.add(deck);
+
+  /* Proue effilée */
+  const bowGeo=new THREE.CylinderGeometry(0,6,14,4);
+  const bow=new THREE.Mesh(bowGeo,matDark);
+  bow.rotation.set(Math.PI/2,Math.PI/4,0);
+  bow.position.set(0,0,-33);
+  ship.add(bow);
+
+  /* Superstructure / Tour de commandement */
+  const bridge=new THREE.Mesh(new THREE.BoxGeometry(7,6,12),matDark);
+  bridge.position.set(0,5,-4);
+  ship.add(bridge);
+  const bridgeTop=new THREE.Mesh(new THREE.BoxGeometry(5,3,8),matPanel);
+  bridgeTop.position.set(0,9,-3);
+  ship.add(bridgeTop);
+  /* Vitres du pont */
+  const windows=new THREE.Mesh(new THREE.BoxGeometry(5.2,1.5,7.8),matGlass);
+  windows.position.set(0,8.2,-3);
+  ship.add(windows);
+
+  /* Mât / Antenne centrale */
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(.15,.2,10,8),matAccent);
+  mast.position.set(0,14,-2);
+  ship.add(mast);
+  const radarDish=new THREE.Mesh(new THREE.SphereGeometry(1.8,10,8,0,Math.PI*2,0,Math.PI/2),matPanel);
+  radarDish.position.set(0,20,-2); radarDish.rotation.x=Math.PI;
+  ship.add(radarDish);
+
+  /* Tourelles principales (3) */
+  [[-14,0,-10],[14,0,-10],[0,3.5,10]].forEach(([tx,ty,tz],i)=>{
+    const tBase=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.5,1.6,10),matDark);
+    tBase.position.set(tx,ty+2.6,tz); ship.add(tBase);
+    const tBody=new THREE.Mesh(new THREE.CylinderGeometry(1.6,2,2,10),matPanel);
+    tBody.position.set(tx,ty+4,tz); ship.add(tBody);
+    /* Canons (2 par tourelle) */
+    [-1,1].forEach(cs=>{
+      const brl=new THREE.Mesh(new THREE.CylinderGeometry(.28,.35,9,6),matDark);
+      brl.rotation.set(Math.PI/2,0,0);
+      brl.position.set(tx+cs*.7,ty+4.2,tz-7);
+      ship.add(brl);
+    });
+  });
+
+  /* Ailes delta larges */
+  function bigWing(side){
+    const g=new THREE.BufferGeometry();
+    const v=new Float32Array([
+      0,1,10,         side*28,-1,-8,
+      side*22,-1,-26, 0,0,-22,
+    ]);
+    g.setAttribute('position',new THREE.BufferAttribute(v,3));
+    g.setIndex([0,1,3, 1,2,3]);
+    g.computeVertexNormals();
+    const m=new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:0x151e34,side:THREE.DoubleSide,specular:0x3355aa,shininess:100}));
+    return m;
+  }
+  ship.add(bigWing(1)); ship.add(bigWing(-1));
+
+  /* Ailerons arrière verticaux */
+  function vFin(side){
+    const g=new THREE.BufferGeometry();
+    const v=new Float32Array([
+      side*6,2,18, side*6,14,12, side*6,2,26, side*7,2,20
+    ]);
+    g.setAttribute('position',new THREE.BufferAttribute(v,3));
+    g.setIndex([0,1,2, 0,3,2]);
+    g.computeVertexNormals();
+    return new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:0x1a2438,side:THREE.DoubleSide,specular:0x4466bb,shininess:80}));
+  }
+  ship.add(vFin(1)); ship.add(vFin(-1));
+
+  /* Pods de propulsion (4 moteurs principaux) */
+  const engineGlows=[];
+  const engineLights=[];
+  [[-5,-2,25],[5,-2,25],[-9,-1,22],[9,-1,22]].forEach(([ex,ey,ez])=>{
+    const pod=new THREE.Mesh(new THREE.CylinderGeometry(1.4,2,8,10),matEngine);
+    pod.rotation.set(Math.PI/2,0,0); pod.position.set(ex,ey,ez);
+    ship.add(pod);
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(1.8,.3,8,12),matAccent);
+    ring.rotation.set(Math.PI/2,0,0); ring.position.set(ex,ey,ez+4);
+    ship.add(ring);
+    const glow=new THREE.Mesh(new THREE.SphereGeometry(1.6,10,10),matOrange);
+    glow.position.set(ex,ey,ez+5.2); ship.add(glow);
+    engineGlows.push(glow);
+    const pl=new THREE.PointLight(0xff6600,6,40); pl.position.set(ex,ey,ez+7); scene.add(pl);
+    engineLights.push(pl);
+  });
+
+  /* Petits propulseurs secondaires */
+  [[-6,2,22],[6,2,22]].forEach(([ex,ey,ez])=>{
+    const sp2=new THREE.Mesh(new THREE.SphereGeometry(.7,8,8),matBlue);
+    sp2.position.set(ex,ey,ez); ship.add(sp2);
+    const pl=new THREE.PointLight(0x4499ff,3,20); pl.position.set(ex,ey,ez+2); scene.add(pl);
+  });
+
+  /* Lumières de navigation (clignotantes) */
+  const navLR=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),new THREE.MeshBasicMaterial({color:0xff2222}));
+  navLR.position.set(-28,-1,-8); ship.add(navLR);
+  const navLG=new THREE.Mesh(new THREE.SphereGeometry(.4,6,6),new THREE.MeshBasicMaterial({color:0x22ff44}));
+  navLG.position.set(28,-1,-8); ship.add(navLG);
+  const navRD=new THREE.PointLight(0xff0000,4,18); navRD.position.set(-28,-1,-8); scene.add(navRD);
+  const navGD=new THREE.PointLight(0x00ff44,4,18); navGD.position.set(28,-1,-8); scene.add(navGD);
+
+  /* Lumières scènes */
+  scene.add(new THREE.AmbientLight(0x1a2244,1.2));
+  const sun=new THREE.DirectionalLight(0x6688ff,3.5);
+  sun.position.set(-40,60,-80); sun.castShadow=true; scene.add(sun);
+  const fill=new THREE.DirectionalLight(0xff7700,1.4);
+  fill.position.set(40,-20,60); scene.add(fill);
+  const rim=new THREE.DirectionalLight(0x0044ff,1.8);
+  rim.position.set(0,30,-100); scene.add(rim);
+
+  /* Position de départ — loin devant, au-dessous de la caméra */
+  ship.position.set(3,-18,-380);
+  ship.rotation.set(-.12,0.06,0);
+  scene.add(ship);
+
+  /* ── HUD SÉQUENCE ── */
+  const SEQ=[
+    {f:0,   s:'SYSTÈMES EN LIGNE',    v:'STATION IMMOBILE'},
+    {f:40,  s:'RÉACTEURS ALLUMÉS',    v:'MACH 2'},
+    {f:90,  s:'APPROCHE DÉTECTÉE',    v:'MACH 12'},
+    {f:160, s:'PASSAGE RAPPROCHÉ',    v:'MACH 28'},
+    {f:230, s:'HYPERESPACE ENGAGÉ',   v:'∞'},
+  ];
+
+  let t=0;
+  /* Total frames : 300 (environ 5s à 60fps) */
+  const TOTAL=300, PASS=190, WARP=230;
+
+  function tick(){
+    raf_id=requestAnimationFrame(tick);
+    t++;
+    SEQ.forEach(s=>{ if(t===s.f){ st.textContent=s.s; sp.textContent=s.v; }});
+
+    /* Clignotement lumières de navigation */
+    const nb=Math.sin(t*.08)>.4;
+    navRD.intensity=nb?5:0; navGD.intensity=nb?5:0;
+    navLR.material.opacity=nb?1:.1; navLG.material.opacity=nb?1:.1;
+
+    /* Pulsation moteurs */
+    const ep=.82+Math.sin(t*.22)*.18;
+    engineGlows.forEach(g=>{ g.scale.setScalar(ep); });
+    engineLights.forEach(l=>{ l.intensity=5+Math.sin(t*.18)*2; });
+
+    /* Rotation disque radar */
+    radarDish.rotation.y+=.04;
+
+    /* Étoiles — vitesse liée à la phase */
+    let ws;
+    if(t<90) ws=.25+t*.02;
+    else if(t<PASS) ws=2.2+Math.pow((t-90)/100,1.4)*8;
+    else if(t<WARP) ws=18;
+    else ws=55;
+    const pa=stars.geometry.attributes.position;
+    for(let i=0;i<8000;i++){
+      pa.array[i*3+2]+=ws;
+      if(pa.array[i*3+2]>300) pa.array[i*3+2]=-900;
+    }
+    pa.needsUpdate=true;
+
+    /* ── TRAJECTOIRE VAISSEAU ──
+       Phase 1 (t 0→PASS=190) : approche lente depuis -380 jusqu'à +280
+       Phase 2 (t PASS→WARP=230) : défilé lent — on profite du navire
+       Phase 3 (t WARP→TOTAL=300) : accélération hyperespace */
+    if(t<=PASS){
+      /* Approche progressive avec easing */
+      const prog=t/PASS;
+      const ease=prog<.5 ? 2*prog*prog : 1-Math.pow(-2*prog+2,2)/2; /* ease-in-out quad */
+      ship.position.z=-380+ease*660;          /* -380 → +280 */
+      ship.position.y=-18+ease*24;            /* monte doucement */
+      ship.position.x=3-ease*4;
+      ship.rotation.z=Math.sin(t*.025)*.035;
+      ship.rotation.x=-.12+ease*.18;
+      ship.rotation.y=.06-ease*.08;
+
+    } else if(t<=WARP){
+      /* Défilé latéral lent — on voit le vaisseau passer */
+      const p2=(t-PASS)/(WARP-PASS);
+      ship.position.z=280+p2*120;
+      ship.position.y=6+p2*8;
+      ship.position.x=-1-p2*6;
+      ship.rotation.x=.06+p2*.06;
+      ship.rotation.y=-.02-p2*.06;
+
+    } else {
+      /* Accélération hyperespace */
+      const burst=Math.pow((t-WARP)/(TOTAL-WARP),2.2);
+      ship.position.z=400+burst*1800;
+      ship.position.y=14+burst*30;
+      ship.position.x=-7-burst*20;
+    }
+
+    /* Flash au passage caméra */
+    if(t===PASS){
+      gsap.to('#cin-fl',{opacity:.7,duration:.04,yoyo:true,repeat:1,onComplete:()=>{ fl.style.opacity=0; }});
+      gsap.fromTo(cam.position,{x:0},{keyframes:[{x:-1.2},{x:1.2},{x:-.5},{x:0}],duration:.32,ease:'none'});
+    }
+
+    /* Tremblement moteur pendant la phase warp */
+    if(t>WARP){
+      cam.position.x=Math.sin(t*.4)*.3;
+      cam.position.y=6+Math.cos(t*.3)*.2;
+    } else {
+      /* Léger balancement caméra */
+      cam.position.x=Math.sin(t*.008)*.5;
+      cam.position.y=6+Math.cos(t*.012)*.3;
+    }
+
+    /* FOV warp dramatique */
+    if(t>WARP){
+      cam.fov=Math.min(55+(t-WARP)*1.2,150);
+      cam.updateProjectionMatrix();
+    } else if(t>PASS){
+      /* FOV réduit pour bien voir le vaisseau */
+      cam.fov=Math.max(55-(t-PASS)*.15,42);
+      cam.updateProjectionMatrix();
+    }
+
+    renderer.render(scene,cam);
+
+    if(t>=TOTAL){
+      cancelAnimationFrame(raf_id);
+      gsap.to('#cin-fl',{opacity:1,duration:.12,onComplete:()=>{
+        try{ renderer.dispose(); }catch{}
+        ov.style.display='none';
+        top.style.height='0'; bot.style.height='0'; hud.style.opacity='0';
+        onDone();
+      }});
+    }
+  }
+  tick();
 }
 
 /* ════ INIT ════ */
