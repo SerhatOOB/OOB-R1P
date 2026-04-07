@@ -299,52 +299,6 @@ body.hyper-mode .cstar{
     color:var(--rb);min-height:16px;text-align:center;
   }
 }
-/* ════ CHART COURBE ════ */
-.chart-wrap{padding:4px 2px;position:relative;z-index:1;}
-.chart-toggle{display:flex;gap:6px;margin-bottom:10px;}
-.chart-toggle-btn{
-  flex:1;padding:5px 4px;background:rgba(255,255,255,.03);
-  border:1px solid var(--bd2);color:var(--dim);
-  font-family:var(--fm);font-size:.42rem;letter-spacing:1.5px;
-  cursor:pointer;border-radius:5px;transition:.2s;text-transform:uppercase;
-}
-.chart-toggle-btn.active{
-  background:rgba(247,147,30,.11);border-color:rgba(247,147,30,.38);color:var(--p);
-}
-/* Stats row */
-.chart-stats-row{display:flex;gap:6px;margin-bottom:8px;}
-.chart-stat-chip{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;
-  padding:6px 4px;border-radius:6px;
-  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);
-}
-.chart-stat-chip.current{background:rgba(247,147,30,.07);border-color:rgba(247,147,30,.22);}
-.chart-stat-chip.prev{background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.15);}
-.chart-stat-val{font-family:var(--fh);font-size:.88rem;font-weight:700;line-height:1;}
-.chart-stat-chip.current .chart-stat-val{color:var(--p);text-shadow:0 0 14px rgba(247,147,30,.5);}
-.chart-stat-chip.prev .chart-stat-val{color:rgba(96,165,250,.8);}
-.chart-stat-lbl{font-family:var(--fm);font-size:.38rem;letter-spacing:1.5px;color:var(--dim);}
-.chart-stat-delta{font-family:var(--fh);font-size:.48rem;font-weight:700;padding:1px 5px;border-radius:3px;margin-top:1px;}
-.chart-stat-delta.pos{color:#22c55e;background:rgba(34,197,94,.1);}
-.chart-stat-delta.neg{color:#ef4444;background:rgba(239,68,68,.1);}
-.chart-stat-delta.eq{color:var(--dim);background:rgba(255,255,255,.05);}
-/* SVG chart */
-.chart-svg-wrap{width:100%;overflow:hidden;border-radius:6px;}
-.chart-svg-wrap svg{display:block;width:100%;height:auto;}
-/* Legend */
-.chart-legend{display:flex;gap:14px;margin-top:8px;justify-content:center;flex-wrap:wrap;}
-.chart-legend-item{display:flex;align-items:center;gap:5px;font-family:var(--fm);font-size:.4rem;letter-spacing:1px;color:var(--dim);}
-.chart-legend-dot{width:10px;height:6px;border-radius:2px;flex-shrink:0;}
-/* Insight bar */
-.chart-insight{
-  margin-top:7px;padding:5px 8px;border-radius:5px;
-  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);
-  font-family:var(--fm);font-size:.4rem;letter-spacing:1px;color:rgba(255,255,255,.4);
-  text-align:center;line-height:1.6;
-}
-.chart-insight strong{color:rgba(247,147,30,.8);}
-.chart-empty{font-family:var(--fm);font-size:.54rem;color:var(--dim);letter-spacing:2px;text-align:center;padding:28px 0;}
-.chart-loading{font-family:var(--fm);font-size:.5rem;color:var(--dim);letter-spacing:2px;text-align:center;padding:20px 0;animation:blink 1s infinite;}
 #app{position:relative;z-index:10;height:100vh;overflow:hidden;padding:12px 16px 8px;display:grid;grid-template-rows:48px 1fr auto;gap:8px;}
 #ah{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;position:relative;}
 #ah::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
@@ -1512,7 +1466,6 @@ body.hyper-mode .cstar{
           <button class="tab-btn active" onclick="switchTab('week',this)">SEMAINE</button>
           <button class="tab-btn"        onclick="switchTab('month',this)">MOIS</button>
           <button class="tab-btn"        onclick="switchTab('session',this)">SESSION</button>
-          <button class="tab-btn"        onclick="switchTab('courbe',this)">📈 COURBE</button>
         </div>
         <div class="si" id="lb-main"></div>
       </div>
@@ -1729,7 +1682,7 @@ body.hyper-mode .cstar{
           <div>
             <div class="ta-output-label">🔑 CLÉ API ANTHROPIC</div>
             <div class="ta-apikey-wrap">
-              <input type="password" class="ta-apikey" id="ta-apikey" placeholder="..." autocomplete="off" spellcheck="false">
+              <input type="password" class="ta-apikey" id="ta-apikey" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
               <button class="abtn2" style="padding:7px 12px;font-size:.55rem;white-space:nowrap;" onclick="taSaveKey()" title="Sauvegarder">💾</button>
             </div>
           </div>
@@ -2244,7 +2197,6 @@ function renderCurrentTab(force=false){
   if(currentTab==='week') renderLB('lb-main',boardWeek,'count_week',force);
   else if(currentTab==='month') renderLB('lb-main',boardMonth,'count_month',force);
   else if(currentTab==='session') renderLB('lb-main',boardSess,'count_session',force);
-  else if(currentTab==='courbe') renderCourbe('lb-main');
 }
 function _snap(items,field){ return items.map(x=>x.key+':'+(x[field]||0)).join('|'); }
 
@@ -3858,8 +3810,6 @@ function taSaveWebhook(){
 /* ── Init: charger les valeurs sauvegardées ── */
 function taInit(){
   /* Pré-chargement clé API */
-  const defaultKey='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';
-  if(!_store.get('oob_ta_apikey')) _store.set('oob_ta_apikey',defaultKey);
   const k=_store.get('oob_ta_apikey');
   if(k) document.getElementById('ta-apikey').value=k;
   const w=_store.get('oob_ta_webhook')||_store.get('oob_teams_wh')||'';
@@ -4105,323 +4055,6 @@ function taRenderLog(logs){
 }
 
 
-
-/* ════════════════════════════════════════════
-   GRAPHE D'ÉVOLUTION — COURBE
-════════════════════════════════════════════ */
-let _chartMode='today'; // 'today' | 'week'
-/* Cache anti-clignotement */
-let _courbeCache={thisWeek:null,lastWeek:null,mon:null,prevMon:null,fetchedAt:0};
-
-async function renderCourbe(containerId){
-  const el=document.getElementById(containerId);
-  if(!el) return;
-  if(!_sb){ el.innerHTML='<div class="chart-empty">SUPABASE REQUIS</div>'; return; }
-
-  const now=new Date();
-  const AGE=Date.now()-_courbeCache.fetchedAt;
-  const hasFresh=_courbeCache.thisWeek!==null && AGE<30000; // cache 30s
-
-  /* Afficher loading UNIQUEMENT si le container est vide (première fois) */
-  const isEmpty=!el.querySelector('.chart-wrap');
-  if(isEmpty && !hasFresh) el.innerHTML='<div class="chart-loading">CHARGEMENT DES DONNÉES...</div>';
-
-  try{
-    let thisWeek=_courbeCache.thisWeek, lastWeek=_courbeCache.lastWeek;
-    let mon=_courbeCache.mon, prevMon=_courbeCache.prevMon;
-
-    if(!hasFresh){
-      /* Semaine en cours : lundi → maintenant */
-      mon=new Date(now);
-      const diff=mon.getDay()===0?-6:1-mon.getDay();
-      mon.setDate(mon.getDate()+diff); mon.setHours(0,0,0,0);
-      prevMon=new Date(mon); prevMon.setDate(prevMon.getDate()-7);
-      const prevSun=new Date(mon); prevSun.setDate(prevSun.getDate()-1); prevSun.setHours(23,59,59,999);
-
-      const[r1,r2]=await Promise.allSettled([
-        _sb.from('suivi_r1p').select('created_at,auteur').gte('created_at',mon.toISOString()).lte('created_at',now.toISOString()).limit(800),
-        _sb.from('suivi_r1p').select('created_at,auteur').gte('created_at',prevMon.toISOString()).lte('created_at',prevSun.toISOString()).limit(800),
-      ]);
-      thisWeek=r1.status==='fulfilled'?(r1.value.data||[]):[];
-      lastWeek=r2.status==='fulfilled'?(r2.value.data||[]):[];
-      /* Mise en cache */
-      _courbeCache={thisWeek,lastWeek,mon,prevMon,fetchedAt:Date.now()};
-    }
-
-    /* Rendu silencieux : on met à jour innerHTML sans flash si chart déjà présent */
-    const newHTML=_buildCourbeHTML(thisWeek,lastWeek,now,mon,prevMon);
-    if(isEmpty){
-      el.innerHTML=newHTML;
-    } else {
-      /* Update uniquement le contenu interne, préserve le container → pas de flash */
-      const inner=el.querySelector('#chart-inner');
-      if(inner){
-        const newDoc=document.createElement('div');
-        newDoc.innerHTML=newHTML;
-        const newInner=newDoc.querySelector('#chart-inner');
-        if(newInner) inner.innerHTML=newInner.innerHTML;
-      } else {
-        el.innerHTML=newHTML;
-      }
-    }
-  }catch(e){
-    if(isEmpty) el.innerHTML='<div class="chart-empty">ERREUR : '+e.message+'</div>';
-  }
-}
-
-function _buildCourbeHTML(thisWeek,lastWeek,now,mon,prevMon){
-  return `<div class="chart-wrap">
-    <div class="chart-toggle">
-      <button class="chart-toggle-btn${_chartMode==='today'?' active':''}" onclick="_chartSwitch('today',this)">📅 AUJOURD'HUI / HEURE</button>
-      <button class="chart-toggle-btn${_chartMode==='week'?' active':''}" onclick="_chartSwitch('week',this)">📆 SEMAINE / JOUR</button>
-    </div>
-    <div id="chart-inner">${_chartMode==='today'?_chartToday(thisWeek,lastWeek,now):_chartWeek(thisWeek,lastWeek,now,mon,prevMon)}</div>
-  </div>`;
-}
-
-function _chartSwitch(mode,btn){
-  _chartMode=mode;
-  document.querySelectorAll('.chart-toggle-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  if(currentTab!=='courbe') return;
-  /* Re-render le inner uniquement, données déjà en cache → pas de flash */
-  const inner=document.getElementById('chart-inner');
-  if(!inner) return;
-  const now=new Date();
-  const{thisWeek,lastWeek,mon,prevMon}=_courbeCache;
-  if(thisWeek){
-    inner.innerHTML=_chartMode==='today'
-      ?_chartToday(thisWeek,lastWeek,now)
-      :_chartWeek(thisWeek,lastWeek,now,mon,prevMon);
-  } else {
-    inner.innerHTML='<div class="chart-loading">CALCUL...</div>';
-    renderCourbe('lb-main');
-  }
-}
-
-function _chartToday(thisWeek,lastWeek,now){
-  const todayStr=now.toISOString().slice(0,10);
-  const prevDayDate=new Date(now); prevDayDate.setDate(prevDayDate.getDate()-7);
-  const prevDayStr=prevDayDate.toISOString().slice(0,10);
-  const currentH=now.getHours();
-
-  const todayByH={}, prevByH={};
-  (thisWeek||[]).filter(d=>d.created_at.slice(0,10)===todayStr).forEach(d=>{
-    const h=new Date(d.created_at).getHours();
-    todayByH[h]=(todayByH[h]||0)+1;
-  });
-  (lastWeek||[]).filter(d=>d.created_at.slice(0,10)===prevDayStr).forEach(d=>{
-    const h=new Date(d.created_at).getHours();
-    prevByH[h]=(prevByH[h]||0)+1;
-  });
-
-  const hours=Array.from({length:12},(_,i)=>i+8);
-  const serA=hours.map(h=>todayByH[h]||0);
-  const serB=hours.map(h=>prevByH[h]||0);
-  const totalToday=serA.reduce((a,b)=>a+b,0);
-  const totalPrev=serB.reduce((a,b)=>a+b,0);
-
-  /* Heure de pointe aujourd'hui */
-  const peakH=hours[serA.indexOf(Math.max(...serA))];
-  const peakVal=Math.max(...serA);
-
-  /* Insight contextuel */
-  let insight='';
-  if(totalToday===0) insight='Aucun R1P enregistré aujourd\'hui pour l\'instant.';
-  else {
-    const delta=totalToday-totalPrev;
-    const sign=delta>=0?'+':'';
-    insight=`<strong>${peakH}h–${peakH+1}h</strong> est le meilleur créneau (${peakVal} R1P) · ${sign}${delta} vs même jour S-1`;
-  }
-
-  return _drawBarChart(
-    hours,serA,serB,
-    hours.map(h=>h+'h'),
-    `Aujourd'hui : ${totalToday} R1P`,
-    `S-1 même jour : ${totalPrev} R1P`,
-    currentH,
-    insight
-  );
-}
-
-function _chartWeek(thisWeek,lastWeek,now,mon,prevMon){
-  const days=['Lun','Mar','Mer','Jeu','Ven'];
-  const dayIdxMap={1:0,2:1,3:2,4:3,5:4};
-  const todayIdx=dayIdxMap[now.getDay()]; // jour courant (undefined si week-end)
-
-  const thisW=[0,0,0,0,0], prevW=[0,0,0,0,0];
-  (thisWeek||[]).forEach(d=>{
-    const di=dayIdxMap[new Date(d.created_at).getDay()];
-    if(di!==undefined) thisW[di]++;
-  });
-  (lastWeek||[]).forEach(d=>{
-    const di=dayIdxMap[new Date(d.created_at).getDay()];
-    if(di!==undefined) prevW[di]++;
-  });
-
-  const totalThis=thisW.reduce((a,b)=>a+b,0);
-  const totalPrev=prevW.reduce((a,b)=>a+b,0);
-  const monLbl=mon.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-  const prevMonLbl=prevMon.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
-
-  /* Insight */
-  let insight='';
-  if(totalThis===0) insight='Aucun R1P cette semaine pour l\'instant.';
-  else {
-    const best=days[thisW.indexOf(Math.max(...thisW))];
-    const delta=totalThis-totalPrev;
-    const sign=delta>=0?'+':'';
-    insight=`Meilleur jour : <strong>${best}</strong> · ${sign}${delta} R1P vs semaine précédente`;
-  }
-
-  return _drawBarChart(
-    days,thisW,prevW,days,
-    `Sem. du ${monLbl} : ${totalThis} R1P`,
-    `Sem. du ${prevMonLbl} : ${totalPrev} R1P`,
-    todayIdx,
-    insight
-  );
-}
-
-function _drawBarChart(labels,serA,serB,xlabels,lblA,lblB,highlightIdx,insight){
-  const W=320, H=148, padL=24, padB=28, padT=16, padR=10;
-  const chartW=W-padL-padR, chartH=H-padB-padT;
-  const n=labels.length;
-  const groupW=chartW/n;
-  const barW=Math.max(4,groupW*.32);
-  const gap=barW*.55;
-  const maxVal=Math.max(1,...serA,...serB);
-
-  const totalA=serA.reduce((a,b)=>a+b,0);
-  const totalB=serB.reduce((a,b)=>a+b,0);
-  const delta=totalA-totalB;
-  const deltaSign=delta>=0?'+':'';
-  const deltaClass=delta>0?'pos':delta<0?'neg':'eq';
-
-  let bars='',xAxis='',yAxis='',trendPts='',gradDefs='';
-
-  /* Gradients */
-  gradDefs+=`
-    <linearGradient id="grA" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(247,147,30,.95)"/>
-      <stop offset="100%" stop-color="rgba(247,100,0,.55)"/>
-    </linearGradient>
-    <linearGradient id="grAhl" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(255,200,60,1)"/>
-      <stop offset="100%" stop-color="rgba(247,147,30,.8)"/>
-    </linearGradient>
-    <linearGradient id="grB" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(96,165,250,.55)"/>
-      <stop offset="100%" stop-color="rgba(60,120,250,.2)"/>
-    </linearGradient>
-    <filter id="glowA" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
-      <feFlood flood-color="rgba(247,147,30,.5)" result="col"/>
-      <feComposite in="col" in2="blur" operator="in" result="sh"/>
-      <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <filter id="glowAhl" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
-      <feFlood flood-color="rgba(255,200,60,.7)" result="col"/>
-      <feComposite in="col" in2="blur" operator="in" result="sh"/>
-      <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>`;
-
-  /* Y gridlines */
-  const ySteps=4;
-  for(let i=0;i<=ySteps;i++){
-    const y=padT+chartH-(i/ySteps)*chartH;
-    const val=Math.round((i/ySteps)*maxVal);
-    const isDash=i>0&&i<ySteps;
-    yAxis+=`<line x1="${padL}" y1="${y.toFixed(1)}" x2="${W-padR}" y2="${y.toFixed(1)}" stroke="rgba(255,255,255,${isDash?.038:.06})" stroke-width="${isDash?.7:1}" stroke-dasharray="${isDash?'3,4':''}"/>`;
-    if(i>0) yAxis+=`<text x="${(padL-4).toFixed(1)}" y="${(y+3.5).toFixed(1)}" text-anchor="end" font-family="'Space Mono',monospace" font-size="6" fill="rgba(255,255,255,.32)">${val}</text>`;
-  }
-
-  /* Barres */
-  serA.forEach((valA,i)=>{
-    const valB=serB[i]||0;
-    const cx=padL+i*groupW+groupW/2;
-    const hA=valA>0?(valA/maxVal)*chartH:0;
-    const hB=valB>0?(valB/maxVal)*chartH:0;
-    const xA=cx-gap/2-barW;
-    const xB=cx+gap/2;
-    const isHL=highlightIdx===i;
-    const baseY=padT+chartH;
-
-    /* Série A — cette période */
-    if(hA>0){
-      bars+=`<rect x="${xA.toFixed(1)}" y="${(baseY-hA).toFixed(1)}" width="${barW.toFixed(1)}" height="${hA.toFixed(1)}" rx="2"
-        fill="url(#${isHL?'grAhl':'grA'})" filter="url(#${isHL?'glowAhl':'glowA'})"/>`;
-      /* Valeur au-dessus */
-      bars+=`<text x="${(xA+barW/2).toFixed(1)}" y="${(baseY-hA-4).toFixed(1)}" text-anchor="middle"
-        font-family="'Space Mono',monospace" font-size="${isHL?7.5:6.5}" font-weight="bold"
-        fill="${isHL?'rgba(255,220,60,1)':'rgba(247,147,30,.95)'}">${valA}</text>`;
-      /* Point pour ligne de tendance */
-      trendPts+=`${(xA+barW/2).toFixed(1)},${(baseY-hA).toFixed(1)} `;
-    } else {
-      bars+=`<rect x="${xA.toFixed(1)}" y="${(baseY-1.5).toFixed(1)}" width="${barW.toFixed(1)}" height="1.5" rx="1" fill="rgba(247,147,30,.15)"/>`;
-      trendPts+=`${(xA+barW/2).toFixed(1)},${baseY.toFixed(1)} `;
-    }
-
-    /* Série B — période précédente */
-    if(hB>0){
-      bars+=`<rect x="${xB.toFixed(1)}" y="${(baseY-hB).toFixed(1)}" width="${barW.toFixed(1)}" height="${hB.toFixed(1)}" rx="2"
-        fill="url(#grB)" opacity="${isHL?.7:.5}"/>`;
-    } else {
-      bars+=`<rect x="${xB.toFixed(1)}" y="${(baseY-1.5).toFixed(1)}" width="${barW.toFixed(1)}" height="1.5" rx="1" fill="rgba(96,165,250,.15)"/>`;
-    }
-
-    /* Label X */
-    xAxis+=`<text x="${cx.toFixed(1)}" y="${(H-8).toFixed(1)}" text-anchor="middle"
-      font-family="'Space Mono',monospace" font-size="${isHL?7:6}" font-weight="${isHL?'bold':'normal'}"
-      fill="${isHL?'rgba(255,210,50,.9)':'rgba(255,255,255,.35)'}">${xlabels[i]}</text>`;
-
-    /* Marqueur jour courant */
-    if(isHL){
-      xAxis+=`<rect x="${(cx-groupW/2+1).toFixed(1)}" y="${padT.toFixed(1)}" width="${(groupW-2).toFixed(1)}" height="${chartH.toFixed(1)}"
-        rx="3" fill="rgba(255,200,50,.035)" stroke="rgba(255,200,50,.12)" stroke-width=".7"/>`;
-    }
-  });
-
-  /* Ligne de tendance série A */
-  const trendArr=trendPts.trim().split(' ');
-  if(trendArr.length>1){
-    bars+=`<polyline points="${trendPts.trim()}" fill="none" stroke="rgba(247,147,30,.45)" stroke-width="1.2" stroke-dasharray="3,2" stroke-linecap="round" stroke-linejoin="round"/>`;
-  }
-
-  /* Ligne de base */
-  yAxis+=`<line x1="${padL}" y1="${padT+chartH}" x2="${W-padR}" y2="${padT+chartH}" stroke="rgba(255,255,255,.14)" stroke-width="1"/>`;
-
-  const svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-    <defs>${gradDefs}</defs>
-    ${yAxis}${bars}${xAxis}
-  </svg>`;
-
-  /* Stats chips */
-  const stats=`<div class="chart-stats-row">
-    <div class="chart-stat-chip current">
-      <span class="chart-stat-val">${totalA}</span>
-      <span class="chart-stat-lbl">${lblA.split(':')[0].toUpperCase()}</span>
-    </div>
-    <div class="chart-stat-chip" style="align-self:center;background:transparent;border:none;">
-      <span class="chart-stat-delta ${deltaClass}">${deltaSign}${delta}</span>
-      <span class="chart-stat-lbl">VS S-1</span>
-    </div>
-    <div class="chart-stat-chip prev">
-      <span class="chart-stat-val">${totalB}</span>
-      <span class="chart-stat-lbl">${lblB.split(':')[0].toUpperCase()}</span>
-    </div>
-  </div>`;
-
-  const legend=`<div class="chart-legend">
-    <div class="chart-legend-item"><div class="chart-legend-dot" style="background:linear-gradient(90deg,rgba(247,147,30,.95),rgba(247,100,0,.55))"></div><span>${lblA}</span></div>
-    <div class="chart-legend-item"><div class="chart-legend-dot" style="background:rgba(96,165,250,.5)"></div><span>${lblB}</span></div>
-  </div>`;
-
-  const insightEl=insight?`<div class="chart-insight">${insight}</div>`:'';
-
-  return `${stats}<div class="chart-svg-wrap">${svg}</div>${legend}${insightEl}`;
-}
 
 /* ════════════════════════════════════════════
    MOBILE R1P
