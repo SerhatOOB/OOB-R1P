@@ -49,7 +49,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
     scroll-behavior:auto!important;
   }
   /* Stop les boucles infinies bruyantes mais garde les micro-transitions */
-  .cstar,.cneb,.sstar,#gb,#hxg,#ob1,#ob2,#ob3,.lr,.lr2,.lr3,.lr4,
+  .cneb,#hxg,#ob1,#ob2,.lr,.lr2,.lr3,.lr4,
   .biglogo,.bigs,.bigs::after,#av::after,#av::before,.av-ring3,
   .gc::before,.p-card.p1,.p-card.p1::after,.p-card.p1 .p-basefill,
   .tmk-wrap,.tmk-rring,.tmk-rsweep,.tmk-rdot,.tmk-rping,
@@ -76,11 +76,9 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
   #cur,#cur2{display:none!important;}
 }
 
-.sstar{position:fixed;height:1.5px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),rgba(247,147,30,.6),transparent);border-radius:2px;pointer-events:none;z-index:1;animation:shoot var(--d,3s) var(--dl,0s) linear infinite;opacity:0;}
-
 /* ════ CSS STARS ════ */
 #sc{position:fixed;inset:0;z-index:0;pointer-events:none;transform:translateZ(0);width:100%;height:100%;}
-/* Note : les étoiles sont dessinées en canvas, voir initStars() */
+/* Étoiles dessinées en canvas, voir initStars() */
 
 /* ════ SKELETON LOADING ════ */
 @keyframes sklShimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
@@ -93,7 +91,6 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
   display:inline-block;min-width:30px;
 }
 .skl::after{content:'';display:inline-block;width:1px;}
-/* Skeleton block pour zones larges (leaderboard vide) */
 .skl-block{
   width:100%;height:54px;margin-bottom:5px;border-radius:7px;
   background:linear-gradient(90deg,rgba(255,255,255,.03) 0%,rgba(247,147,30,.09) 35%,rgba(255,255,255,.03) 70%);
@@ -105,47 +102,22 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
 .skl-block:nth-child(4){animation-delay:.45s;opacity:.5;}
 .skl-block:nth-child(5){animation-delay:.6s;opacity:.38;}
 
-/* ════ HEX GRID OVERLAY ════ */
-#hxg{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='48'%3E%3Cpath d='M28 2 L52 16 L52 32 L28 46 L4 32 L4 16 Z' fill='none' stroke='rgba(247,147,30,0.045)' stroke-width='0.5'/%3E%3C/svg%3E");
-  background-size:56px 48px;
-  mask-image:radial-gradient(ellipse at center,black 10%,transparent 72%);
-  animation:hexFade 14s ease-in-out infinite;
-  will-change:opacity;transform:translateZ(0);}
-
-/* ════ GRID OVERLAY ════ */
-#gb{position:fixed;inset:0;z-index:1;pointer-events:none;
-  background-image:linear-gradient(rgba(247,147,30,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(247,147,30,.03) 1px,transparent 1px);
-  background-size:54px 54px;
-  mask-image:radial-gradient(ellipse at center,black 15%,transparent 68%);
-  animation:gBrth 12s ease-in-out infinite;
-  will-change:opacity;transform:translateZ(0);}
-@keyframes gBrth{0%,100%{opacity:.45;}50%{opacity:1;}}
-
-/* ════ SCANLINES + VIGNETTE ════ */
-#scanlines{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.055) 2px,rgba(0,0,0,.055) 4px);
-  transform:translateZ(0);}
+/* ════ VIGNETTE ════ */
 #vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.9) 100%);
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.88) 100%);
   transform:translateZ(0);}
 
-/* ════ AMBIENT ORBS ════ */
-#ob1{position:fixed;width:700px;height:700px;top:-260px;left:-240px;border-radius:50%;
-  background:radial-gradient(circle,rgba(247,147,30,.65),transparent 65%);
-  opacity:.12;pointer-events:none;z-index:1;animation:ob1m 16s ease-in-out infinite;
+/* ════ AMBIENT ORBS — deux orbes subtiles, respiration lente ════ */
+#ob1{position:fixed;width:720px;height:720px;top:-280px;left:-260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(247,147,30,.55),transparent 65%);
+  opacity:.09;pointer-events:none;z-index:1;animation:ob1m 24s ease-in-out infinite;
   will-change:transform;}
-#ob2{position:fixed;width:560px;height:560px;bottom:-180px;right:-140px;border-radius:50%;
-  background:radial-gradient(circle,rgba(96,165,250,.55),transparent 65%);
-  opacity:.1;pointer-events:none;z-index:1;animation:ob2m 22s ease-in-out infinite;
-  will-change:transform;}
-#ob3{position:fixed;width:420px;height:420px;bottom:30%;left:30%;border-radius:50%;
-  background:radial-gradient(circle,rgba(168,85,247,.45),transparent 65%);
-  opacity:.04;pointer-events:none;z-index:1;animation:ob2m 28s ease-in-out infinite reverse;
+#ob2{position:fixed;width:580px;height:580px;bottom:-200px;right:-160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(96,165,250,.5),transparent 65%);
+  opacity:.07;pointer-events:none;z-index:1;animation:ob2m 32s ease-in-out infinite;
   will-change:transform;}
 @keyframes ob1m{0%,100%{transform:translate(0,0);}50%{transform:translate(55px,38px);}}
 @keyframes ob2m{0%,100%{transform:translate(0,0);}50%{transform:translate(-42px,-28px);}}
-@keyframes shoot{0%{transform:translate(0,0) rotate(-35deg);opacity:1;width:0;}40%{opacity:1;width:120px;}100%{transform:translate(260px,-180px) rotate(-35deg);opacity:0;width:60px;}}
 
 /* ════ WARP OVERLAY ════ */
 #warplines{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden;display:none;}
@@ -348,6 +320,91 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
 #sess-status{font-family:var(--fm);font-size:.52rem;letter-spacing:2px;padding:4px 10px;border-radius:20px;border:1px solid rgba(34,197,94,.3);color:var(--grn);background:rgba(34,197,94,.06);transition:all .5s;}
 #sess-status.inactive{border-color:rgba(255,255,255,.08);color:var(--dim);background:transparent;}
 .abtn{cursor:pointer;font-family:var(--fm);font-size:.52rem;color:rgba(255,255,255,.16);letter-spacing:2px;padding:4px 8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;transition:.25s;}
+/* ─ Latence Supabase ─ pill discrète qui respire selon la fraîcheur */
+.hping{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:.52rem;letter-spacing:1.5px;color:rgba(255,255,255,.38);padding:3px 9px;border:1px solid rgba(255,255,255,.06);border-radius:20px;background:rgba(255,255,255,.015);transition:color .3s,border-color .3s;}
+.hping .hping-u{color:rgba(255,255,255,.22);font-size:.44rem;margin-left:-1px;}
+.hping .hping-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);box-shadow:0 0 8px var(--grn);animation:pingBreath 2.4s ease-in-out infinite;flex-shrink:0;}
+.hping.warn{color:rgba(251,191,36,.72);border-color:rgba(251,191,36,.18);}
+.hping.warn .hping-dot{background:var(--gold);box-shadow:0 0 8px var(--gold);animation-duration:1.6s;}
+.hping.bad{color:rgba(239,68,68,.78);border-color:rgba(239,68,68,.22);}
+.hping.bad .hping-dot{background:var(--red);box-shadow:0 0 10px var(--red);animation-duration:.9s;}
+@keyframes pingBreath{0%,100%{transform:scale(1);opacity:.9;}50%{transform:scale(1.35);opacity:1;}}
+
+
+
+
+/* ════ MODE TV — projection grand écran (touche T ou ?tv=1) ════
+   Masque header/admin/rp, recentre le podium + compteur équipe,
+   horloge XXL en haut à droite. Pensé pour un écran de bureau. */
+body.tv-mode #lm{display:none!important;}
+body.tv-mode #app{display:block!important;opacity:1!important;height:100vh;width:100vw;overflow:hidden;}
+body.tv-mode #ah{display:none!important;}
+body.tv-mode #rp{display:none!important;}
+body.tv-mode #lp{display:none!important;}
+body.tv-mode #ab{display:flex!important;flex-direction:column;height:100vh;width:100vw;padding:100px 40px 40px;gap:0;overflow:hidden;}
+body.tv-mode #cp{flex:1;display:flex;flex-direction:column;gap:30px;max-width:1600px;margin:0 auto;width:100%;}
+body.tv-mode #cp>.gc:first-child{flex:0 0 auto;padding:32px 44px!important;}
+body.tv-mode #cp>.gc:last-child{flex:1;display:flex;flex-direction:column;}
+body.tv-mode #cp .si{flex:1;overflow:hidden;padding-top:10px;}
+body.tv-mode #cur,body.tv-mode #cur2{display:none!important;}
+body.tv-mode .tab-bar{display:none;}
+body.tv-mode #tmk-zone{display:none;}
+body.tv-mode #cp .gc:first-child .ct{font-size:1rem;letter-spacing:5px;margin-bottom:20px;}
+body.tv-mode .bg{gap:34px;margin-top:18px;}
+body.tv-mode .ts{padding:36px 30px!important;}
+body.tv-mode .tsco{font-size:6rem!important;text-shadow:0 0 50px rgba(247,147,30,.6);}
+body.tv-mode .tn{font-size:1.25rem!important;letter-spacing:5px;margin-bottom:20px;}
+body.tv-mode .vs-glow{font-size:3rem!important;}
+body.tv-mode .bbar-wrap{height:16px!important;margin-top:22px!important;}
+body.tv-mode .boss-label{font-size:1.15rem!important;}
+body.tv-mode .boss-target-lbl{font-size:1rem!important;}
+body.tv-mode .boss-outer{height:16px!important;}
+body.tv-mode .boss-pct{font-size:1.1rem!important;}
+body.tv-mode .podium-stage{min-height:440px!important;gap:24px!important;padding:10px 40px 12px;}
+body.tv-mode .p-card{max-width:300px!important;padding:26px 20px!important;}
+body.tv-mode .p-card.p1{max-width:360px!important;padding-bottom:58px!important;}
+body.tv-mode .p-card.p1 .p-av{width:130px!important;height:130px!important;font-size:3.2rem!important;margin-bottom:16px;}
+body.tv-mode .p-card.p2 .p-av{width:104px!important;height:104px!important;font-size:2.4rem!important;margin-bottom:14px;}
+body.tv-mode .p-card.p3 .p-av{width:92px!important;height:92px!important;font-size:2.1rem!important;margin-bottom:14px;}
+body.tv-mode .p-card.p1 .p-name{font-size:1.7rem!important;}
+body.tv-mode .p-card.p2 .p-name,body.tv-mode .p-card.p3 .p-name{font-size:1.4rem!important;}
+body.tv-mode .p-card.p1 .p-score{font-size:5rem!important;}
+body.tv-mode .p-card.p2 .p-score{font-size:3.4rem!important;}
+body.tv-mode .p-card.p3 .p-score{font-size:2.8rem!important;}
+body.tv-mode .p-unit{font-size:1rem!important;letter-spacing:4px;}
+body.tv-mode .p-crown{font-size:3rem!important;}
+body.tv-mode .p-medal{font-size:2.1rem!important;}
+body.tv-mode .p-lvlnum{font-size:.85rem!important;}
+body.tv-mode .p-rest{display:none;}
+body.tv-mode #tv-clock{display:flex!important;}
+body.tv-mode .skl-block{display:none;}
+/* Message d'attente si pas connecté */
+body.tv-mode.tv-no-user #cp{justify-content:center;align-items:center;}
+body.tv-mode.tv-no-user #cp>*{display:none!important;}
+body.tv-mode.tv-no-user #cp::before{content:'CONNEXION REQUISE · LANCEZ UNE SESSION';display:block;font-family:var(--fh);font-size:2rem;font-weight:900;letter-spacing:8px;color:rgba(247,147,30,.5);text-align:center;text-shadow:0 0 30px rgba(247,147,30,.3);}
+
+#tv-clock{display:none;position:fixed;top:30px;right:48px;z-index:9980;align-items:baseline;gap:14px;font-family:var(--fh);}
+#tv-clock .tvc-time{font-size:4.2rem;font-weight:900;color:#fff;letter-spacing:8px;text-shadow:0 0 40px rgba(247,147,30,.5);line-height:1;}
+#tv-clock .tvc-date{font-family:var(--fm);font-size:.85rem;color:var(--dim);letter-spacing:5px;text-transform:uppercase;}
+#tv-exit{display:none;position:fixed;top:34px;left:44px;z-index:9980;padding:10px 18px;border:1px solid rgba(255,255,255,.18);border-radius:24px;font-family:var(--fm);font-size:.62rem;letter-spacing:3px;color:rgba(255,255,255,.5);cursor:pointer;background:rgba(0,0,0,.4);backdrop-filter:blur(8px);transition:.25s;}
+#tv-exit:hover{color:#fff;border-color:rgba(255,255,255,.4);}
+body.tv-mode #tv-exit{display:block;}
+body.tv-mode #mobile-view{display:none!important;}
+
+/* ─ Lifetime Stats Overlay ─ archives pilote, ouvrable via double-clic sur l'avatar */
+#lt-overlay{position:fixed;inset:0;z-index:9988;background:rgba(0,2,8,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .28s ease;cursor:pointer;}
+#lt-overlay.in{opacity:1;}
+.lt-card{padding:38px 54px 30px;background:linear-gradient(160deg,rgba(5,12,26,.96) 0%,rgba(2,6,15,.98) 100%);border:1px solid rgba(247,147,30,.32);border-radius:14px;box-shadow:0 30px 90px rgba(0,0,0,.8),0 0 60px rgba(247,147,30,.14),inset 0 1px 0 rgba(255,255,255,.06);text-align:center;position:relative;transform:scale(.92);transition:transform .3s cubic-bezier(.34,1.56,.64,1);max-width:460px;}
+#lt-overlay.in .lt-card{transform:scale(1);}
+.lt-card::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(247,147,30,.7),rgba(251,191,36,.5),rgba(247,147,30,.7),transparent);}
+.lt-tag{font-family:var(--fm);font-size:.5rem;letter-spacing:5px;color:var(--p);margin-bottom:10px;opacity:.75;}
+.lt-name{font-family:var(--fh);font-size:1.55rem;font-weight:900;letter-spacing:6px;color:#fff;margin-bottom:22px;text-shadow:0 0 22px rgba(247,147,30,.4);}
+.lt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:20px;}
+.lt-stat{padding:14px 6px;background:rgba(247,147,30,.05);border:1px solid rgba(247,147,30,.16);border-radius:8px;}
+.lt-v{font-family:var(--fh);font-size:1.8rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:6px;text-shadow:0 0 18px rgba(251,191,36,.4);}
+.lt-l{font-family:var(--fm);font-size:.45rem;letter-spacing:2.5px;color:var(--dim);text-transform:uppercase;}
+.lt-close{font-family:var(--fm);font-size:.48rem;letter-spacing:3px;color:rgba(255,255,255,.25);text-transform:uppercase;margin-top:10px;}
+
 .abtn:hover{color:var(--red);border-color:rgba(239,68,68,.32);}
 
 /* ════ LAYOUT ════ */
@@ -465,6 +522,12 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
 #br1p:hover{transform:translateY(-5px);box-shadow:0 28px 85px rgba(247,147,30,.75),0 0 0 1px rgba(255,220,180,.35),inset 0 1px 0 rgba(255,255,255,.45);background-position:100% 0;filter:brightness(1.05) saturate(1.1);animation-play-state:paused;}
 #br1p:active{transform:translateY(2px) scale(.97);animation-play-state:paused;filter:brightness(.95);}
 #br1p:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important;animation:none!important;filter:grayscale(.4);}
+/* Etat sending : cooldown 250ms, bouton reste cliquable mais visuellement engage */
+#br1p.sending{animation:pulseBtn 2.5s ease-in-out infinite,sendingFlash .25s ease-out;pointer-events:auto;}
+@keyframes sendingFlash{0%{filter:brightness(1.25) saturate(1.15);}100%{filter:none;}}
+/* Ripple radial au clic — confirmation physique de l'action */
+.rp{position:absolute;border-radius:50%;transform:translate(-50%,-50%) scale(0);background:radial-gradient(circle,rgba(255,255,255,.5) 0%,rgba(255,255,255,.15) 45%,transparent 70%);pointer-events:none;animation:rpExpand .6s cubic-bezier(.25,.8,.3,1) forwards;}
+@keyframes rpExpand{to{transform:translate(-50%,-50%) scale(1);opacity:0;}}
 .fomo{margin-top:8px;padding:6px 10px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);font-family:var(--fm);font-size:.55rem;color:#ff8888;letter-spacing:1px;border-radius:5px;text-align:center;}
 
 /* ════ BATTLE ════ */
@@ -489,6 +552,14 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
 .stv.up{color:var(--grn);text-shadow:0 0 14px rgba(34,197,94,.45);}
 .stv.hl{color:var(--p);text-shadow:0 0 16px rgba(247,147,30,.45);}
 .stv.rd{color:var(--red);}
+/* Sparkline 14 jours — mini-graphique en bas de la carte stats */
+.spark-row{margin-top:10px;padding-top:11px;border-top:1px solid rgba(255,255,255,.05);}
+.spark-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.spark-lbl{font-family:var(--fm);font-size:.46rem;letter-spacing:2.5px;color:var(--dim);text-transform:uppercase;}
+.spark-trend{font-family:var(--fh);font-size:.58rem;font-weight:700;letter-spacing:1px;color:var(--grn);}
+.spark-trend.down{color:var(--red);}
+.spark-trend.flat{color:var(--dim);}
+#spark-cv{width:100%;height:42px;display:block;opacity:.9;}
 
 /* ════ FEED ════ */
 
@@ -546,7 +617,16 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
   box-shadow:0 0 0 1px rgba(239,68,68,.07),0 44px 120px rgba(0,0,0,.99);padding:36px;position:relative;}
 .aframe::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(239,68,68,.45),transparent);}
 .atit{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:var(--red);letter-spacing:5px;margin-bottom:4px;}
-.asub{font-family:var(--fm);font-size:.57rem;color:var(--dim);letter-spacing:3px;margin-bottom:28px;}
+.asub{font-family:var(--fm);font-size:.57rem;color:var(--dim);letter-spacing:3px;margin-bottom:14px;}
+/* Onglets admin — hiérarchie visuelle claire pour 15+ sections */
+.adm-tabbar{display:flex;gap:4px;margin-bottom:22px;padding:5px;background:rgba(0,0,0,.3);border:1px solid var(--bd2);border-radius:10px;}
+.adm-tab{flex:1;padding:10px 8px;background:transparent;border:none;color:rgba(255,255,255,.42);font-family:var(--fh);font-size:.66rem;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:7px;transition:background .22s ease,color .22s ease,box-shadow .22s ease;}
+.adm-tab:hover{color:rgba(255,255,255,.78);background:rgba(255,255,255,.03);}
+.adm-tab.active{color:#fff;background:linear-gradient(180deg,rgba(239,68,68,.22),rgba(239,68,68,.08));box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 0 24px rgba(239,68,68,.18);}
+.adm-tab[data-tab="danger"].active{background:linear-gradient(180deg,rgba(239,68,68,.35),rgba(239,68,68,.12));box-shadow:inset 0 1px 0 rgba(255,200,200,.14),0 0 30px rgba(239,68,68,.25);color:#ffb3b3;}
+.asect[data-tab]{display:none;animation:admTabIn .28s ease;}
+.asect[data-tab].active{display:block;}
+@keyframes admTabIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 .asect{margin-bottom:24px;}
 .asect-t{font-family:var(--fm);font-size:.58rem;letter-spacing:3px;color:var(--dim);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--bd2);text-transform:uppercase;}
 .abtn2{padding:10px 18px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));color:white;font-family:var(--fh);font-size:.67rem;letter-spacing:2px;cursor:pointer;border-radius:6px;margin-right:7px;margin-bottom:7px;display:inline-block;transition:border-color .25s ease,color .25s ease,background .25s ease,transform .15s ease,box-shadow .25s ease;position:relative;overflow:hidden;}
@@ -1375,18 +1455,13 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
 <div id="cur"></div>
 <div id="cur2"></div>
 <canvas id="sc"></canvas>
-<div id="gb"></div>
 <div id="hxg"></div>
-<div id="scanlines"></div>
 <div id="vignette"></div>
-<div id="ob1"></div><div id="ob2"></div><div id="ob3"></div>
-<div class="sstar" style="top:12%;left:5%;--d:4.2s;--dl:0s;"></div>
-<div class="sstar" style="top:28%;left:60%;--d:6.1s;--dl:1.8s;"></div>
-<div class="sstar" style="top:55%;left:25%;--d:5.4s;--dl:3.2s;"></div>
-<div class="sstar" style="top:8%;left:78%;--d:7.2s;--dl:0.6s;"></div>
-<div class="sstar" style="top:70%;left:45%;--d:5.8s;--dl:2.5s;"></div>
+<div id="ob1"></div><div id="ob2"></div>
 <div id="warplines"></div>
 <div id="ring3d"></div>
+<div id="tv-clock"><span class="tvc-time" id="tvc-time">00:00</span><span class="tvc-date" id="tvc-date"></span></div>
+<div id="tv-exit" onclick="toggleTVMode()">✕ QUITTER MODE TV (T)</div>
 
 <div id="notif">
   <div class="notif-inner">
@@ -1467,6 +1542,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
       <span id="sess-status" class="inactive">⏳ HORS SESSION</span>
       <div class="lchip"><span class="ld"></span>LIVE</div>
       <div id="ttc"><span id="ttc-lbl">TEAM</span><span id="ttc-val">0</span><span id="ttc-lbl2" style="font-family:var(--fm);font-size:.48rem;color:var(--dim);letter-spacing:2px;">R1P</span></div>
+      <div class="hping" id="hping" title="Latence Supabase"><span class="hping-dot"></span><span id="hping-val">—</span><span class="hping-u">ms</span></div>
       <div id="clk">--:--:--</div>
       <div id="upill">—</div>
       <div class="abtn" onclick="openPW()">⚙ ADMIN</div>
@@ -1502,7 +1578,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
         <div class="btn-hex-wrap br1p-wrap">
           <div class="btn-s1"></div><div class="btn-s2"></div><div class="btn-s3"></div>
           <div class="btn-rot"></div>
-          <button id="br1p" onclick="takeR1P()">
+          <button id="br1p" onclick="takeR1P(event)">
             <div class="b-scan"></div>
             <div class="b-corners"></div>
             <div class="b-inner">
@@ -1569,6 +1645,13 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
         <div class="str"><span class="stl">SESSION</span><span class="stv skl" id="stse">—</span></div>
         <div class="str"><span class="stl">DURÉE SESSION</span><span class="stv" id="stimer">00:00:00</span></div>
         <div class="str"><span class="stl">RECORD PERSO</span><span class="stv skl" id="stbest" style="color:var(--gold);">—</span></div>
+        <div class="spark-row">
+          <div class="spark-header">
+            <span class="spark-lbl">ÉVOLUTION 14 JOURS</span>
+            <span class="spark-trend" id="spark-trend">—</span>
+          </div>
+          <canvas id="spark-cv" width="240" height="42"></canvas>
+        </div>
       </div>
       <div class="gc" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
         <div class="hs"></div>
@@ -1686,7 +1769,16 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
     <div class="aclose" onclick="closeAdm()">✕ FERMER</div>
     <div class="atit">🛡 PANNEAU ADMIN — OOB</div>
     <div class="asub">GESTION SESSIONS · CONTRÔLE TOTAL · ACCÈS RESTREINT</div>
-    <div class="asect">
+
+    <div class="adm-tabbar" id="adm-tabbar">
+      <button class="adm-tab active" data-tab="dashboard" onclick="admSwitchTab('dashboard',this)">📊 TABLEAU</button>
+      <button class="adm-tab" data-tab="pilots" onclick="admSwitchTab('pilots',this)">👥 PILOTES</button>
+      <button class="adm-tab" data-tab="session" onclick="admSwitchTab('session',this)">⏱ SESSION</button>
+      <button class="adm-tab" data-tab="comm" onclick="admSwitchTab('comm',this)">📡 COMM</button>
+      <button class="adm-tab" data-tab="danger" onclick="admSwitchTab('danger',this)">⚠ DANGER</button>
+    </div>
+
+    <div class="asect" data-tab="dashboard">
       <div class="asect-t">📊 STATS GLOBALES</div>
       <div class="agrid">
         <div class="astat"><div class="asv" id="ast">—</div><div class="asl">TOTAL SEMAINE</div></div>
@@ -1696,7 +1788,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
       <div class="reset-info" id="reset-info">Chargement...</div>
     </div>
 
-    <div class="asect">
+    <div class="asect" data-tab="dashboard">
       <div class="asect-t">🎯 OBJECTIF COLLECTIF SEMAINE</div>
       <div style="display:flex;gap:8px;align-items:center;">
         <input class="ainp" id="boss-target-inp" type="number" placeholder="Objectif R1P semaine (défaut: 50)" min="1" max="999" style="flex:1;">
@@ -1718,7 +1810,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
         L'URL est sauvegardée localement sur cet appareil.
       </div>
     </div>
-    <div class="asect">
+    <div class="asect" data-tab="danger">
       <div class="asect-t">🔄 RESET MANUEL</div>
       <button class="abtn2 d" onclick="admDo('reset_session')">⚡ RESET SESSION</button>
       <button class="abtn2 d" onclick="admDo('reset_week')">📅 RESET SEMAINE</button>
@@ -1726,37 +1818,37 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
       <button class="abtn2 d" onclick="admDo('reset_all')">💣 RESET TOTAL</button>
       <div class="alog" id="alog">En attente d'action...</div>
     </div>
-    <div class="asect">
+    <div class="asect" data-tab="pilots">
       <div class="asect-t">👤 AJOUTER UN PILOTE</div>
       <input class="ainp" id="npn" placeholder="Prénom (ex: thomas)">
       <input class="ainp" id="npt" placeholder="Équipe (ex: Caen)">
       <button class="abtn2 g" onclick="admAddPilot()">➕ AJOUTER LE PILOTE</button>
     </div>
-    <div class="asect">
+    <div class="asect" data-tab="comm">
       <div class="asect-t">📣 MESSAGE DIFFUSION</div>
       <input class="ainp" id="bmsg" placeholder="Ex: DERNIÈRE HEURE — À FOND !">
       <button class="abtn2" onclick="admBroadcast()">📡 DIFFUSER LE MESSAGE</button>
     </div>
-    <div class="asect">
+    <div class="asect" data-tab="dashboard">
       <div class="asect-t">📥 EXPORT DONNÉES</div>
       <button class="abtn2 g" onclick="admExportExcel()">📊 EXCEL PAR ÉQUIPE (.xlsx)</button>
       <button class="abtn2 g" onclick="admExportCSV()">📋 CSV SEMAINE</button>
       <button class="abtn2"   onclick="admExportFeed()">📋 HISTORIQUE R1P (.xlsx)</button>
     </div>
-    <div class="asect">
+    <div class="asect" data-tab="session">
       <div class="asect-t">⏱ CONTRÔLE SESSION</div>
       <button class="abtn2 g" onclick="admDo('start')">▶ DÉMARRER</button>
       <button class="abtn2 d" onclick="admDo('stop')">■ TERMINER</button>
       <button class="abtn2"   onclick="admRefresh()">🔄 FORCER REFRESH</button>
     </div>
-    <div class="asect">
+    <div class="asect" data-tab="pilots">
       <div class="asect-t">🗂 PILOTES & SCORES</div>
       <button class="abtn2" onclick="admLoadPilots()">📥 CHARGER LES DONNÉES</button>
       <div class="si" style="max-height:190px;margin-top:9px;" id="aplist"></div>
     </div>
 
     <!-- TEAMS AI AUTOMATION -->
-    <div class="asect ta-module">
+    <div class="asect ta-module" data-tab="comm">
       <div class="asect-t">🤖 MESSAGES TEAMS — IA</div>
       <div class="ta-card">
         <div class="ta-header">
@@ -1817,7 +1909,7 @@ body{font-family:var(--fu);background:var(--dark);color:#fff;cursor:none;-webkit
     </div>
     <!-- END TEAMS AI -->
     <!-- SCHEDULER AUTO -->
-    <div class="asect sched-module">
+    <div class="asect sched-module" data-tab="comm">
       <div class="asect-t">⏱ SCHEDULER — ENVOI AUTOMATIQUE</div>
       <div class="sched-card">
         <div class="sched-header">
@@ -2107,8 +2199,6 @@ document.addEventListener('keydown',_triggerTypingPause,{passive:true,capture:tr
   });
 })();
 
-function initTilt(){}
-
 /* ════ CURSOR TRAIL — pool réutilisable, zéro GC pressure ════ */
 let _trailT=0;
 const _trailPool=[];
@@ -2146,16 +2236,9 @@ function spawnTrail(x,y){
   setTimeout(()=>{ slot.busy=false; },560);
 }
 
-/* ════ THREE.JS SCÈNE ════ */
-let SR,SS,SC,SM,SN2;
-let torusRings=[];
-const N=3200;
-let SP,SV,SA;
-
 /* ════ STARFIELD — rendu canvas unifié ════
    228 divs animés → 1 seul canvas avec boucle rAF unique.
    Le rendu inclut étoiles tombantes, nébuleuses, twinkle et mode warp. */
-let _cssStarBaseData = [];
 let _starsVersion = 0;
 let _starsResizeHandler = null;
 let _starsVisHandler = null;
@@ -2409,7 +2492,7 @@ function doLogin(){
         const ap=document.getElementById('app');
         ap.style.display='grid';
         gsap.fromTo(ap,{opacity:0},{opacity:1,duration:.65});
-        boot(); startClock(); initTilt(); checkAutoReset(); mobileBootUI();
+        boot(); startClock(); checkAutoReset(); mobileBootUI();
       });
     },580);
   },1650);
@@ -2433,12 +2516,16 @@ function boot(){
   buildStreak(0); updateSessionStatus();
   const pb=parseInt(_store.get('oob_pb_'+user.name))||0;
   document.getElementById('stbest').textContent=pb?pb+' R1P':'—';
+  initLifetimeStats();
+  drawSparkline(true);
   setInterval(()=>{
     const s=~~((Date.now()-t0)/1000),h=~~(s/3600),m=~~((s%3600)/60),sc=s%60;
     document.getElementById('stimer').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');
   },1000);
   refreshAll();
-  setInterval(refreshAll,8000);
+  /* Polling de sécurité — le channel Supabase Realtime gère les updates live,
+     ce setInterval sert uniquement de filet pour reconvergence après reconnexion */
+  setInterval(refreshAll,30000);
   const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ';
   if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; }
   // ── Adaptation R1TMK (Lucas) ──
@@ -2591,13 +2678,170 @@ async function sendTeamsNotif({name,team,count,note,r1type}){
 }
 
 /* ════ TAKE R1P ════ */
-async function takeR1P(){
+/* ════ RIPPLE — confirmation visuelle centrée sur le point de clic ════ */
+function spawnRipple(btn,ev){
+  if(!btn) return;
+  const r=btn.getBoundingClientRect();
+  const x=ev&&ev.clientX?ev.clientX-r.left:r.width/2;
+  const y=ev&&ev.clientY?ev.clientY-r.top :r.height/2;
+  const maxD=Math.hypot(Math.max(x,r.width-x),Math.max(y,r.height-y))*2;
+  const rp=document.createElement('span');
+  rp.className='rp';
+  rp.style.cssText=`left:${x}px;top:${y}px;width:${maxD}px;height:${maxD}px;`;
+  btn.appendChild(rp);
+  setTimeout(()=>rp.remove(),620);
+}
+
+/* ════ ODOMETER — transitions de chiffres plus élégantes ════
+   Remplace l'affichage instantané par un roll court (300ms max) vers la
+   nouvelle valeur. Utilisé pour les stats qui changent régulièrement. */
+const _odoStates=new WeakMap();
+function odometerSet(el,newVal,suffix=''){
+  if(!el) return;
+  const cur=_odoStates.get(el)||parseInt(el.textContent)||0;
+  if(cur===newVal){ el.textContent=newVal+suffix; _odoStates.set(el,newVal); return; }
+  const delta=newVal-cur;
+  /* Saut direct si grosse différence ou premier affichage */
+  if(Math.abs(delta)>25||cur===0&&newVal>10){
+    el.textContent=newVal+suffix;
+    _odoStates.set(el,newVal);
+    return;
+  }
+  const dur=Math.min(320,Math.abs(delta)*45);
+  const start=performance.now();
+  const sv=cur;
+  function step(now){
+    const t=Math.min(1,(now-start)/dur);
+    /* Easing out-expo pour effet "arrive puis se pose" */
+    const e=t===1?1:1-Math.pow(2,-9*t);
+    const v=Math.round(sv+delta*e);
+    el.textContent=v+suffix;
+    if(t<1) requestAnimationFrame(step);
+    else _odoStates.set(el,newVal);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ════ LATENCY PROBE — santé de la connexion Supabase ════
+   Mesure discrète, ne déclenche aucun log serveur (fetch HEAD sur l'URL Supabase).
+   Vert < 250ms, ambre < 700ms, rouge au-delà ou erreur. */
+async function measureLatency(){
+  const pill=document.getElementById('hping');
+  const val=document.getElementById('hping-val');
+  if(!pill||!val) return;
+  try{
+    const t0=performance.now();
+    const ctrl=new AbortController();
+    const to=setTimeout(()=>ctrl.abort(),4000);
+    const r=await fetch(SB_URL+'/rest/v1/',{method:'HEAD',cache:'no-store',signal:ctrl.signal,headers:{apikey:SB_KEY}});
+    clearTimeout(to);
+    const ms=Math.round(performance.now()-t0);
+    val.textContent=ms;
+    pill.classList.remove('warn','bad');
+    if(ms>700||!r.ok) pill.classList.add('bad');
+    else if(ms>250) pill.classList.add('warn');
+  } catch {
+    val.textContent='—';
+    pill.classList.remove('warn');
+    pill.classList.add('bad');
+  }
+}
+
+/* ════ RACCOURCI CLAVIER — T = Mode TV ════ */
+function initShortcuts(){
+  document.addEventListener('keydown',e=>{
+    if((e.key==='t'||e.key==='T')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){
+      const ae=document.activeElement;
+      if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;
+      e.preventDefault();
+      toggleTVMode();
+    }
+  });
+}
+
+/* ════ MODE TV ════ */
+let _tvClockInterval=null;
+function toggleTVMode(){
+  const on=!document.body.classList.contains('tv-mode');
+  document.body.classList.toggle('tv-mode',on);
+  if(on){
+    /* Détection "pas connecté" pour afficher un message plutôt qu'un écran vide */
+    const connected=!!(user&&user.name);
+    document.body.classList.toggle('tv-no-user',!connected);
+    _tvUpdateClock();
+    if(!_tvClockInterval) _tvClockInterval=setInterval(_tvUpdateClock,1000);
+    /* Force un refresh du classement si connecté (sinon skeleton blocks vides) */
+    if(connected){ try{ refreshAll(); }catch{} }
+    /* Tentative plein écran — fallback silencieux si refusé */
+    try{ if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); }catch{}
+  } else {
+    document.body.classList.remove('tv-no-user');
+    if(_tvClockInterval){ clearInterval(_tvClockInterval); _tvClockInterval=null; }
+    try{ if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }catch{}
+  }
+}
+function _tvUpdateClock(){
+  const t=document.getElementById('tvc-time');
+  const d=document.getElementById('tvc-date');
+  if(!t||!d) return;
+  const now=new Date();
+  t.textContent=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const days=['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'];
+  const months=['JAN','FÉV','MAR','AVR','MAI','JUIN','JUIL','AOÛ','SEP','OCT','NOV','DÉC'];
+  d.textContent=days[now.getDay()]+' '+now.getDate()+' '+months[now.getMonth()];
+}
+/* Auto-activation via ?tv=1 — on diffère pour que le DOM soit prêt */
+if(new URLSearchParams(location.search).get('tv')==='1'){
+  window.addEventListener('load',()=>setTimeout(toggleTVMode,300));
+}
+
+/* ════ LIFETIME STATS — double-clic avatar pour stats cumulées ════ */
+function showLifetimeStats(){
+  if(!user.name) return;
+  const pb=parseInt(_store.get('oob_pb_'+user.name))||0;
+  const bestStreak=parseInt(_store.get('oob_bstreak_'+user.name))||0;
+  const total=(parseInt(_store.get('oob_lt_'+user.name))||0)+week;
+  const ov=document.createElement('div');
+  ov.id='lt-overlay';
+  ov.innerHTML=`<div class="lt-card">
+    <div class="lt-tag">✦ ARCHIVES PILOTE ✦</div>
+    <div class="lt-name">${user.name.toUpperCase()}</div>
+    <div class="lt-grid">
+      <div class="lt-stat"><div class="lt-v">${total}</div><div class="lt-l">TOTAL LIFETIME</div></div>
+      <div class="lt-stat"><div class="lt-v">${pb||'—'}</div><div class="lt-l">MEILLEURE SEMAINE</div></div>
+      <div class="lt-stat"><div class="lt-v">${bestStreak||'—'}</div><div class="lt-l">STREAK RECORD</div></div>
+    </div>
+    <div class="lt-close">CLIQUEZ POUR FERMER</div>
+  </div>`;
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>ov.classList.add('in'));
+  const close=()=>{ ov.classList.remove('in'); setTimeout(()=>ov.remove(),280); };
+  ov.addEventListener('click',close);
+  setTimeout(()=>ov.addEventListener('keydown',e=>e.key==='Escape'&&close()),10);
+}
+function initLifetimeStats(){
+  const av=document.getElementById('av');
+  if(av) av.addEventListener('dblclick',showLifetimeStats);
+  /* Lifetime counter accumulatif : total hebdo ajouté au logout */
+  window.addEventListener('beforeunload',()=>{
+    if(!user.name) return;
+    const acc=(parseInt(_store.get('oob_lt_'+user.name))||0);
+    _store.set('oob_lt_'+user.name,acc);
+  });
+}
+
+async function takeR1P(ev){
   if(!_sb){ showToast('CONNEXION','Mode hors-ligne — Supabase indisponible',0,true); return; }
   const note=(document.getElementById('note').value||'').trim();
   const btn=document.getElementById('br1p');
+  spawnRipple(btn,ev);
   const _lbl=document.getElementById('br1p-lbl');
   const _lblDefault=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
-  btn.disabled=true; if(_lbl) _lbl.textContent='⏳ ENVOI...';
+  /* Anti double-clic accidentel : 250ms de cooldown visuel, PAS bloquant */
+  btn.classList.add('sending');
+  setTimeout(()=>btn.classList.remove('sending'),250);
+  /* ── OPTIMISTIC UPDATE — bump UI avant réponse réseau ── */
+  ses++; week++; month++;
   try{
     const{error}=await _sb.from('suivi_r1p').insert({
       auteur:user.name,equipe:user.team,
@@ -2606,7 +2850,6 @@ async function takeR1P(){
     });
     if(error) throw error;
     await Promise.all([upsert('Individuel',user.name),upsert('Equipe',user.team)]);
-    ses++; week++; month++;
     /* ── Floating +1 ── */
     (()=>{
       const btn=document.getElementById('br1p');
@@ -2631,13 +2874,13 @@ async function takeR1P(){
     ms.classList.remove('pop'); void ms.offsetWidth; ms.classList.add('pop');
     numAnim('myscore',ses);
     buildStreak(Math.min(ses,7)); setRank(week);
+    if(typeof pushSparkPoint==='function') pushSparkPoint();
     document.getElementById('note').value='';
     document.getElementById('stse').textContent=ses+' R1P';
-    document.getElementById('stw').textContent=week;
-    document.getElementById('stm').textContent=month;
+    odometerSet(document.getElementById('stw'),week);
+    odometerSet(document.getElementById('stm'),month);
     const pb=parseInt(_store.get('oob_pb_'+user.name))||0;
     if(week>pb){ _store.set('oob_pb_'+user.name,week); document.getElementById('stbest').textContent=week+' R1P'; if(week>pb) showNotif('🏆 NOUVEAU RECORD PERSONNEL — '+week+' R1P !'); }
-    btn.disabled=false;
     const _bl=document.getElementById('br1p-lbl');
     if(_bl) _bl.textContent=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
     burstR1P(btn);
@@ -2666,10 +2909,22 @@ async function takeR1P(){
     }
     refreshAll();
   }catch(e){
-    showToast('ERREUR',(e?.message||'Erreur inconnue').slice(0,60),0,true);
-    btn.disabled=false;
+    /* ROLLBACK — compteurs annules, UI remise a l'etat pre-clic */
+    ses--; week--; month--;
+    const ms2=document.getElementById('myscore');
+    if(ms2){ ms2.textContent=ses; ms2.setAttribute('data-val',ses); }
+    document.getElementById('stse').textContent=ses+' R1P';
+    odometerSet(document.getElementById('stw'),week);
+    odometerSet(document.getElementById('stm'),month);
+    buildStreak(Math.min(ses,7)); setRank(week);
+    const cb2=document.getElementById('combo-badge');
+    if(cb2){ if(ses>=2){ cb2.textContent='🔥 ×'+ses+' COMBO'; } else { cb2.className=''; } }
+    const hb2=document.getElementById('hot-badge');
+    if(hb2) hb2.style.display=ses>=5?'block':'none';
+    showToast('⚠ ÉCHEC','R1P non enregistré — '+(e?.message||'réseau').slice(0,50),0,true);
+    btn.classList.remove('sending');
     const _bl=document.getElementById('br1p-lbl');
-    if(_bl) _bl.textContent=btn.getAttribute('data-r1tmk')?'📞 R1TMK +1':'📞 R1P +1';
+    if(_bl) _bl.textContent=_lblDefault;
   }
 }
 
@@ -2828,7 +3083,7 @@ function updateBossBar(indiv){
   /* team total header chip */
   const ttc=document.getElementById('ttc');
   const ttv=document.getElementById('ttc-val');
-  if(ttv) ttv.textContent=total;
+  if(ttv) odometerSet(ttv,total);
   if(ttc){ ttc.style.display='flex'; if(pct>=80) ttc.classList.add('live'); else ttc.classList.remove('live'); }
 }
 
@@ -2862,9 +3117,130 @@ async function refreshAll(){
   renderCurrentTab(); renderFeed(feed); updateStats(indiv); updateBattle(teams); updateBossBar(indiv); renderTMK(indiv); updateBossBar(indiv);
   window._lastIndiv=indiv;
   const me=indiv.find(x=>x.key.toLowerCase()===user.name.toLowerCase());
-  if(me){ week=me.count_week; month=me.count_month||0; document.getElementById('stw').textContent=week; document.getElementById('stm').textContent=month; setRank(week);
+  if(me){ week=me.count_week; month=me.count_month||0; odometerSet(document.getElementById('stw'),week); odometerSet(document.getElementById('stm'),month); setRank(week);
     if(!_bootLoaded){ ses=me.count_session||0; document.getElementById('myscore').textContent=ses; document.getElementById('myscore').setAttribute('data-val',ses); document.getElementById('stse').textContent=ses+' '+_r1lbl; _bootLoaded=true; } }
   _syncMobileUI();
+  /* Sparkline — refetch historique seulement toutes les 3 minutes pour économiser */
+  if(typeof drawSparkline==='function') drawSparkline();
+}
+
+/* ════ SPARKLINE 14 JOURS ════
+   Récupère l'historique personnel, l'agrège par jour, dessine mini-barres.
+   Cache 3 minutes pour éviter de hammerer Supabase. */
+let _sparkCache={data:null,ts:0};
+let _sparkToday=0; /* incrément optimistic du jour courant */
+async function drawSparkline(force=false){
+  const cv=document.getElementById('spark-cv');
+  if(!cv||!user.name||!_sb) return;
+  const now=Date.now();
+  let daily;
+  if(!force && _sparkCache.data && now-_sparkCache.ts<180000){
+    daily=_sparkCache.data;
+  } else {
+    try{
+      const since=new Date(now-14*86400000).toISOString();
+      const{data,error}=await _sb.from('suivi_r1p')
+        .select('created_at')
+        .eq('auteur',user.name)
+        .gte('created_at',since);
+      if(error) throw error;
+      daily=_aggregateByDay(data||[]);
+      _sparkCache={data:daily,ts:now};
+      _sparkToday=0; /* reset optimistic buffer après refresh */
+    }catch(e){ return; }
+  }
+  _renderSpark(cv,daily,_sparkToday);
+}
+function _aggregateByDay(rows){
+  const out=new Array(14).fill(0);
+  const todayMid=new Date(); todayMid.setHours(0,0,0,0);
+  for(const r of rows){
+    const dt=new Date(r.created_at);
+    const diff=Math.floor((todayMid-dt)/86400000);
+    const idx=13-diff;
+    if(idx>=0&&idx<14) out[idx]++;
+  }
+  return out;
+}
+function _renderSpark(cv,daily,optimisticToday){
+  const ctx=cv.getContext('2d');
+  const DPR=Math.min(window.devicePixelRatio||1,2);
+  const W=cv.clientWidth||240, H=cv.clientHeight||42;
+  cv.width=W*DPR; cv.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.clearRect(0,0,W,H);
+
+  const vals=daily.slice();
+  vals[13]=(vals[13]||0)+optimisticToday;
+  const max=Math.max(1,...vals);
+  const n=vals.length;
+  const barW=(W-2)/n;
+  const pad=Math.max(1,barW*0.18);
+
+  /* Ligne de base subtile */
+  ctx.fillStyle='rgba(255,255,255,.035)';
+  ctx.fillRect(0,H-1,W,1);
+
+  for(let i=0;i<n;i++){
+    const v=vals[i];
+    const h=v>0?Math.max(2,(v/max)*(H-4)):1;
+    const x=1+i*barW+pad;
+    const y=H-h-1;
+    const w=barW-pad*2;
+    const isToday=(i===n-1);
+    if(v===0){
+      ctx.fillStyle='rgba(255,255,255,.08)';
+      ctx.fillRect(x,H-2,w,1);
+      continue;
+    }
+    /* Dégradé orange → doré sur la hauteur */
+    const grad=ctx.createLinearGradient(0,y,0,y+h);
+    if(isToday){
+      grad.addColorStop(0,'rgba(251,191,36,.95)');
+      grad.addColorStop(1,'rgba(247,147,30,.55)');
+    } else {
+      grad.addColorStop(0,'rgba(247,147,30,.8)');
+      grad.addColorStop(1,'rgba(247,147,30,.25)');
+    }
+    ctx.fillStyle=grad;
+    /* Coin arrondi simulé */
+    const rr=Math.min(w/2,1.5);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.lineTo(x+w-rr,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+rr);
+    ctx.lineTo(x+w,H-1);
+    ctx.lineTo(x,H-1);
+    ctx.lineTo(x,y+rr);
+    ctx.quadraticCurveTo(x,y,x+rr,y);
+    ctx.closePath();
+    ctx.fill();
+    if(isToday){
+      /* Pulse dot au-dessus de la barre du jour */
+      ctx.fillStyle='rgba(251,191,36,1)';
+      ctx.beginPath();
+      ctx.arc(x+w/2,y-3,1.5,0,6.2832);
+      ctx.fill();
+    }
+  }
+
+  /* Tendance — régression linéaire simple sur les 14 points */
+  const tEl=document.getElementById('spark-trend');
+  if(tEl){
+    let sx=0,sy=0,sxy=0,sxx=0;
+    for(let i=0;i<n;i++){ sx+=i; sy+=vals[i]; sxy+=i*vals[i]; sxx+=i*i; }
+    const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx);
+    const pctChange=slope>0.15?'+':slope<-0.15?'':'';
+    if(slope>0.15){ tEl.textContent='▲ EN HAUSSE'; tEl.className='spark-trend'; }
+    else if(slope<-0.15){ tEl.textContent='▼ EN BAISSE'; tEl.className='spark-trend down'; }
+    else { tEl.textContent='◆ STABLE'; tEl.className='spark-trend flat'; }
+  }
+}
+/* Optimistic push — appelé depuis takeR1P, bump le jour en cours sans refetch */
+function pushSparkPoint(){
+  _sparkToday++;
+  const cv=document.getElementById('spark-cv');
+  if(cv && _sparkCache.data) _renderSpark(cv,_sparkCache.data,_sparkToday);
 }
 
 function renderLB(id,items,field,force=false){
@@ -3199,7 +3575,23 @@ function showMilestone(num,ms){
 }
 
 /* ════ UTILS ════ */
-function numAnim(id,val){ const el=document.getElementById(id); if(!el)return; let cur=parseInt(el.textContent)||0; const step=()=>{ cur++; el.textContent=cur; el.setAttribute('data-val',cur); if(cur<val) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+function numAnim(id,val){
+  const el=document.getElementById(id); if(!el) return;
+  const start=parseInt(el.textContent)||0;
+  const diff=val-start;
+  if(diff===0){ el.setAttribute('data-val',val); return; }
+  const dur=Math.min(700,180+Math.abs(diff)*80);
+  const t0=performance.now();
+  const tick=now=>{
+    const p=Math.min(1,(now-t0)/dur);
+    const eased=1-Math.pow(1-p,3);
+    const v=Math.round(start+diff*eased);
+    el.textContent=v;
+    el.setAttribute('data-val',v);
+    if(p<1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
 function shake(id){ const el=document.getElementById(id); gsap.fromTo(el,{x:0},{keyframes:[{x:-9},{x:9},{x:-6},{x:6},{x:0}],duration:.32,ease:'none'}); }
 function today(){ return new Date().toISOString().slice(0,10); }
 function ago(d){ const s=~~((Date.now()-d)/1000); if(s<60) return`il y a ${s}s`; if(s<3600) return`il y a ${~~(s/60)}min`; return`il y a ${~~(s/3600)}h`; }
@@ -3239,7 +3631,17 @@ function openPW(){ document.getElementById('pwo').style.display='flex'; setTimeo
 function closePW(){ document.getElementById('pwo').style.display='none'; document.getElementById('apw').value=''; document.getElementById('pwerr').textContent=''; }
 function checkPW(){ if(document.getElementById('apw').value===ADMIN_PW){ closePW(); openAdm(); } else{ document.getElementById('pwerr').textContent='✕ MOT DE PASSE INCORRECT'; shake('apw'); } }
 document.getElementById('apw').addEventListener('keydown',e=>{ if(e.key==='Enter') checkPW(); });
-function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _bc=document.getElementById('boss-cur-target'); if(_bc) _bc.textContent=localStorage.getItem('oob_boss_target')||'50'; const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } }
+function admSwitchTab(tab,btn){
+  document.querySelectorAll('.adm-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.asect[data-tab]').forEach(s=>{
+    s.classList.toggle('active',s.getAttribute('data-tab')===tab);
+  });
+  /* Scroll propre vers le haut du panneau */
+  const fr=document.querySelector('#adm .aframe');
+  if(fr) fr.scrollTop=0;
+}
+function openAdm(){ const m=document.getElementById('adm'); m.style.display='flex'; gsap.fromTo(m,{opacity:0},{opacity:1,duration:.3}); admStats(); const _bc=document.getElementById('boss-cur-target'); if(_bc) _bc.textContent=localStorage.getItem('oob_boss_target')||'50'; const _twh=_store.get('oob_teams_wh')||'https://default18fa1534e40a495f952e52aad3dbbf.05.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/878d1841339c49edbc0dcce82c4c45da/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=XTYuvop498kCkAe4WhbtqkaUewSGZydYykurfre-FNQ'; if(_twh){ const el=document.getElementById('teams-wh'); if(el) el.value=_twh; } admSwitchTab('dashboard',document.querySelector('.adm-tab[data-tab="dashboard"]')); }
 function closeAdm(){ gsap.to('#adm',{opacity:0,duration:.25,onComplete:()=>document.getElementById('adm').style.display='none'}); }
 function alog(msg,ok=true){ const el=document.getElementById('alog'); const t=new Date().toTimeString().slice(0,8); el.innerHTML+=`<br>[${t}] ${ok?'✓':'✕'} ${msg}`; el.scrollTop=el.scrollHeight; }
 async function saveBossTarget(){
@@ -4603,7 +5005,12 @@ async function mobileR1P(){
 }
 
 /* ════ INIT ════ */
-window.onload=()=>{ initStars(); loadPilotCount(); taInit(); schedInit(); };
+window.onload=()=>{
+  initStars(); loadPilotCount(); taInit(); schedInit();
+  initShortcuts();
+  measureLatency();
+  setInterval(measureLatency,18000);
+};
 </script>
 </body>
 </html>
